@@ -288,6 +288,9 @@ function initializeForm() {
     const indoorText = document.getElementById('indoorText');
     const outdoorText = document.getElementById('outdoorText');
 
+    // Initialize with default mixed breed option
+    populateBreedOptions(katzenRassen);
+
     // Update form based on pet type selection
     tierKategorie.addEventListener('change', function() {
         const petType = this.value;
@@ -314,6 +317,14 @@ function initializeForm() {
             
             // Update breed options for horses
             populateBreedOptions(pferdeRassen);
+        } else {
+            // Reset to default when no pet type is selected
+            haltungTitle.textContent = 'Wie wird Ihr Tier gehalten?';
+            indoorText.textContent = 'ausschließlich in der Wohnung/im Haus';
+            outdoorText.textContent = 'mit Freilauf';
+            
+            // Reset breed options
+            rasse.innerHTML = '<option value="">Rasse wählen</option>';
         }
     });
 }
@@ -334,19 +345,26 @@ function populateBreedOptions(breeds) {
 // Initialize postal code functionality
 function initializePostalCode() {
     const plzInput = document.getElementById('plz');
+    const cityDisplay = document.getElementById('cityName');
+    
+    if (!plzInput || !cityDisplay) {
+        console.error('PLZ input or city display element not found');
+        return;
+    }
     
     plzInput.addEventListener('input', function() {
         // Only allow numbers and limit to 5 digits
         this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5);
         
         // Show city name if PLZ is found
-        const cityDisplay = document.getElementById('cityName');
         const plz = this.value;
         
         if (plz.length === 5 && plzCityMap[plz]) {
             cityDisplay.textContent = plzCityMap[plz];
+            cityDisplay.style.color = '#0066cc';
         } else if (plz.length === 5) {
             cityDisplay.textContent = '(Stadt nicht gefunden)';
+            cityDisplay.style.color = '#999';
         } else {
             cityDisplay.textContent = '';
         }
@@ -379,19 +397,59 @@ function initializeFormSubmission() {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Simple validation
+        // Validate required fields
         const plz = document.getElementById('plz').value;
         const tierKat = document.getElementById('tierKategorie').value;
+        const geschlecht = document.getElementById('geschlecht').value;
+        const rasse = document.getElementById('rasse').value;
         const gebDatum = document.getElementById('geburtsdatum').value;
         
-        if (!plz || !tierKat || !gebDatum) {
-            alert('Bitte füllen Sie alle Pflichtfelder aus.');
+        // Check if basic fields are filled
+        if (!plz || !tierKat || !geschlecht || !rasse || !gebDatum) {
+            alert('Bitte füllen Sie alle Pflichtfelder aus: PLZ, Tierkategorie, Geschlecht, Rasse und Geburtsdatum.');
+            return;
+        }
+        
+        // Validate postal code
+        if (plz.length !== 5) {
+            alert('Bitte geben Sie eine gültige 5-stellige Postleitzahl ein.');
             return;
         }
         
         // Validate birth date format
         if (!/^\d{2}\.\d{2}\.\d{4}$/.test(gebDatum)) {
             alert('Bitte geben Sie das Geburtsdatum im Format TT.MM.JJJJ ein.');
+            return;
+        }
+        
+        // Check if required radio buttons are selected
+        const kastriertSelected = document.querySelector('input[name="kastriert"]:checked');
+        if (!kastriertSelected) {
+            alert('Bitte geben Sie an, ob Ihr Tier kastriert/sterilisiert wurde.');
+            return;
+        }
+        
+        const haltungSelected = document.querySelector('input[name="haltung"]:checked');
+        if (!haltungSelected) {
+            alert('Bitte geben Sie an, wie Ihr Tier gehalten wird.');
+            return;
+        }
+        
+        const behandlungSelected = document.querySelector('input[name="behandlung"]:checked');
+        if (!behandlungSelected) {
+            alert('Bitte geben Sie an, ob Ihr Tier bereits tierärztlich behandelt wurde.');
+            return;
+        }
+        
+        const krankheitenSelected = document.querySelector('input[name="krankheiten"]:checked');
+        if (!krankheitenSelected) {
+            alert('Bitte geben Sie an, ob Ihnen Krankheiten Ihres Tieres bekannt sind.');
+            return;
+        }
+        
+        const spezielleKrankheitenSelected = document.querySelector('input[name="spezielle_krankheiten"]:checked');
+        if (!spezielleKrankheitenSelected) {
+            alert('Bitte geben Sie an, ob Ihr Tier eine der aufgelisteten Krankheiten hat.');
             return;
         }
         
@@ -411,7 +469,7 @@ function closeResults() {
 
 function initializeModalHandlers() {
     // Close button handler
-    const closeButton = document.querySelector('.close-modal');
+    const closeButton = document.getElementById('closeModalButton');
     if (closeButton) {
         closeButton.addEventListener('click', closeResults);
     }
@@ -431,6 +489,24 @@ function initializeModalHandlers() {
     });
 }
 
+// Initialize checkbox mutual exclusivity
+function initializeCheckboxes() {
+    const behandlungCheckboxes = document.querySelectorAll('input[name="behandlung"]');
+    
+    behandlungCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                // Uncheck all other checkboxes in this group
+                behandlungCheckboxes.forEach(otherCheckbox => {
+                    if (otherCheckbox !== this) {
+                        otherCheckbox.checked = false;
+                    }
+                });
+            }
+        });
+    });
+}
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initializeForm();
@@ -438,16 +514,5 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeDateInput();
     initializeFormSubmission();
     initializeModalHandlers();
+    initializeCheckboxes();
 });
-
-// Export functions for testing purposes (optional)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        plzCityMap,
-        katzenRassen,
-        hundeRassen,
-        pferdeRassen,
-        showResults,
-        closeResults
-    };
-}
