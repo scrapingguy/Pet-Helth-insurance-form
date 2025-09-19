@@ -21,6 +21,11 @@
                                 <span id="cityName" class="form-text city-display"></span>
                                 <span class="form-text">.</span>
                             </div>
+                            <!-- Error message for PLZ -->
+                            <div class="error-box" id="plzError">
+                                <div class="error-icon"></div>
+                                <div class="error-message">Bitte geben Sie eine gültige Postleitzahl ein.</div>
+                            </div>
                             
                             <div class="form-line">
                                 <select id="tierKategorie" class="form-select">
@@ -39,8 +44,7 @@
                                 <span class="form-text">und ein</span>
                                 
                                 <select id="rasse" class="form-select">
-                                    <option value="">Mischling / Hauskatze / Eur...</option>
-                                    <option value="mischling">Mischling / Hauskatze / Europäisch Kurzhaar</option>
+                                    <option value="" selected>Rasse auswählen...</option>
                                 </select>
                             </div>
                         </div>
@@ -58,6 +62,16 @@
                                     <!-- <span class="date-format-hint">TT.MM.JJJJ</span> -->
                                 </div>
                             </div>
+                            <!-- Error message for birth date -->
+                            <div class="error-box" id="geburtsdatumError">
+                                <div class="error-icon"></div>
+                                <div class="error-message">Bitte geben Sie das Geburtsdatum Ihres Tieres ein.</div>
+                            </div>
+                            <!-- Error message for future birth date -->
+                            <div class="error-box" id="geburtsdatumFutureError">
+                                <div class="error-icon"></div>
+                                <div class="error-message">Das Geburtsdatum kann nicht in der Zukunft liegen.</div>
+                            </div>
                         </div>
 
                         <!-- Neutered Question -->
@@ -74,6 +88,11 @@
                                     <span class="radio-custom"></span>
                                     <span>Nein</span>
                                 </label>
+                            </div>
+                            <!-- Error message for neutering -->
+                            <div class="error-box" id="kastriertError">
+                                <div class="error-icon"></div>
+                                <div class="error-message">Bitte geben Sie an, ob ihr Tier kastriert oder sterilisiert ist.</div>
                             </div>
                         </div>
 
@@ -95,6 +114,11 @@
                                     <span id="outdoorText">Freigänger</span>
                                 </label>
                             </div>
+                            <!-- Error message for housing -->
+                            <div class="error-box" id="haltungError">
+                                <div class="error-icon"></div>
+                                <div class="error-message">Bitte wählen Sie aus, wie Ihr Tier gehalten wird.</div>
+                            </div>
                         </div>
 
                         <!-- New Health Issues Question -->
@@ -114,6 +138,11 @@
                                     <span class="radio-custom"></span>
                                     <span>Nein</span>
                                 </label>
+                            </div>
+                            <!-- Error message for health problems -->
+                            <div class="error-box" id="gesundheitsproblemeError">
+                                <div class="error-icon"></div>
+                                <div class="error-message">Bitte geben Sie an, ob Ihnen Krankheiten Ihres Tieres bekannt sind.</div>
                             </div>
                         </div>
 

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breed Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        select { margin: 10px; padding: 8px; font-size: 16px; }
+        .test-info { background: #f0f8ff; padding: 15px; margin: 20px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h2>Breed Selection Test</h2>
+        <p>This test verifies that breed options change based on selected animal type.</p>
+    </div>
+
+    <label for="tierKategorie">Animal Type:</label>
+    <select id="tierKategorie">
+        <option value="katze" selected>Meine Katze</option>
+        <option value="hund">Mein Hund</option>
+        <option value="pferd">Mein Pferd</option>
+    </select>
+
+    <br>
+
+    <label for="rasse">Breed:</label>
+    <select id="rasse">
+        <option value="">Rasse auswählen...</option>
+    </select>
+
+    <div id="output" class="test-info" style="margin-top: 20px; background: #f9f9f9;">
+        <h3>Selected Values:</h3>
+        <p>Animal: <span id="selectedAnimal">katze</span></p>
+        <p>Breed: <span id="selectedBreed">none</span></p>
+        <p>Total breeds available: <span id="breedCount">0</span></p>
+    </div>
+
+    <script>
+        // Breed data - simplified for testing
+        const breedData = {
+            katze: [
+                'Mischling / Hauskatze / Europäisch Kurzhaar',
+                'Maine Coon',
+                'Perser',
+                'British Kurzhaar',
+                'Siamese'
+            ],
+            hund: [
+                'Mischling',
+                'Labrador',
+                'Golden Retriever',
+                'Deutscher Schäferhund',
+                'Border Collie'
+            ],
+            pferd: [
+                'Mischling',
+                'Hannoveraner',
+                'Oldenburger', 
+                'Quarter Horse',
+                'Islandpferd'
+            ]
+        };
+
+        const tierKategorieSelect = document.getElementById('tierKategorie');
+        const rasseSelect = document.getElementById('rasse');
+        
+        function updateBreedOptions(animalType) {
+            rasseSelect.innerHTML = '';
+            
+            const breeds = breedData[animalType] || [];
+            
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Rasse auswählen...';
+            defaultOption.selected = true;
+            rasseSelect.appendChild(defaultOption);
+            
+            breeds.forEach(breed => {
+                const option = document.createElement('option');
+                option.value = breed.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                option.textContent = breed;
+                rasseSelect.appendChild(option);
+            });
+
+            // Update output
+            document.getElementById('selectedAnimal').textContent = animalType;
+            document.getElementById('breedCount').textContent = breeds.length;
+        }
+
+        tierKategorieSelect.addEventListener('change', function() {
+            updateBreedOptions(this.value);
+            document.getElementById('selectedBreed').textContent = 'none';
+        });
+
+        rasseSelect.addEventListener('change', function() {
+            document.getElementById('selectedBreed').textContent = this.options[this.selectedIndex].text;
+        });
+
+        // Initialize
+        updateBreedOptions('katze');
+        
+        console.log('Breed test initialized');
+        console.log('Available breeds for horses:', breedData.pferd.length);
+    </script>
+</body>
+</html>
