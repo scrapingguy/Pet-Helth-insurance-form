@@ -489,19 +489,78 @@ function initializeModalHandlers() {
     });
 }
 
-// Initialize checkbox mutual exclusivity
-function initializeCheckboxes() {
-    const behandlungCheckboxes = document.querySelectorAll('input[name="behandlung"]');
+// Initialize new health questions logic
+function initializeHealthQuestions() {
+    // Handle showing/hiding treatment question based on health problems answer
+    const gesundheitsproblemeRadios = document.querySelectorAll('input[name="gesundheitsprobleme"]');
+    const behandlungsFrage = document.getElementById('behandlungsFrage');
+    const krankheitenListe = document.getElementById('krankheitenListe');
     
-    behandlungCheckboxes.forEach(checkbox => {
+    gesundheitsproblemeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'ja') {
+                behandlungsFrage.style.display = 'block';
+                krankheitenListe.style.display = 'block';
+            } else {
+                behandlungsFrage.style.display = 'none';
+                krankheitenListe.style.display = 'none';
+                // Reset all treatment options when hiding
+                const neueBehandlungCheckboxes = document.querySelectorAll('input[name="neue_behandlung"]');
+                neueBehandlungCheckboxes.forEach(cb => cb.checked = false);
+                document.getElementById('operationAnzahl').style.display = 'none';
+                document.getElementById('anzahl_operationen').value = '';
+                // Reset disease list radio buttons
+                const krankheitenRadios = document.querySelectorAll('input[name="spezielle_krankheiten"]');
+                krankheitenRadios.forEach(kr => kr.checked = false);
+            }
+        });
+    });
+    
+    // Handle treatment options logic
+    const neueBehandlungCheckboxes = document.querySelectorAll('input[name="neue_behandlung"]');
+    const operationAnzahl = document.getElementById('operationAnzahl');
+    const keinBesuchCheckbox = document.getElementById('neue_kein_besuch');
+    const heilbehandlungCheckbox = document.getElementById('neue_heilbehandlung');
+    const operationCheckbox = document.getElementById('neue_operation');
+    
+    neueBehandlungCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                // Uncheck all other checkboxes in this group
-                behandlungCheckboxes.forEach(otherCheckbox => {
-                    if (otherCheckbox !== this) {
-                        otherCheckbox.checked = false;
+            if (this.id === 'neue_kein_besuch') {
+                if (this.checked) {
+                    // If "kein Besuch" is selected, uncheck and disable other options
+                    heilbehandlungCheckbox.checked = false;
+                    operationCheckbox.checked = false;
+                    heilbehandlungCheckbox.disabled = true;
+                    operationCheckbox.disabled = true;
+                    operationAnzahl.style.display = 'none';
+                    document.getElementById('anzahl_operationen').value = '';
+                } else {
+                    // If "kein Besuch" is unchecked, enable other options
+                    heilbehandlungCheckbox.disabled = false;
+                    operationCheckbox.disabled = false;
+                }
+            } else {
+                // If any other option is selected, disable "kein Besuch"
+                if (this.checked) {
+                    keinBesuchCheckbox.checked = false;
+                    keinBesuchCheckbox.disabled = true;
+                } else {
+                    // Check if no other options are selected
+                    const otherOptionsSelected = (heilbehandlungCheckbox.checked || operationCheckbox.checked);
+                    if (!otherOptionsSelected) {
+                        keinBesuchCheckbox.disabled = false;
                     }
-                });
+                }
+                
+                // Show operation count field if operation is selected
+                if (this.id === 'neue_operation') {
+                    if (this.checked) {
+                        operationAnzahl.style.display = 'block';
+                    } else {
+                        operationAnzahl.style.display = 'none';
+                        document.getElementById('anzahl_operationen').value = '';
+                    }
+                }
             }
         });
     });
@@ -514,5 +573,5 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeDateInput();
     initializeFormSubmission();
     initializeModalHandlers();
-    initializeCheckboxes();
+    initializeHealthQuestions();
 });

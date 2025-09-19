@@ -90,68 +90,84 @@
                             </div>
                         </div>
 
-                        <!-- Previous Treatment -->
-                        <div class="form-question">
-                            <div class="question-title">Hat Ihr Tier bereits eine tierärztliche Behandlung erhalten?</div>
-                            <div class="checkbox-group">
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="behandlung" value="heilbehandlung">
-                                    <span class="checkbox-custom"></span>
-                                    <span class="grayed-option">Heilbehandlung ohne Operation (kurative Behandlung)</span>
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="behandlung" value="kein_besuch" checked>
-                                    <span class="checkbox-custom"></span>
-                                    <span>bisher wurde kein Tierarztbesuch gemacht</span>
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="behandlung" value="operation">
-                                    <span class="checkbox-custom"></span>
-                                    <span class="grayed-option">Operation</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Illness Question -->
+                        <!-- New Health Issues Question -->
                         <div class="form-question">
                             <div class="question-title">Sind Ihnen Krankheiten, Fehlentwicklungen oder Unfälle Ihres Tieres bekannt?</div>
                             <div class="question-help">
-                                Es zählen alle gesundheitlichen Beeinträchtigungen, die aktuell bestehen oder 
-                                innerhalb der letzten 5 Jahre aufgetreten sind (dazu gehören nicht: Impfungen, Zahnpflege und Routineuntersuchungen).
+                                Es zählen alle gesundheitlichen Beeinträchtigungen, die aktuell bestehen oder innerhalb der letzten 5 Jahre aufgetreten sind (dazu gehören nicht: Impfungen, Zahnpflege und Routineuntersuchungen).
                             </div>
                             <div class="radio-group">
                                 <label class="radio-option">
-                                    <input type="radio" name="krankheiten" value="ja">
+                                    <input type="radio" name="gesundheitsprobleme" value="ja" id="gesundheitsprobleme_ja">
                                     <span class="radio-custom"></span>
                                     <span>Ja</span>
                                 </label>
                                 <label class="radio-option">
-                                    <input type="radio" name="krankheiten" value="nein" checked>
+                                    <input type="radio" name="gesundheitsprobleme" value="nein" id="gesundheitsprobleme_nein">
                                     <span class="radio-custom"></span>
                                     <span>Nein</span>
                                 </label>
                             </div>
                         </div>
 
+                        <!-- Conditional Treatment Question -->
+                        <div class="form-question" id="behandlungsFrage" style="display: none;">
+                            <div class="question-title">Fanden deshalb bereits Behandlungen bei einer Tierärztin oder bei einem Tierarzt statt?</div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-option">
+                                    <input type="checkbox" name="neue_behandlung" value="heilbehandlung" id="neue_heilbehandlung">
+                                    <span class="checkbox-custom"></span>
+                                    <span>Behandlung ohne Operation (Heilbehandlung)</span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" name="neue_behandlung" value="kein_besuch" id="neue_kein_besuch">
+                                    <span class="checkbox-custom"></span>
+                                    <span>bisher kein Tierarztbesuch erfolgt</span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" name="neue_behandlung" value="operation" id="neue_operation">
+                                    <span class="checkbox-custom"></span>
+                                    <span>Operation</span>
+                                </label>
+                            </div>
+                            
+                            <!-- Operation Count Field -->
+                            <div class="form-question" id="operationAnzahl" style="display: none;">
+                                <div class="question-title">Anzahl der Operationen</div>
+                                <div class="input-group">
+                                    <input type="number" id="anzahl_operationen" class="form-input" placeholder="Anzahl eingeben" min="1">
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Disease List -->
-                        <div class="form-question">
-                            <div class="question-title">Hat Ihr Tier eine der folgenden Krankheiten oder wird eine dieser Krankheiten vermutet?</div>
+                        <div class="form-question" id="krankheitenListe" style="display: none;">
+                            <div class="question-title">Hat oder hatte Ihr Tier eine der folgenden Erkrankungen oder besteht der Verdacht auf eine dieser Erkrankungen? <span class="info-icon">ⓘ</span></div>
                             <div class="disease-list">
                                 <div class="disease-columns">
                                     <div class="disease-column">
                                         <ul>
-                                            <li>Entzündung des ZNS (Zentrales Nervensystem)</li>
-                                            <li>FeLV (Leukose)</li>
-                                            <li>Leishmaniose (Sandfliegenkrankheit)</li>
-                                            <li>Cushing-Syndrom (Nebennierenüberfunktion)</li>
+                                            <li>FIP (Bauchfellentzündung)</li>
+                                            <li>FIV (Katzenaids)</li>
+                                            <li>FeLV (Katzenleukämie)</li>
+                                            <li>Epilepsie</li>
+                                            <li>Morbus Cushing (Überfunktion der Nebenniere)</li>
+                                            <li>Babesiose (Hundemalaria)</li>
+                                            <li>Ehrlichiose (Infektionskrankheit durch Zecken)</li>
+                                            <li>Leishmaniose (Infektionskrankheit durch Sandmücken)</li>
+                                            <li>Borreliose (Infektionskrankheiten durch Zecken)</li>
                                         </ul>
                                     </div>
                                     <div class="disease-column">
                                         <ul>
-                                            <li>Epilepsie-bedingte Syndrome (Hirnerkr.)</li>
-                                            <li>FIP (Katzenblauchfellentzündung)</li>
-                                            <li>Herzmuskelerkrankung (Kardiomyopathie)</li>
-                                            <li>Nierenerkrankung (Nephropathie und weitere)</li>
+                                            <li>Morbus Addison (Unterfunktion der Nebenniere)</li>
+                                            <li>Anaplasmose (Infektionskrankheit durch Zecken)</li>
+                                            <li>Entzündung ZNS (zentrales Nervensystem)</li>
+                                            <li>Angeborener Lebershunt (Missbildung der Lebergefäße)</li>
+                                            <li>Lupus erythematodes (autoimmune Bindegewebserkrankung)</li>
+                                            <li>Myasthenia gravis (autoimmune Muskelerkrankung)</li>
+                                            <li>Bluter (Blutgerinnungsstörung)</li>
+                                            <li>Dirofilariose (Herzwurmerkrankung)</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -163,7 +179,7 @@
                                     <span>Ja</span>
                                 </label>
                                 <label class="radio-option">
-                                    <input type="radio" name="spezielle_krankheiten" value="nein" checked>
+                                    <input type="radio" name="spezielle_krankheiten" value="nein">
                                     <span class="radio-custom"></span>
                                     <span>Nein</span>
                                 </label>
