@@ -15,16 +15,16 @@
                     <form id="insuranceForm">
                         <!-- Inline Form Row -->
                         <div class="inline-form">
-                            <div class="form-group-1">
+                            <div class="form-line">
                                 <span class="form-text">Ich wohne in</span>
-                                <input type="text" id="plz" class="form-input plz-input" placeholder="01067" maxlength="5">
+                                <input type="text" id="plz" class="form-input plz-input" placeholder="PLZ" maxlength="5">
                                 <span id="cityName" class="form-text city-display"></span>
                                 <span class="form-text">.</span>
                             </div>
                             
-                            <div class="form-group-2">
+                            <div class="form-line">
                                 <select id="tierKategorie" class="form-select">
-                                    <option value="">Tierkategorie</option>
+                                    <option value="">Meine Katze</option>
                                     <option value="katze">Meine Katze</option>
                                     <option value="hund">Mein Hund</option>
                                     <option value="pferd">Mein Pferd</option>
@@ -33,15 +33,15 @@
                                 <span class="form-text">ist</span>
                                 
                                 <select id="geschlecht" class="form-select">
-                                    <option value="">Geschlecht</option>
+                                    <option value="">männlich</option>
                                     <option value="maennlich">männlich</option>
                                     <option value="weiblich">weiblich</option>
                                 </select>
-                                
-                                <span class="form-text">und</span>
+
+                                <span class="form-text">und ein</span>
                                 
                                 <select id="rasse" class="form-select">
-                                    <option value="">Rasse wählen</option>
+                                    <option value="">Mischling / Hauskatze / Eur...</option>
                                     <option value="mischling">Mischling / Hauskatze / Europäisch Kurzhaar</option>
                                 </select>
                             </div>
@@ -49,10 +49,16 @@
 
                         <!-- Birth Date Question -->
                         <div class="form-question">
-                            <div class="question-title">Wann wurde Ihr Tier geboren?</div>
-                            <div class="date-input-group">
-                                <label>Geburtsdatum</label>
-                                <input type="text" id="geburtsdatum" class="date-input" placeholder="TT.MM.JJJJ">
+                            <div class="question-header">
+                                <span class="question-title">Wann wurde Ihr Tier geboren?</span>
+                                <span class="info-icon">ⓘ</span>
+                            </div>
+                            <div class="date-input-container">
+                                <label class="date-label">Geburtsdatum</label>
+                                <div class="date-input-wrapper">
+                                    <input type="date" id="geburtsdatum" class="date-input" placeholder="TT.MM.JJJJ">
+                                    <!-- <span class="date-format-hint">TT.MM.JJJJ</span> -->
+                                </div>
                             </div>
                         </div>
 
@@ -75,7 +81,10 @@
 
                         <!-- Housing Question -->
                         <div class="form-question">
-                            <div class="question-title" id="haltungTitle">Wie wird Ihre Katze gehalten?</div>
+                            <div class="question-header">
+                                <span class="question-title" id="haltungTitle">Wie wird Ihre Katze gehalten?</span>
+                                <span class="info-icon">ⓘ</span>
+                            </div>
                             <div class="radio-group">
                                 <label class="radio-option">
                                     <input type="radio" name="haltung" value="wohnung">
@@ -134,8 +143,10 @@
                             <!-- Operation Count Field -->
                             <div class="form-question" id="operationAnzahl" style="display: none;">
                                 <div class="question-title">Anzahl der Operationen</div>
-                                <div class="input-group">
-                                    <input type="number" id="anzahl_operationen" class="form-input" placeholder="Anzahl eingeben" min="1">
+                                <div class="number-input-container">
+                                    <button type="button" class="number-btn minus-btn" id="decreaseBtn">−</button>
+                                    <input type="number" id="anzahl_operationen" class="number-input" value="1" min="1" readonly>
+                                    <button type="button" class="number-btn plus-btn" id="increaseBtn">+</button>
                                 </div>
                             </div>
                         </div>

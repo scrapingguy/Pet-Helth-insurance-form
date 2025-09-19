@@ -54,13 +54,17 @@
 
         /* Inline Form Row */
         .inline-form {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 12px;
             margin: 30px 0;
             font-size: 16px;
             line-height: 1.8;
+        }
+
+        .form-line {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .inline-form .form-text {
@@ -75,7 +79,7 @@
             font-size: 16px;
             background: transparent;
             min-width: 120px;
-            color: #333;
+            color: #0066cc;
             transition: all 0.3s ease;
         }
 
@@ -121,22 +125,6 @@
             font-style: italic;
         }
 
-        /* Inline form groups for better organization */
-        .form-group-1 {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .form-group-2 {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
         /* Form Questions */
         .form-question {
             margin: 35px 0;
@@ -149,6 +137,27 @@
             font-weight: 500;
         }
 
+        .question-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-icon {
+            color: #0066cc;
+            font-size: 14px;
+            cursor: help;
+            background: #e7f3ff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
         .question-help {
             color: #666;
             font-size: 14px;
@@ -157,31 +166,71 @@
         }
 
         /* Date Input */
-        .date-input-group {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .date-input-container {
             margin: 20px 0;
         }
 
-        .date-input-group label {
+        .date-label {
+            display: block;
             color: #333;
-            font-size: 16px;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .date-input-wrapper {
+            position: relative;
+            display: inline-block;
         }
 
         .date-input {
             border: none;
             border-bottom: 2px solid #0066cc;
-            padding: 8px 12px;
+            padding: 8px 35px 8px 12px;
             font-size: 16px;
             background: transparent;
-            width: 150px;
+            width: 200px;
+            color: #0066cc;
+            position: relative;
         }
 
         .date-input:focus {
             outline: none;
             border-bottom-color: #0052a3;
             background: rgba(0, 102, 204, 0.05);
+        }
+
+        /* Style the calendar icon */
+        .date-input::-webkit-calendar-picker-indicator {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230066cc' stroke-width='2'%3e%3crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3e%3c/rect%3e%3cline x1='16' y1='2' x2='16' y2='6'%3e%3c/line%3e%3cline x1='8' y1='2' x2='8' y2='6'%3e%3c/line%3e%3cline x1='3' y1='10' x2='21' y2='10'%3e%3c/line%3e%3c/svg%3e") no-repeat center;
+            background-size: 14px;
+            opacity: 0.8;
+        }
+
+        .date-input::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        .date-format-hint {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: #0066cc;
+            pointer-events: none;
+            font-style: italic;
+        }
+
+        /* Hide the hint when input has value */
+        .date-input:not(:placeholder-shown) + .date-format-hint {
+            display: none;
         }
 
         /* Radio Buttons */
@@ -281,8 +330,24 @@
             opacity: 1;
         }
 
+        .checkbox-option input[type="checkbox"]:disabled + .checkbox-custom {
+            border-color: #ccc;
+            background: #f5f5f5;
+        }
+
+        .checkbox-option input[type="checkbox"]:disabled + .checkbox-custom::after {
+            opacity: 0;
+        }
+
         .grayed-option {
             color: #999;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .grayed-option .checkbox-custom {
+            border-color: #ccc;
+            background: #f5f5f5;
         }
 
         /* Disease List */
@@ -562,4 +627,65 @@
             .form-text {
                 font-size: 15px;
             }
+        }
+
+        /* Number Input with +/- buttons */
+        .number-input-container {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin: 20px 0;
+            width: fit-content;
+        }
+
+        .number-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #0066cc;
+            background: #fff;
+            color: #0066cc;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .minus-btn {
+            border-radius: 6px 0 0 6px;
+            border-right: 1px solid #0066cc;
+        }
+
+        .plus-btn {
+            border-radius: 0 6px 6px 0;
+            border-left: 1px solid #0066cc;
+        }
+
+        .number-btn:hover {
+            background: #0066cc;
+            color: #fff;
+        }
+
+        .number-btn:active {
+            transform: scale(0.95);
+        }
+
+        .number-input {
+            width: 60px;
+            height: 40px;
+            border: 2px solid #0066cc;
+            border-left: none;
+            border-right: none;
+            background: #fff;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            outline: none;
+        }
+
+        .number-input:focus {
+            background: rgba(0, 102, 204, 0.05);
         }
