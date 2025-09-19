@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Allianz Pet Insurance Calculator</title>
+    <title>Tierkrankenversicherungs-Tarif berechnen | Allianz</title>
     <style>
         /* CSS Reset & Base Styles */
         * {
@@ -13,558 +13,659 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.5;
-            color: #2f3b3d;
-            background: #f5f7f8;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
 
-        /* Hero Section */
+        /* Header */
+        .header {
+            background: #fff;
+            padding: 15px 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0066cc;
+        }
+
+        .contact-info {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Hero Section - Exact Allianz Blue */
         .hero {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            padding: 60px 0 40px;
+            background: linear-gradient(135deg, #c8e6f5 0%, #a8d4f0 100%);
+            padding: 80px 0 60px;
             text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><pattern id="pet-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="2" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="200" height="200" fill="url(%23pet-pattern)"/></svg>');
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-subtitle {
+            color: #2c5282;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: normal;
         }
 
         .hero h1 {
+            color: #1a4b6b;
+            font-size: 36px;
             font-weight: 300;
-            margin: 0;
-            font-size: 40px;
-            color: #23424a;
-            margin-bottom: 8px;
+            margin-bottom: 20px;
+            line-height: 1.2;
         }
 
-        .hero p {
-            color: #426b70;
+        .hero-description {
+            color: #2c5282;
             font-size: 18px;
+            margin-bottom: 40px;
         }
 
-        /* Progress Bar */
-        .progress-container {
-            background: white;
-            padding: 20px 0;
-            border-bottom: 1px solid #e0e7e8;
+        /* Form Section */
+        .form-section {
+            background: #fff;
+            padding: 50px 0;
         }
 
-        .progress-bar {
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .form-title {
+            color: #1a4b6b;
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .form-subtitle {
+            color: #666;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        /* Inline Form Row */
+        .inline-form {
             display: flex;
-            justify-content: center;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 40px;
+            gap: 12px;
+            margin: 30px 0;
+            font-size: 16px;
+            line-height: 1.8;
         }
 
-        .progress-step {
+        .inline-form .form-text {
+            color: #333;
+            white-space: nowrap;
+        }
+
+        .form-input, .form-select {
+            border: none;
+            border-bottom: 2px solid #0066cc;
+            padding: 5px 8px;
+            font-size: 16px;
+            background: transparent;
+            min-width: 120px;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-bottom-color: #0052a3;
+            background: rgba(0, 102, 204, 0.05);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230066cc' stroke-width='2'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 5px center;
+            background-size: 12px;
+            padding-right: 25px;
+            cursor: pointer;
+            min-width: 140px;
+        }
+
+        /* Specific widths for better alignment */
+        #tierKategorie {
+            min-width: 150px;
+        }
+
+        #geschlecht {
+            min-width: 120px;
+        }
+
+        #rasse {
+            min-width: 280px;
+        }
+
+        .plz-input {
+            width: 80px;
+            flex-shrink: 0;
+        }
+
+        .city-display {
+            color: #0066cc;
+            font-weight: 500;
+            margin-left: 2px;
+            font-style: italic;
+        }
+
+        /* Inline form groups for better organization */
+        .form-group-1 {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-weight: 500;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
         }
 
-        .step-number {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
+        .form-group-2 {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .step-number.active {
-            background: #0b7288;
-            color: white;
-        }
-
-        .step-number.inactive {
-            background: #e0e7e8;
-            color: #9aa6a8;
-        }
-
-        .progress-divider {
-            width: 60px;
-            height: 2px;
-            background: #e0e7e8;
-        }
-
-        /* Form Card */
-        .form-section {
-            padding: 40px 0;
-        }
-
-        .card {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-        }
-
-        /* Form Row Layout */
-        .form-row {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            margin: 24px 0;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
-        .form-row.column {
-            flex-direction: column;
-            align-items: flex-start;
+        /* Form Questions */
+        .form-question {
+            margin: 35px 0;
         }
 
-        /* Input Styles */
-        .inline-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 18px;
-            flex-wrap: wrap;
-        }
-
-        .underline-input {
-            border: none;
-            border-bottom: 2px solid #0b7288;
-            padding: 8px 12px;
-            background: transparent;
-            font-size: 18px;
-            min-width: 120px;
-            transition: all 0.3s ease;
-        }
-
-        .underline-input:focus {
-            outline: none;
-            border-bottom-color: #0d8ca6;
-            box-shadow: 0 2px 8px rgba(11, 114, 136, 0.15);
-        }
-
-        .underline-input::placeholder {
-            color: #9aa6a8;
-        }
-
-        /* Custom Select Styles */
-        .select-underline {
-            appearance: none;
-            border: none;
-            border-bottom: 2px solid #0b7288;
-            padding: 8px 32px 8px 12px;
-            background: transparent;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b7288' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            background-size: 16px;
-            font-size: 18px;
-            min-width: 140px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .select-underline:focus {
-            outline: none;
-            border-bottom-color: #0d8ca6;
-            box-shadow: 0 2px 8px rgba(11, 114, 136, 0.15);
-        }
-
-        /* Date Input Special Styling */
-        .date-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .today-helper {
-            color: #9aa6a8;
-            font-size: 14px;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .today-helper:hover {
-            color: #0b7288;
-        }
-
-        /* Section Titles */
-        h2 {
-            font-size: 24px;
-            margin: 32px 0 16px;
-            color: #2f3b3d;
+        .question-title {
+            color: #1a4b6b;
+            font-size: 16px;
+            margin-bottom: 15px;
             font-weight: 500;
         }
 
-        h3 {
-            font-size: 20px;
-            margin: 24px 0 12px;
-            color: #2f3b3d;
-            font-weight: 500;
-        }
-
-        .help-text {
-            color: #6b7a7e;
+        .question-help {
+            color: #666;
             font-size: 14px;
-            margin-bottom: 16px;
+            margin-bottom: 15px;
             line-height: 1.4;
         }
 
-        .muted {
-            color: #9aa6a8;
+        /* Date Input */
+        .date-input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
         }
 
-        /* Custom Radio Buttons */
+        .date-input-group label {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .date-input {
+            border: none;
+            border-bottom: 2px solid #0066cc;
+            padding: 8px 12px;
+            font-size: 16px;
+            background: transparent;
+            width: 150px;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-bottom-color: #0052a3;
+            background: rgba(0, 102, 204, 0.05);
+        }
+
+        /* Radio Buttons */
         .radio-group {
             display: flex;
-            gap: 24px;
-            align-items: center;
-            flex-wrap: wrap;
+            gap: 30px;
+            margin: 20px 0;
         }
 
-        .radio {
+        .radio-option {
             display: flex;
-            gap: 10px;
             align-items: center;
+            gap: 8px;
             cursor: pointer;
-            padding: 4px;
-            transition: all 0.3s ease;
+            font-size: 16px;
         }
 
-        .radio:hover {
-            background: rgba(11, 114, 136, 0.05);
-            border-radius: 4px;
-        }
-
-        .radio input {
+        .radio-option input[type="radio"] {
             display: none;
         }
 
-        .radio .dot {
-            width: 22px;
-            height: 22px;
+        .radio-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #0066cc;
             border-radius: 50%;
-            border: 2px solid #cfdadb;
-            display: grid;
-            place-items: center;
+            position: relative;
             transition: all 0.3s ease;
         }
 
-        .radio .dot::after {
+        .radio-custom::after {
             content: '';
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: transparent;
-            transition: all 0.3s ease;
+            background: #0066cc;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.3s ease;
         }
 
-        .radio input:checked + .dot {
-            border-color: #0b7288;
-            background: #0b7288;
+        .radio-option input[type="radio"]:checked + .radio-custom::after {
+            transform: translate(-50%, -50%) scale(1);
         }
 
-        .radio input:checked + .dot::after {
-            background: white;
+        .radio-option:hover .radio-custom {
+            border-color: #0052a3;
+            background: rgba(0, 102, 204, 0.05);
         }
 
-        .radio input:focus + .dot {
-            box-shadow: 0 0 0 3px rgba(11, 114, 136, 0.2);
-        }
-
-        /* Custom Checkboxes */
+        /* Checkboxes */
         .checkbox-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 8px;
+            margin: 20px 0;
         }
 
-        .checkbox {
+        .checkbox-option {
             display: flex;
-            gap: 12px;
             align-items: center;
+            gap: 12px;
+            margin: 15px 0;
             cursor: pointer;
-            padding: 4px;
-            transition: all 0.3s ease;
+            font-size: 15px;
         }
 
-        .checkbox:hover {
-            background: rgba(11, 114, 136, 0.05);
-            border-radius: 4px;
-        }
-
-        .checkbox input {
+        .checkbox-option input[type="checkbox"] {
             display: none;
         }
 
-        .checkbox .box {
-            width: 22px;
-            height: 22px;
-            border: 2px solid #cfdadb;
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #0066cc;
             border-radius: 3px;
-            display: grid;
-            place-items: center;
+            position: relative;
             transition: all 0.3s ease;
         }
 
-        .checkbox .box svg {
-            width: 14px;
-            height: 14px;
+        .checkbox-custom::after {
+            content: '✓';
+            position: absolute;
+            top: -2px;
+            left: 2px;
+            color: white;
+            font-size: 14px;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
 
-        .checkbox input:checked + .box {
-            background: #0b7288;
-            border-color: #0b7288;
+        .checkbox-option input[type="checkbox"]:checked + .checkbox-custom {
+            background: #0066cc;
+            border-color: #0066cc;
         }
 
-        .checkbox input:checked + .box svg {
+        .checkbox-option input[type="checkbox"]:checked + .checkbox-custom::after {
             opacity: 1;
-            fill: white;
         }
 
-        .checkbox input:focus + .box {
-            box-shadow: 0 0 0 3px rgba(11, 114, 136, 0.2);
-        }
-
-        .muted-option {
-            color: #9aa6a8;
+        .grayed-option {
+            color: #999;
         }
 
         /* Disease List */
-        .diseases {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px 20px;
-            margin: 16px 0 24px;
-            padding: 20px;
-            background: #f8fafb;
+        .disease-list {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
             border-radius: 6px;
-            border-left: 4px solid #0b7288;
+            padding: 20px;
+            margin: 20px 0;
         }
 
-        .diseases ul {
+        .disease-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .disease-column ul {
             list-style: none;
         }
 
-        .diseases li {
-            margin: 6px 0;
-            color: #3a4e50;
+        .disease-column li {
+            padding: 5px 0;
             font-size: 14px;
+            color: #555;
             position: relative;
-            padding-left: 12px;
+            padding-left: 15px;
         }
 
-        .diseases li:before {
+        .disease-column li::before {
             content: '•';
-            color: #0b7288;
             position: absolute;
             left: 0;
+            color: #0066cc;
         }
 
         /* CTA Button */
         .cta-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #ff6d00 0%, #e65100 100%);
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
             color: white;
-            padding: 16px 32px;
-            border-radius: 8px;
             border: none;
-            font-weight: 700;
+            padding: 15px 40px;
             font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
             cursor: pointer;
-            margin-top: 32px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(255, 109, 0, 0.3);
+            margin: 40px 0 20px;
+            box-shadow: 0 4px 15px rgba(247, 147, 30, 0.3);
         }
 
         .cta-button:hover {
-            background: linear-gradient(135deg, #ff7d10 0%, #f66100 100%);
+            background: linear-gradient(135deg, #ff7a47 0%, #f89c32 100%);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 109, 0, 0.4);
+            box-shadow: 0 6px 20px rgba(247, 147, 30, 0.4);
         }
 
-        .cta-button:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 109, 0, 0.3);
-        }
-
-        .cta-button:active {
-            transform: translateY(0);
-        }
-
-        /* Modal Result */
-        .modal {
+        /* Results Modal */
+        .results-modal {
             position: fixed;
-            left: 0;
-            right: 0;
             top: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
             display: none;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             z-index: 1000;
-            padding: 20px;
         }
 
-        .modal.show {
+        .results-modal.show {
             display: flex;
         }
 
-        .modal-content {
-            background: white;
+        .results-content {
+            background: #e8f4fd;
             padding: 40px;
-            border-radius: 12px;
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            animation: modalFadeIn 0.3s ease;
+            border-radius: 8px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .modal h3 {
-            color: #0b7288;
-            margin-bottom: 20px;
+        .results-title {
+            color: #1a4b6b;
             font-size: 24px;
+            text-align: center;
+            margin-bottom: 30px;
         }
 
-        .tariff-result {
-            font-size: 18px;
-            margin-bottom: 24px;
-            line-height: 1.6;
+        .plan-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
-        .close-button {
-            background: #6b7a7e;
+        .plan-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .plan-card.recommended {
+            border: 3px solid #ff6b35;
+        }
+
+        .plan-card.recommended::before {
+            content: 'Unser Favorit';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff6b35;
             color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
+            padding: 5px 15px;
+            font-size: 12px;
+            border-radius: 12px;
+        }
+
+        .plan-name {
+            color: #1a4b6b;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .plan-price {
+            color: #0066cc;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .plan-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .plan-features li {
+            padding: 5px 0;
+            font-size: 14px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .plan-button {
+            background: #0066cc;
+            color: white;
             border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
-            transition: background 0.3s ease;
+            width: 100%;
         }
 
-        .close-button:hover {
-            background: #5a686c;
+        .plan-button:hover {
+            background: #0052a3;
+        }
+
+        .close-modal {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 32px;
-            }
-            
-            .hero p {
-                font-size: 16px;
-            }
-
-            .progress-bar {
+            .inline-form {
+                flex-direction: column;
+                align-items: flex-start;
                 gap: 20px;
             }
-            
-            .progress-divider {
-                width: 40px;
+
+            .form-group-1, .form-group-2 {
+                width: 100%;
+                justify-content: flex-start;
             }
 
-            .card {
-                padding: 24px;
+            .form-input, .form-select {
+                min-width: 130px;
             }
 
-            .form-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
+            .plz-input {
+                width: 100px;
             }
 
-            .inline-group {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
+            #tierKategorie {
+                min-width: 160px;
+            }
+
+            #geschlecht {
+                min-width: 130px;
+            }
+
+            #rasse {
+                min-width: 200px;
             }
 
             .radio-group {
-                gap: 16px;
+                flex-direction: column;
+                gap: 15px;
             }
 
-            .diseases {
+            .disease-columns {
                 grid-template-columns: 1fr;
-                gap: 6px;
             }
 
-            .modal-content {
-                margin: 20px;
-                padding: 24px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 16px;
-            }
-
-            .hero {
-                padding: 40px 0 30px;
+            .plan-options {
+                grid-template-columns: 1fr;
             }
 
             .hero h1 {
                 font-size: 28px;
             }
 
-            .progress-bar {
-                flex-direction: column;
+            .results-content {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: 50px 0 40px;
+            }
+/* 
+            .form-card {
+                padding: 25px;
+            } */
+
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .inline-form {
+                gap: 25px;
+            }
+
+            .form-group-1, .form-group-2 {
                 gap: 12px;
             }
 
-            .progress-divider {
-                width: 2px;
-                height: 20px;
+            .form-input, .form-select {
+                min-width: 150px;
+                font-size: 15px;
             }
 
-            .card {
-                padding: 20px;
+            #tierKategorie {
+                min-width: 170px;
+            }
+
+            #geschlecht {
+                min-width: 140px;
+            }
+
+            #rasse {
+                min-width: 220px;
+            }
+
+            .form-text {
+                font-size: 15px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Allianz ⭕</div>
+                <div class="contact-info">
+                    <span>0800 4 720 113</span> | 
+                    <span>Mo-Fr: 8am-8pm, Sa: 9am-4pm</span> | 
+                    <span>Ansprechpartner:in vor Ort finden</span> | 
+                    <span>Meine Allianz</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h1>Pet Insurance Calculator</h1>
-            <p>Get your personalized tariff in just a few steps</p>
-        </div>
-    </section>
-
-    <!-- Progress Bar -->
-    <section class="progress-container">
-        <div class="container">
-            <div class="progress-bar" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="3">
-                <div class="progress-step">
-                    <div class="step-number active" aria-label="Step 1 active">1</div>
-                    <span>Pet Details</span>
-                </div>
-                <div class="progress-divider"></div>
-                <div class="progress-step">
-                    <div class="step-number inactive" aria-label="Step 2 inactive">2</div>
-                    <span>Health Info</span>
-                </div>
-                <div class="progress-divider"></div>
-                <div class="progress-step">
-                    <div class="step-number inactive" aria-label="Step 3 inactive">3</div>
-                    <span>Calculate</span>
-                </div>
+            <div class="hero-content">
+                <p class="hero-subtitle">Der beste Schutz für Ihren vierbeinigen Gefährten</p>
+                <h1>Tierkrankenversicherungs-Tarif berechnen</h1>
+                <p class="hero-description">In nur zwei Schritten Ihren individuellen Preis berechnen</p>
             </div>
         </div>
     </section>
@@ -572,495 +673,423 @@
     <!-- Form Section -->
     <section class="form-section">
         <div class="container">
-            <div class="card">
-                <form id="petInsuranceForm" role="form" aria-label="Pet Insurance Calculator Form">
-                    <!-- Location -->
-                    <div class="form-row">
-                        <div class="inline-group">
-                            <label for="zipcode" class="muted">Your zip code:</label>
-                            <input 
-                                type="text" 
-                                id="zipcode" 
-                                name="zipcode" 
-                                class="underline-input" 
-                                placeholder="01067"
-                                pattern="[0-9]{5}"
-                                aria-describedby="zipcode-help"
-                                required
-                            >
-                            <small id="zipcode-help" class="help-text">5-digit German postal code</small>
-                        </div>
-                    </div>
-
-                    <!-- Pet Details -->
-                    <div class="form-row">
-                        <div class="inline-group">
-                            <span class="muted">I have a</span>
-                            <select 
-                                id="petType" 
-                                name="petType" 
-                                class="select-underline"
-                                aria-label="Select pet type"
-                                required
-                            >
-                                <option value="">Select pet type</option>
-                                <option value="cat">Cat</option>
-                                <option value="dog">Dog</option>
-                            </select>
+            <div class="form-container">
+                <div class="form-card">
+                    <form id="insuranceForm">
+                        <!-- Inline Form Row -->
+                        <div class="inline-form">
+                            <div class="form-group-1">
+                                <span class="form-text">Ich wohne in</span>
+                                <input type="text" id="plz" class="form-input plz-input" placeholder="01067" maxlength="5">
+                                <span id="cityName" class="form-text city-display"></span>
+                                <span class="form-text">.</span>
+                            </div>
                             
-                            <span class="muted">that is</span>
-                            <select 
-                                id="gender" 
-                                name="gender" 
-                                class="select-underline"
-                                aria-label="Select pet gender"
-                                required
-                            >
-                                <option value="">Select gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
-                            
-                            <span class="muted">breed:</span>
-                            <select 
-                                id="breed" 
-                                name="breed" 
-                                class="select-underline"
-                                aria-label="Select pet breed"
-                                required
-                            >
-                                <option value="">Select breed</option>
-                                <option value="mixed">Mixed breed</option>
-                                <option value="labrador">Labrador</option>
-                                <option value="german_shepherd">German Shepherd</option>
-                                <option value="persian">Persian</option>
-                                <option value="siamese">Siamese</option>
-                                <option value="british_shorthair">British Shorthair</option>
-                            </select>
+                            <div class="form-group-2">
+                                <select id="tierKategorie" class="form-select">
+                                    <option value="">Tierkategorie</option>
+                                    <option value="katze">Meine Katze</option>
+                                    <option value="hund">Mein Hund</option>
+                                </select>
+                                
+                                <span class="form-text">ist</span>
+                                
+                                <select id="geschlecht" class="form-select">
+                                    <option value="">Geschlecht</option>
+                                    <option value="maennlich">männlich</option>
+                                    <option value="weiblich">weiblich</option>
+                                </select>
+                                
+                                <span class="form-text">und</span>
+                                
+                                <select id="rasse" class="form-select">
+                                    <option value="">Rasse wählen</option>
+                                    <option value="mischling">Mischling / Hauskatze / Europäisch Kurzhaar</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Birth Date -->
-                    <div class="form-row">
-                        <div class="date-group">
-                            <label for="birthdate" class="muted">Birth date:</label>
-                            <input 
-                                type="text" 
-                                id="birthdate" 
-                                name="birthdate" 
-                                class="underline-input" 
-                                placeholder="DD.MM.YYYY"
-                                pattern="[0-9]{2}\.[0-9]{2}\.[0-9]{4}"
-                                aria-describedby="birthdate-help"
-                                required
-                            >
-                            <span class="today-helper" id="todayHelper" tabindex="0" role="button" aria-label="Use today's date">Today</span>
-                            <small id="birthdate-help" class="help-text">Format: DD.MM.YYYY</small>
+                        <!-- Birth Date Question -->
+                        <div class="form-question">
+                            <div class="question-title">Wann wurde Ihr Tier geboren?</div>
+                            <div class="date-input-group">
+                                <label>Geburtsdatum</label>
+                                <input type="text" id="geburtsdatum" class="date-input" placeholder="TT.MM.JJJJ">
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Neutered -->
-                    <h3>Is your pet neutered/spayed?</h3>
-                    <div class="radio-group" role="radiogroup" aria-label="Is your pet neutered">
-                        <label class="radio">
-                            <input type="radio" name="neutered" value="yes" required>
-                            <span class="dot" aria-hidden="true"></span>
-                            <span>Yes</span>
-                        </label>
-                        <label class="radio">
-                            <input type="radio" name="neutered" value="no" required>
-                            <span class="dot" aria-hidden="true"></span>
-                            <span>No</span>
-                        </label>
-                    </div>
+                        <!-- Neutered Question -->
+                        <div class="form-question">
+                            <div class="question-title">Wurde Ihr Tier kastriert oder sterilisiert?</div>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="kastriert" value="ja">
+                                    <span class="radio-custom"></span>
+                                    <span>Ja</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="kastriert" value="nein">
+                                    <span class="radio-custom"></span>
+                                    <span>Nein</span>
+                                </label>
+                            </div>
+                        </div>
 
-                    <!-- Kept -->
-                    <h3>Where is your pet mainly kept?</h3>
-                    <div class="radio-group" role="radiogroup" aria-label="Where is your pet kept">
-                        <label class="radio">
-                            <input type="radio" name="kept" value="indoor" required>
-                            <span class="dot" aria-hidden="true"></span>
-                            <span>Indoor</span>
-                        </label>
-                        <label class="radio">
-                            <input type="radio" name="kept" value="outdoor" required>
-                            <span class="dot" aria-hidden="true"></span>
-                            <span>Outdoor/Mixed</span>
-                        </label>
-                    </div>
+                        <!-- Housing Question -->
+                        <div class="form-question">
+                            <div class="question-title" id="haltungTitle">Wie wird Ihre Katze gehalten?</div>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="haltung" value="wohnung">
+                                    <span class="radio-custom"></span>
+                                    <span id="indoorText">ausschließlich in der Wohnung</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="haltung" value="freigang">
+                                    <span class="radio-custom"></span>
+                                    <span id="outdoorText">Freigänger</span>
+                                </label>
+                            </div>
+                        </div>
 
-                    <!-- Treatment History -->
-                    <h3>Have you already received treatment from a veterinarian?</h3>
-                    <div class="checkbox-group" role="group" aria-label="Veterinary treatments received">
-                        <label class="checkbox">
-                            <input type="checkbox" name="treatment" value="curative">
-                            <span class="box" aria-hidden="true">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M20 6L9 17l-5-5"/>
-                                </svg>
-                            </span>
-                            <span class="muted-option">Treatment without surgery (curative treatment)</span>
-                        </label>
-                        <label class="checkbox">
-                            <input type="checkbox" name="treatment" value="no_visit" checked>
-                            <span class="box" aria-hidden="true">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M20 6L9 17l-5-5"/>
-                                </svg>
-                            </span>
-                            <span>No visit to the vet has been made so far</span>
-                        </label>
-                        <label class="checkbox">
-                            <input type="checkbox" name="treatment" value="operation">
-                            <span class="box" aria-hidden="true">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M20 6L9 17l-5-5"/>
-                                </svg>
-                            </span>
-                            <span class="muted-option">Operation</span>
-                        </label>
-                    </div>
+                        <!-- Previous Treatment -->
+                        <div class="form-question">
+                            <div class="question-title">Hat Ihr Tier bereits eine tierärztliche Behandlung erhalten?</div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-option">
+                                    <input type="checkbox" name="behandlung" value="heilbehandlung">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="grayed-option">Heilbehandlung ohne Operation (kurative Behandlung)</span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" name="behandlung" value="kein_besuch" checked>
+                                    <span class="checkbox-custom"></span>
+                                    <span>bisher wurde kein Tierarztbesuch gemacht</span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" name="behandlung" value="operation">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="grayed-option">Operation</span>
+                                </label>
+                            </div>
+                        </div>
 
-                    <!-- Health Questions -->
-                    <h3>Are you aware of any illnesses, malformations or accidents your animal has?</h3>
-                    <div class="help-text">All health impairments that currently exist or have occurred within the last 5 years count (this does not include vaccinations, dental care and routine examinations).</div>
-                    <div class="radio-group" role="radiogroup" aria-label="Known illnesses">
-                        <label class="radio">
-                            <input type="radio" name="illness_known" value="yes" required>
-                            <span class="dot" aria-hidden="true"></span>
-                            <span>Yes</span>
-                        </label>
-                        <label class="radio">
-                            <input type="radio" name="illness_known" value="no" checked required>
-                            <span class="dot" aria-hidden="true"></span>
-                            <span>No</span>
-                        </label>
-                    </div>
+                        <!-- Illness Question -->
+                        <div class="form-question">
+                            <div class="question-title">Sind Ihnen Krankheiten, Fehlentwicklungen oder Unfälle Ihres Tieres bekannt?</div>
+                            <div class="question-help">
+                                Es zählen alle gesundheitlichen Beeinträchtigungen, die aktuell bestehen oder 
+                                innerhalb der letzten 5 Jahre aufgetreten sind (dazu gehören nicht: Impfungen, Zahnpflege und Routineuntersuchungen).
+                            </div>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="krankheiten" value="ja">
+                                    <span class="radio-custom"></span>
+                                    <span>Ja</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="krankheiten" value="nein" checked>
+                                    <span class="radio-custom"></span>
+                                    <span>Nein</span>
+                                </label>
+                            </div>
+                        </div>
 
-                    <!-- Disease List -->
-                    <h3>Does your pet have or have any of the following diseases or is one of these diseases suspected?</h3>
-                    <div class="diseases" role="region" aria-label="List of specific diseases">
-                        <ul>
-                            <li>FIP (peritonitis)</li>
-                            <li>FIV (feline AIDS)</li>
-                            <li>FeLV (feline leukemia)</li>
-                            <li>Epilepsy</li>
-                            <li>Cushing's disease (overactive adrenal gland)</li>
-                            <li>Babesiosis (canine malaria)</li>
-                            <li>Ehrlichiosis (infectious disease caused by ticks)</li>
-                            <li>Leishmaniasis (infectious disease caused by sand flies)</li>
-                            <li>Lyme disease (infectious diseases caused by ticks)</li>
-                        </ul>
-                        <ul>
-                            <li>Addison's disease (underactive adrenal gland)</li>
-                            <li>Anaplasmosis (infectious disease caused by ticks)</li>
-                            <li>Inflammation of the CNS (central nervous system)</li>
-                            <li>Congenital liver shunt (malformation of the liver vessels)</li>
-                            <li>Lupus erythematosus (autoimmune connective tissue disease)</li>
-                            <li>Myasthenia gravis (autoimmune muscle disease)</li>
-                            <li>Hemophilia (blood clotting disorder)</li>
-                            <li>Dirofilariasis (heartworm disease)</li>
-                        </ul>
-                    </div>
+                        <!-- Disease List -->
+                        <div class="form-question">
+                            <div class="question-title">Hat Ihr Tier eine der folgenden Krankheiten oder wird eine dieser Krankheiten vermutet?</div>
+                            <div class="disease-list">
+                                <div class="disease-columns">
+                                    <div class="disease-column">
+                                        <ul>
+                                            <li>Entzündung des ZNS (Zentrales Nervensystem)</li>
+                                            <li>FeLV (Leukose)</li>
+                                            <li>Leishmaniose (Sandfliegenkrankheit)</li>
+                                            <li>Cushing-Syndrom (Nebennierenüberfunktion)</li>
+                                        </ul>
+                                    </div>
+                                    <div class="disease-column">
+                                        <ul>
+                                            <li>Epilepsie-bedingte Syndrome (Hirnerkr.)</li>
+                                            <li>FIP (Katzenblauchfellentzündung)</li>
+                                            <li>Herzmuskelerkrankung (Kardiomyopathie)</li>
+                                            <li>Nierenerkrankung (Nephropathie und weitere)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="spezielle_krankheiten" value="ja">
+                                    <span class="radio-custom"></span>
+                                    <span>Ja</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="spezielle_krankheiten" value="nein" checked>
+                                    <span class="radio-custom"></span>
+                                    <span>Nein</span>
+                                </label>
+                            </div>
+                        </div>
 
-                    <div class="radio-group" role="radiogroup" aria-label="Has any listed diseases">
-                        <label class="radio">
-                            <input type="radio" name="disease_list" value="yes" required>
-                            <span class="dot" aria-hidden="true"></span>
-                            <span>Yes</span>
-                        </label>
-                        <label class="radio">
-                            <input type="radio" name="disease_list" value="no" checked required>
-                            <span class="dot" aria-hidden="true"></span>
-                            <span>No</span>
-                        </label>
-                    </div>
-
-                    <!-- Calculate Button -->
-                    <div>
-                        <button type="submit" class="cta-button" id="calculateButton" aria-describedby="calculate-help">
-                            Calculate Tariff Now
-                        </button>
-                        <small id="calculate-help" class="help-text" style="display: block; margin-top: 8px;">
-                            Click to get your personalized insurance quote
-                        </small>
-                    </div>
-                </form>
+                        <!-- Submit Button -->
+                        <div style="text-align: center;">
+                            <button type="submit" class="cta-button" id="berechnenButton">
+                                JETZT TARIF BERECHNEN
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Result Modal -->
-    <div class="modal" id="resultModal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
-        <div class="modal-content">
-            <h3 id="modal-title">Your Simulated Tariff</h3>
-            <div id="modal-description" class="tariff-result">
-                Calculating your personalized quote...
+    <!-- Results Modal -->
+    <div class="results-modal" id="resultsModal">
+        <div class="results-content">
+            <h2 class="results-title">Unser Angebot für Sie</h2>
+            <div class="plan-options">
+                <!-- Basis Plan -->
+                <div class="plan-card">
+                    <div class="plan-name">Basis</div>
+                    <div class="plan-price">35,10 €<br><small>monatlich</small></div>
+                    <ul class="plan-features">
+                        <li>Kostenerstattung Eingriffe ab 500 EUR</li>
+                        <li>Allgemeine Heilbehandlung ab 6 Monate</li>
+                        <li>Prophylaxe: 6 Monate</li>
+                        <li>Notfallscheck</li>
+                        <li>Zahnbehandlung</li>
+                    </ul>
+                    <button class="plan-button">Auswählen</button>
+                </div>
+
+                <!-- Smart Plan -->
+                <div class="plan-card recommended">
+                    <div class="plan-name">Smart</div>
+                    <div class="plan-price">51,10 €<br><small>monatlich</small></div>
+                    <ul class="plan-features">
+                        <li>Kostenerstattung Eingriffe ab 0 EUR</li>
+                        <li>Allgemeine Heilbehandlung ab 6 Monate</li>
+                        <li>Prophylaxe: 6 Monate</li>
+                        <li>Notfallscheck</li>
+                        <li>Zahnbehandlung</li>
+                        <li>Vorsorge: 5 Mal</li>
+                    </ul>
+                    <button class="plan-button">Auswählen</button>
+                </div>
+
+                <!-- Optimal Plan -->
+                <div class="plan-card">
+                    <div class="plan-name">Optimal</div>
+                    <div class="plan-price">73,30 €<br><small>monatlich</small></div>
+                    <ul class="plan-features">
+                        <li>Kostenerstattung Eingriffe ab 0 EUR</li>
+                        <li>Allgemeine Heilbehandlung ab 0 Monate</li>
+                        <li>Prophylaxe: 0 Monate</li>
+                        <li>Notfallscheck</li>
+                        <li>Zahnbehandlung</li>
+                        <li>Vorsorge: 5 Mal</li>
+                    </ul>
+                    <button class="plan-button">Auswählen</button>
+                </div>
             </div>
-            <button type="button" class="close-button" id="closeModal" aria-label="Close results">Close</button>
+            
+            <div style="text-align: center;">
+                <button class="close-modal" onclick="closeResults()">Schließen</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Date parsing and validation utilities
-        function parseGermanDate(dateStr) {
-            if (!dateStr) return null;
-            const parts = dateStr.split('.');
-            if (parts.length !== 3) return null;
-            
-            const dd = parseInt(parts[0], 10);
-            const mm = parseInt(parts[1], 10) - 1; // JS months are 0-based
-            const yyyy = parseInt(parts[2], 10);
-            
-            if (isNaN(dd) || isNaN(mm) || isNaN(yyyy)) return null;
-            if (dd < 1 || dd > 31 || mm < 0 || mm > 11 || yyyy < 1900 || yyyy > 2030) return null;
-            
-            const date = new Date(yyyy, mm, dd);
-            if (isNaN(date.getTime())) return null;
-            
-            // Check if the date components match (handles invalid dates like Feb 31)
-            if (date.getDate() !== dd || date.getMonth() !== mm || date.getFullYear() !== yyyy) {
-                return null;
-            }
-            
-            return date;
-        }
+        // German postal code to city mapping
+        const plzCityMap = {
+            '01067': 'Dresden',
+            '10115': 'Berlin',
+            '20095': 'Hamburg',
+            '80331': 'München',
+            '50667': 'Köln',
+            '60311': 'Frankfurt am Main',
+            '70173': 'Stuttgart',
+            '40213': 'Düsseldorf',
+            '44135': 'Dortmund',
+            '45127': 'Essen',
+            '04109': 'Leipzig',
+            '28195': 'Bremen',
+            '30159': 'Hannover',
+            '90402': 'Nürnberg',
+            '68159': 'Mannheim',
+            '76133': 'Karlsruhe',
+            '86150': 'Augsburg',
+            '65183': 'Wiesbaden',
+            '45879': 'Gelsenkirchen',
+            '41061': 'Mönchengladbach',
+            '38100': 'Braunschweig',
+            '24103': 'Kiel',
+            '09111': 'Chemnitz',
+            '48143': 'Münster',
+            '47051': 'Duisburg',
+            '18055': 'Rostock',
+            '99084': 'Erfurt',
+            '55116': 'Mainz',
+            '66111': 'Saarbrücken',
+            '99423': 'Weimar',
+            '01307': 'Dresden',
+            '01309': 'Dresden',
+            '10117': 'Berlin',
+            '10119': 'Berlin',
+            '10178': 'Berlin',
+            '10179': 'Berlin',
+            '20354': 'Hamburg',
+            '20355': 'Hamburg',
+            '20357': 'Hamburg',
+            '80333': 'München',
+            '80335': 'München',
+            '80336': 'München',
+            '50668': 'Köln',
+            '50670': 'Köln',
+            '50672': 'Köln',
+            '60313': 'Frankfurt am Main',
+            '60314': 'Frankfurt am Main',
+            '60316': 'Frankfurt am Main'
+        };
 
-        function ageYears(fromDate) {
-            const now = new Date();
-            let age = now.getFullYear() - fromDate.getFullYear();
-            const monthDiff = now.getMonth() - fromDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < fromDate.getDate())) {
-                age--;
-            }
-            return Math.max(0, age);
-        }
+        // Form interaction and dynamic content
+        document.addEventListener('DOMContentLoaded', function() {
+            const tierKategorie = document.getElementById('tierKategorie');
+            const geschlecht = document.getElementById('geschlecht');
+            const rasse = document.getElementById('rasse');
+            const haltungTitle = document.getElementById('haltungTitle');
+            const indoorText = document.getElementById('indoorText');
+            const outdoorText = document.getElementById('outdoorText');
 
-        function formatDate(date) {
-            const dd = String(date.getDate()).padStart(2, '0');
-            const mm = String(date.getMonth() + 1).padStart(2, '0');
-            const yyyy = date.getFullYear();
-            return `${dd}.${mm}.${yyyy}`;
-        }
+            // Cat/Dog breed options
+            const katzenRassen = [
+                { value: 'mischling_katze', text: 'Mischling / Hauskatze / Europäisch Kurzhaar' },
+                { value: 'perser', text: 'Perser' },
+                { value: 'siamese', text: 'Siamese' },
+                { value: 'british_kurzhaar', text: 'British Kurzhaar' },
+                { value: 'maine_coon', text: 'Maine Coon' },
+                { value: 'ragdoll', text: 'Ragdoll' },
+                { value: 'bengal', text: 'Bengal' },
+                { value: 'sphynx', text: 'Sphynx' }
+            ];
 
-        // Today helper functionality
-        document.getElementById('todayHelper').addEventListener('click', function() {
-            document.getElementById('birthdate').value = formatDate(new Date());
-        });
+            const hundeRassen = [
+                { value: 'mischling_hund', text: 'Mischling' },
+                { value: 'labrador', text: 'Labrador Retriever' },
+                { value: 'deutscher_schaeferhund', text: 'Deutscher Schäferhund' },
+                { value: 'golden_retriever', text: 'Golden Retriever' },
+                { value: 'bulldogge', text: 'Bulldogge' },
+                { value: 'beagle', text: 'Beagle' },
+                { value: 'pudel', text: 'Pudel' },
+                { value: 'dackel', text: 'Dackel' },
+                { value: 'rottweiler', text: 'Rottweiler' }
+            ];
 
-        document.getElementById('todayHelper').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                document.getElementById('birthdate').value = formatDate(new Date());
-            }
-        });
-
-        // Form validation and submission
-        document.getElementById('petInsuranceForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(this);
-            const birthStr = formData.get('birthdate');
-            
-            // Validate birth date
-            const birthDate = parseGermanDate(birthStr);
-            if (!birthDate) {
-                alert('Please enter a valid birth date in DD.MM.YYYY format.');
-                document.getElementById('birthdate').focus();
-                return;
-            }
-            
-            // Check if pet is too old or not yet born
-            const age = ageYears(birthDate);
-            const now = new Date();
-            if (birthDate > now) {
-                alert('Birth date cannot be in the future.');
-                document.getElementById('birthdate').focus();
-                return;
-            }
-            if (age > 20) {
-                alert('Sorry, we cannot insure pets older than 20 years.');
-                document.getElementById('birthdate').focus();
-                return;
-            }
-            
-            // Calculate simulated tariff
-            calculateTariff(formData, birthDate, age);
-        });
-
-        function calculateTariff(formData, birthDate, age) {
-            // Show modal immediately with loading state
-            const modal = document.getElementById('resultModal');
-            const resultDiv = document.getElementById('modal-description');
-            resultDiv.innerHTML = 'Calculating your personalized quote...';
-            modal.classList.add('show');
-            
-            // Simulate processing delay
-            setTimeout(() => {
-                let baseTariff = 18; // Base monthly premium in EUR
-                let factors = [];
+            // Update form based on pet type selection
+            tierKategorie.addEventListener('change', function() {
+                const petType = this.value;
                 
-                // Age factor
-                if (age < 1) {
-                    baseTariff += 4;
-                    factors.push('Young pet surcharge: +4€');
-                } else if (age <= 5) {
-                    factors.push('Prime age: no adjustment');
-                } else if (age <= 10) {
-                    baseTariff += 6;
-                    factors.push('Senior pet surcharge: +6€');
+                // Update housing question text
+                if (petType === 'katze') {
+                    haltungTitle.textContent = 'Wie wird Ihre Katze gehalten?';
+                    indoorText.textContent = 'ausschließlich in der Wohnung';
+                    outdoorText.textContent = 'Freigänger';
+                    
+                    // Update breed options for cats
+                    rasse.innerHTML = '<option value="">Rasse wählen</option>';
+                    katzenRassen.forEach(kat => {
+                        const option = document.createElement('option');
+                        option.value = kat.value;
+                        option.textContent = kat.text;
+                        rasse.appendChild(option);
+                    });
+                } else if (petType === 'hund') {
+                    haltungTitle.textContent = 'Wie wird Ihr Hund gehalten?';
+                    indoorText.textContent = 'ausschließlich im Haus/Wohnung';
+                    outdoorText.textContent = 'mit Auslauf/Garten';
+                    
+                    // Update breed options for dogs
+                    rasse.innerHTML = '<option value="">Rasse wählen</option>';
+                    hundeRassen.forEach(hund => {
+                        const option = document.createElement('option');
+                        option.value = hund.value;
+                        option.textContent = hund.text;
+                        rasse.appendChild(option);
+                    });
+                }
+            });
+
+            // PLZ input validation and city display
+            document.getElementById('plz').addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5);
+                
+                // Show city name if PLZ is found
+                const cityDisplay = document.getElementById('cityName');
+                const plz = this.value;
+                
+                if (plz.length === 5 && plzCityMap[plz]) {
+                    cityDisplay.textContent = plzCityMap[plz];
+                } else if (plz.length === 5) {
+                    cityDisplay.textContent = '(Stadt nicht gefunden)';
                 } else {
-                    baseTariff += 12;
-                    factors.push('Elderly pet surcharge: +12€');
+                    cityDisplay.textContent = '';
                 }
-                
-                // Pet type factor
-                const petType = formData.get('petType');
-                if (petType === 'dog') {
-                    baseTariff += 3;
-                    factors.push('Dog premium: +3€');
-                }
-                
-                // Neutered discount
-                const neutered = formData.get('neutered');
-                if (neutered === 'yes') {
-                    const discount = Math.max(2, baseTariff * 0.1);
-                    baseTariff -= discount;
-                    factors.push(`Neutered discount: -${discount.toFixed(2)}€`);
-                }
-                
-                // Outdoor risk
-                const kept = formData.get('kept');
-                if (kept === 'outdoor') {
-                    baseTariff += 5;
-                    factors.push('Outdoor risk surcharge: +5€');
-                }
-                
-                // Health conditions
-                const illnessKnown = formData.get('illness_known');
-                if (illnessKnown === 'yes') {
-                    baseTariff += 15;
-                    factors.push('Known illness surcharge: +15€');
-                }
-                
-                const diseaseList = formData.get('disease_list');
-                if (diseaseList === 'yes') {
-                    baseTariff += 25;
-                    factors.push('Specific disease surcharge: +25€');
-                }
-                
-                // Ensure minimum premium
-                baseTariff = Math.max(12, baseTariff);
-                
-                // Generate result display
-                const resultHtml = `
-                    <div style="margin-bottom: 20px;">
-                        <div style="font-size: 24px; font-weight: bold; color: #0b7288; margin-bottom: 8px;">
-                            ${baseTariff.toFixed(2)}€ /month
-                        </div>
-                        <div style="color: #6b7a7e; font-size: 14px;">
-                            Estimated monthly premium for your ${age}-year-old ${petType}
-                        </div>
-                    </div>
-                    
-                    <div style="text-align: left; background: #f8fafb; padding: 16px; border-radius: 6px; margin-bottom: 20px;">
-                        <div style="font-weight: 600; margin-bottom: 8px; color: #2f3b3d;">Calculation factors:</div>
-                        ${factors.map(factor => `<div style="font-size: 14px; color: #6b7a7e; margin: 4px 0;">• ${factor}</div>`).join('')}
-                    </div>
-                    
-                    <div style="font-size: 12px; color: #9aa6a8; line-height: 1.4;">
-                        <strong>Disclaimer:</strong> This is a simulated calculation for demonstration purposes only. 
-                        Actual premiums may vary based on detailed underwriting and current rates.
-                    </div>
-                `;
-                
-                resultDiv.innerHTML = resultHtml;
-            }, 1500);
-        }
+            });
 
-        // Modal close functionality
-        document.getElementById('closeModal').addEventListener('click', function() {
-            document.getElementById('resultModal').classList.remove('show');
+            // Date input formatting
+            document.getElementById('geburtsdatum').addEventListener('input', function() {
+                let value = this.value.replace(/[^0-9]/g, '');
+                if (value.length >= 2) {
+                    value = value.slice(0, 2) + '.' + value.slice(2);
+                }
+                if (value.length >= 5) {
+                    value = value.slice(0, 5) + '.' + value.slice(5, 9);
+                }
+                this.value = value;
+            });
+
+            // Form submission
+            document.getElementById('insuranceForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Simple validation
+                const plz = document.getElementById('plz').value;
+                const tierKat = document.getElementById('tierKategorie').value;
+                const gebDatum = document.getElementById('geburtsdatum').value;
+                
+                if (!plz || !tierKat || !gebDatum) {
+                    alert('Bitte füllen Sie alle Pflichtfelder aus.');
+                    return;
+                }
+                
+                // Validate birth date format
+                if (!/^\d{2}\.\d{2}\.\d{4}$/.test(gebDatum)) {
+                    alert('Bitte geben Sie das Geburtsdatum im Format TT.MM.JJJJ ein.');
+                    return;
+                }
+                
+                // Show results
+                document.getElementById('resultsModal').classList.add('show');
+            });
         });
+
+        function closeResults() {
+            document.getElementById('resultsModal').classList.remove('show');
+        }
 
         // Close modal when clicking outside
-        document.getElementById('resultModal').addEventListener('click', function(e) {
+        document.getElementById('resultsModal').addEventListener('click', function(e) {
             if (e.target === this) {
-                this.classList.remove('show');
+                closeResults();
             }
         });
 
         // Close modal with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                document.getElementById('resultModal').classList.remove('show');
+                closeResults();
             }
-        });
-
-        // Dynamic breed options based on pet type
-        document.getElementById('petType').addEventListener('change', function() {
-            const breedSelect = document.getElementById('breed');
-            const petType = this.value;
-            
-            // Clear existing options except first
-            breedSelect.innerHTML = '<option value="">Select breed</option>';
-            
-            if (petType === 'cat') {
-                const catBreeds = [
-                    { value: 'mixed', text: 'Mixed breed' },
-                    { value: 'persian', text: 'Persian' },
-                    { value: 'siamese', text: 'Siamese' },
-                    { value: 'british_shorthair', text: 'British Shorthair' },
-                    { value: 'maine_coon', text: 'Maine Coon' },
-                    { value: 'ragdoll', text: 'Ragdoll' },
-                    { value: 'bengal', text: 'Bengal' }
-                ];
-                catBreeds.forEach(breed => {
-                    const option = document.createElement('option');
-                    option.value = breed.value;
-                    option.textContent = breed.text;
-                    breedSelect.appendChild(option);
-                });
-            } else if (petType === 'dog') {
-                const dogBreeds = [
-                    { value: 'mixed', text: 'Mixed breed' },
-                    { value: 'labrador', text: 'Labrador Retriever' },
-                    { value: 'german_shepherd', text: 'German Shepherd' },
-                    { value: 'golden_retriever', text: 'Golden Retriever' },
-                    { value: 'bulldog', text: 'Bulldog' },
-                    { value: 'beagle', text: 'Beagle' },
-                    { value: 'poodle', text: 'Poodle' }
-                ];
-                dogBreeds.forEach(breed => {
-                    const option = document.createElement('option');
-                    option.value = breed.value;
-                    option.textContent = breed.text;
-                    breedSelect.appendChild(option);
-                });
-            }
-        });
-
-        // Input formatting for zip code
-        document.getElementById('zipcode').addEventListener('input', function() {
-            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5);
-        });
-
-        // Birth date input formatting
-        document.getElementById('birthdate').addEventListener('input', function() {
-            let value = this.value.replace(/[^0-9]/g, '');
-            if (value.length >= 2) {
-                value = value.slice(0, 2) + '.' + value.slice(2);
-            }
-            if (value.length >= 5) {
-                value = value.slice(0, 5) + '.' + value.slice(5, 9);
-            }
-            this.value = value;
-        });
-
-        // Initialize form - set focus to first input
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('zipcode').focus();
         });
     </script>
 </body>
