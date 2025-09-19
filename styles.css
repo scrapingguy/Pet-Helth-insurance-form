@@ -102,6 +102,27 @@
             font-weight: bold;
         }
 
+        /* Dropdown options styling */
+        .form-select option {
+            background: #fff;
+            color: #333;
+            padding: 8px 12px;
+            font-weight: normal;
+            border: none;
+        }
+
+        .form-select option:hover {
+            background: #f0f8ff;
+            color: #003781;
+        }
+
+        .form-select option:checked,
+        .form-select option:selected {
+            background: #003781;
+            color: #fff;
+            font-weight: bold;
+        }
+
         /* Specific widths for better alignment */
         #tierKategorie {
             min-width: 150px;
