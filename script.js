@@ -1730,6 +1730,340 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Generate JSON from form data
+    function generateFormJSON() {
+        // Get current date as start date
+        const today = new Date();
+        
+        // Get form values
+        const zipCode = document.getElementById('plz').value;
+        const city = plzCityMap[zipCode] || 'Unknown City';
+        
+        // Animal type - convert to uppercase
+        const tierKategorie = document.getElementById('tierKategorie').value;
+        let animal = '';
+        if (tierKategorie === 'katze') {
+            animal = 'CAT';
+        } else if (tierKategorie === 'hund') {
+            animal = 'DOG';
+        } else if (tierKategorie === 'pferd') {
+            animal = 'HORSE';
+        }
+        
+        // Sex - convert to uppercase
+        const geschlecht = document.getElementById('geschlecht').value;
+        let sex = '';
+        if (geschlecht === 'maennlich') {
+            sex = 'MALE';
+        } else if (geschlecht === 'weiblich') {
+            sex = 'FEMALE';
+        }
+        
+        // Breed - get the breed CODE (value) instead of label
+        const rasseSelect = document.getElementById('rasse');
+        const breedCode = rasseSelect.value;
+        
+        // Birth date - convert to DD.MM.YYYY format
+        const birthDateInput = document.getElementById('geburtsdatum').value;
+        let birthDate = '';
+        if (birthDateInput) {
+            const date = new Date(birthDateInput);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            birthDate = `${day}.${month}.${year}`;
+        }
+        
+        // Environment - convert to uppercase for cats
+        const haltung = document.querySelector('input[name="haltung"]:checked').value;
+        let environment = '';
+        if (haltung === 'wohnung') {
+            environment = 'INDOOR';
+        } else if (haltung === 'freigang') {
+            environment = 'OUTDOOR';
+        }
+        
+        // Sterilized/Neutered status
+        const kastriert = document.querySelector('input[name="kastriert"]:checked').value;
+        const sterilized = kastriert === 'ja';
+        
+        // Health problems status
+        const gesundheitsprobleme = document.querySelector('input[name="gesundheitsprobleme"]:checked').value;
+        const preExistingDiagnosis = gesundheitsprobleme === 'ja';
+        
+        // For now, set excludedExistingDiagnosis to false
+        const excludedExistingDiagnosis = false;
+        
+        // Treatment logic - build treatments array and surgery amount
+        let treatments = [];
+        let surgeryAmount = 0;
+        
+        if (gesundheitsprobleme === 'ja') {
+            const heilbehandlung = document.getElementById('neue_heilbehandlung');
+            const operation = document.getElementById('neue_operation');
+            const keinBesuch = document.getElementById('neue_kein_besuch');
+            
+            if (heilbehandlung && heilbehandlung.checked) {
+                treatments.push('HEALING_TREATMENT');
+            }
+            
+            if (operation && operation.checked) {
+                treatments.push('SURGERY');
+                const anzahlOperationen = document.getElementById('anzahl_operationen');
+                surgeryAmount = anzahlOperationen ? parseInt(anzahlOperationen.value) : 1;
+            }
+        }
+        
+        // Start date in DD.MM.YYYY format (today, not tomorrow)
+        const startDay = String(today.getDate()).padStart(2, '0');
+        const startMonth = String(today.getMonth() + 1).padStart(2, '0');
+        const startYear = today.getFullYear();
+        const formattedStartDate = `${startDay}.${startMonth}.${startYear}`;
+        
+        // Generate a random session ID
+        const sessionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        
+        // Create complete JSON object matching server structure
+        const jsonData = {
+            "id": null,
+            "applicationNumber": null,
+            "sessionId": sessionId,
+            "hash": null,
+            "step": 2,
+            "firstPageValid": true,
+            "currentStep": 2,
+            "useragent": navigator.userAgent,
+            "confirmSectionsValidated": false,
+            "consultation": false,
+            "consultationAt": null,
+            "contractDocuments": false,
+            "contractDocumentsAt": null,
+            "downloadDocuments": false,
+            "downloadDocumentsAt": null,
+            "finished": false,
+            "finishedAt": null,
+            "agencyMail": false,
+            "agencyMailAt": null,
+            "agencyId": null,
+            "agencyIdChanged": false,
+            "agencySite": false,
+            "agencyDecision": "AGENCY",
+            "abTest": {
+                "group": null,
+                "tests": [],
+                "id": null
+            },
+            "nlf": {
+                "valid": true,
+                "zip": zipCode,
+                "city": city,
+                "street": "",
+                "animalCategory": animal,
+                "animalGender": sex,
+                "animalRace": breedCode,
+                "age": null,
+                "birthdate": "",
+                "streetNumber": ""
+            },
+            "person": [
+                {
+                    "salutation": "UNKNOWN",
+                    "firstname": "",
+                    "lastname": "",
+                    "street": "",
+                    "number": "",
+                    "zip": zipCode,
+                    "city": city,
+                    "age": null,
+                    "birthdate": null,
+                    "coverage": 65000,
+                    "retention": 20,
+                    "product": null,
+                    "options": [],
+                    "payment_schedule": "M",
+                    "contract_term": 1,
+                    "email": null,
+                    "phone": null
+                }
+            ],
+            "animal": {
+                "category": animal,
+                "gender": sex,
+                "race": breedCode,
+                "birthDate": birthDate,
+                "age": null,
+                "sterilized": sterilized,
+                "catHousingType": environment,
+                "preExistingDiagnosis": preExistingDiagnosis,
+                "excludedExistingDiagnosis": excludedExistingDiagnosis,
+                "treatments": treatments,
+                "surgeryAmount": surgeryAmount,
+                "name": null,
+                "label": null,
+                "labelValue": null,
+                "operationArea": null,
+                "hasPreviousDiagnosis": null,
+                "previousDiagnosis": [],
+                "consultation": {
+                    "sumInsuredType": null,
+                    "sumInsuredValue": null,
+                    "grantIllness": null,
+                    "bestCoverage": null,
+                    "recommendedProduct": ""
+                }
+            },
+            "price": -1,
+            "pricePositions": [],
+            "trackingId": null,
+            "visitorId": "",
+            "contactByEmail": false,
+            "contactByEmailAt": null,
+            "got_insurance": null,
+            "previous_insurance": null,
+            "previous_insurance_list": [],
+            "got_damage": null,
+            "damage_count": null,
+            "hb_selection": null,
+            "start_date": formattedStartDate,
+            "got_agency": null,
+            "want_agency": null,
+            "bank": {
+                "name": null,
+                "owner": null,
+                "iban": null,
+                "bic": null,
+                "sepaMandate": false,
+                "sepaMandateAt": null
+            },
+            "consultationProtocol": null,
+            "mazData": {
+                "token": null,
+                "importedData": false
+            },
+            "prefillContext": null
+        };
+        
+        return jsonData;
+    }
+
+    // Function to update pricing modal with real API data
+    function updatePricingModal(apiResponse) {
+        try {
+            const response = JSON.parse(apiResponse);
+            const products = response.data?.productResponse?.products || [];
+            
+            if (products.length === 0) {
+                console.log('No products found in API response');
+                showApiError('Keine Tarife für Ihre Eingaben gefunden. Bitte überprüfen Sie Ihre Angaben.');
+                return;
+            }
+
+            // Find the plan options container
+            const planOptions = document.querySelector('.plan-options');
+            if (!planOptions) {
+                console.error('Plan options container not found');
+                showApiError('Fehler beim Anzeigen der Tarife.');
+                return;
+            }
+
+            // Clear existing plans
+            planOptions.innerHTML = '';
+
+            // Create plan cards from API data
+            products.forEach((product, index) => {
+                const planCard = document.createElement('div');
+                planCard.className = `plan-card${index === 1 ? ' recommended' : ''}`;
+                
+                // Format price (assuming priceAmount might be in cents or as decimal)
+                let formattedPrice = '0,00';
+                if (product.priceAmount) {
+                    // Convert to German format with comma as decimal separator
+                    const price = product.priceAmount > 1000 ? 
+                        (product.priceAmount / 100) : product.priceAmount;
+                    formattedPrice = price.toFixed(2).replace('.', ',');
+                }
+                
+                const priceUnit = product.priceUnit || 'monatlich';
+                
+                // Build features list from product options
+                let featuresHtml = '';
+                if (product.options && product.options.length > 0) {
+                    featuresHtml = product.options.slice(0, 6).map(option => 
+                        `<li>${option.title}</li>`
+                    ).join('');
+                } else {
+                    // Default features if no options provided
+                    featuresHtml = `
+                        <li>Allgemeine Heilbehandlung</li>
+                        <li>Operationen und Eingriffe</li>
+                        <li>Notfallbehandlung</li>
+                        <li>Vorsorgeuntersuchungen</li>
+                    `;
+                }
+                
+                planCard.innerHTML = `
+                    <div class="plan-name">${product.title || `Plan ${index + 1}`}</div>
+                    <div class="plan-price">${formattedPrice} €<br><small>${priceUnit}</small></div>
+                    <ul class="plan-features">
+                        ${featuresHtml}
+                    </ul>
+                    <button class="plan-button" data-product-id="${product.id}" data-product-ident="${product.ident}">Auswählen</button>
+                `;
+                
+                planOptions.appendChild(planCard);
+            });
+
+            // Add click handlers to new plan buttons
+            const planButtons = planOptions.querySelectorAll('.plan-button');
+            planButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product-id');
+                    const productIdent = this.getAttribute('data-product-ident');
+                    console.log('Selected plan:', productId, productIdent);
+                    
+                    // You can add logic here to handle plan selection
+                    // For example, redirect to next step or store selection
+                    alert(`Sie haben Plan "${this.closest('.plan-card').querySelector('.plan-name').textContent}" ausgewählt!`);
+                });
+            });
+
+            console.log('Successfully updated pricing modal with API data');
+            
+        } catch (error) {
+            console.error('Error parsing API response:', error);
+            showApiError('Fehler beim Verarbeiten der Server-Antwort.');
+        }
+    }
+
+    // Function to show error message when API fails
+    function showApiError(errorMessage = 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.') {
+        const planOptions = document.querySelector('.plan-options');
+        if (!planOptions) {
+            console.error('Plan options container not found');
+            return;
+        }
+
+        // Clear existing content and show error
+        planOptions.innerHTML = `
+            <div class="api-error" style="text-align: center; padding: 40px; color: #e74c3c;">
+                <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+                <h3 style="margin-bottom: 15px; color: #2c3e50;">Fehler beim Laden der Tarife</h3>
+                <p style="margin-bottom: 20px; line-height: 1.6;">${errorMessage}</p>
+                <button type="button" class="cta-button" onclick="location.reload()" style="background: #e74c3c; border: none; padding: 12px 24px; color: white; border-radius: 4px; cursor: pointer;">
+                    Seite neu laden
+                </button>
+            </div>
+        `;
+        
+        console.error('API Error - showing error message to user');
+    }
+
+    // Fallback function to show static pricing if API fails
+    function showStaticPricing() {
+        console.log('Static pricing function called - but we now show error instead');
+        showApiError();
+    }
+
     // Form submission
     if (form) {
         form.addEventListener('submit', function(e) {
@@ -1739,19 +2073,143 @@ document.addEventListener('DOMContentLoaded', function() {
             const isValid = validateFormWithErrors();
             
             if (isValid) {
-                // Get form data
-                const formData = new FormData(form);
-                const data = {};
+                // Generate JSON data
+                const jsonData = generateFormJSON();
                 
-                for (let [key, value] of formData.entries()) {
-                    data[key] = value;
-                }
+                // Log the JSON to console (for testing)
+                console.log('Generated JSON:', JSON.stringify(jsonData, null, 2));
+                
+                // Store JSON data globally for access from other functions if needed
+                window.formJSONData = jsonData;
 
-                // Show the results modal instead of alert
-                document.getElementById('resultsModal').style.display = 'flex';
+                // Setup headers for GraphQL request
+                const myHeaders = new Headers();
+                myHeaders.append("accept", "application/json, text/plain, */*");
+                myHeaders.append("accept-language", "en-US,en;q=0.9,hi;q=0.8,gu;q=0.7,zh;q=0.6,zh-HK;q=0.5,zh-TW;q=0.4,zh-CN;q=0.3,am;q=0.2,de;q=0.1");
+                myHeaders.append("content-type", "application/json");
+                myHeaders.append("origin", "https://www.allianz.de");
+                myHeaders.append("priority", "u=1, i");
+                myHeaders.append("referer", "https://www.allianz.de/");
+                myHeaders.append("sec-ch-ua", "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"");
+                myHeaders.append("sec-ch-ua-mobile", "?0");
+                myHeaders.append("sec-ch-ua-platform", "\"macOS\"");
+                myHeaders.append("sec-fetch-dest", "empty");
+                myHeaders.append("sec-fetch-mode", "cors");
+                myHeaders.append("sec-fetch-site", "same-site");
+                myHeaders.append("user-agent", navigator.userAgent);
+
+                // Create GraphQL query with our form data
+                const graphql = JSON.stringify({
+                    query: "query fetch_products($order: String!) {\n  productResponse: getProducts(order: $order) {\n    products {\n      id\n      ident\n      ps20ident\n      title\n      topSeller\n      priceAmount\n      priceUnit\n      vat\n      disabled\n      options {\n        id\n        ident\n        ps20ident\n        title\n        icon\n        inclusive\n        vat\n        params {\n          id\n          type\n          title\n          config {\n            value\n            ps20Ident\n            price\n            inclusive\n            displayValue\n            disabled\n            displayValueWithPrice\n            __typename\n          }\n          initialValue\n          inclusiveValue\n          __typename\n        }\n        tracking {\n          name\n          step\n          __typename\n        }\n        tracking {\n          name\n          step\n          __typename\n        }\n        __typename\n      }\n      contractDuration {\n        allowChange\n        availableDurations\n        defaultDuration\n        __typename\n      }\n      priceListNumber\n      forceOneYearPeriod\n      __typename\n    }\n    initialOptions {\n      id\n      ident\n      ps20ident\n      title\n      icon\n      inclusive\n      vat\n      params {\n        id\n        type\n        title\n        initialValue\n        inclusiveValue\n        config {\n          value\n          ps20Ident\n          price\n          inclusive\n          displayValue\n          disabled\n          displayValueWithPrice\n          __typename\n        }\n        __typename\n      }\n      tracking {\n        name\n        step\n        __typename\n      }\n      tracking {\n        name\n        step\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}",
+                    variables: {"order": btoa(JSON.stringify(jsonData))}
+                });
+
+                const requestOptions = {
+                    method: "POST",
+                    headers: myHeaders,
+                    body: graphql,
+                    redirect: "follow"
+                    ,mode:'no-cors' // Added to attempt to bypass CORS issues
+                };
+
+                // For testing - use mock data instead of real API call
+                console.log('Using mock data for testing purposes');
                 
-                // Here you would normally send the data to a server
-                // or show a results page
+                // Mock API response for testing
+                // const mockResponse = {
+                //     data: {
+                //         productResponse: {
+                //             products: [
+                //                 {
+                //                     id: "basic-001",
+                //                     ident: "TKV_BASIC",
+                //                     title: "Basis Tarif",
+                //                     priceAmount: 3510,
+                //                     priceUnit: "monatlich",
+                //                     options: [
+                //                         { title: "Kostenerstattung ab 500 EUR" },
+                //                         { title: "Allgemeine Heilbehandlung ab 6 Monate" },
+                //                         { title: "Notfallbehandlung" }
+                //                     ]
+                //                 },
+                //                 {
+                //                     id: "smart-001", 
+                //                     ident: "TKV_SMART",
+                //                     title: "Smart Tarif",
+                //                     priceAmount: 5110,
+                //                     priceUnit: "monatlich",
+                //                     options: [
+                //                         { title: "Kostenerstattung ab 0 EUR" },
+                //                         { title: "Allgemeine Heilbehandlung ab 6 Monate" },
+                //                         { title: "Vorsorge: 5 Mal" },
+                //                         { title: "Notfallbehandlung" }
+                //                     ]
+                //                 },
+                //                 {
+                //                     id: "optimal-001",
+                //                     ident: "TKV_OPTIMAL", 
+                //                     title: "Optimal Tarif",
+                //                     priceAmount: 7330,
+                //                     priceUnit: "monatlich",
+                //                     options: [
+                //                         { title: "Kostenerstattung ab 0 EUR" },
+                //                         { title: "Allgemeine Heilbehandlung ab 0 Monate" },
+                //                         { title: "Vorsorge: 5 Mal" },
+                //                         { title: "Premium Abdeckung" }
+                //                     ]
+                //                 }
+                //             ]
+                //         }
+                //     }
+                // };
+
+                // // Simulate API delay
+                // setTimeout(() => {
+                //     console.log('Mock API Response:', mockResponse);
+                //     updatePricingModal(JSON.stringify(mockResponse));
+                //     document.getElementById('resultsModal').style.display = 'flex';
+                // }, 1000);
+
+                
+                // Real API call (commented out due to CORS issues)
+                // Make the API call
+                fetch("https://inno-prod.allianz.de/tkv/op/graphql", requestOptions)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP Error: ${response.status} - ${response.statusText}`);
+                        }
+                        return response.text();
+                    })
+                    .then((result) => {
+                        console.log('API Response:', result);
+                        
+                        // Check if response contains error
+                        try {
+                            const jsonResult = JSON.parse(result);
+                            if (jsonResult.errors && jsonResult.errors.length > 0) {
+                                throw new Error(`API Error: ${jsonResult.errors[0].message}`);
+                            }
+                        } catch (parseError) {
+                            // If it's not JSON, that's also an error
+                            if (!result.includes('data')) {
+                                throw new Error('Invalid API response format');
+                            }
+                        }
+                        
+                        // Try to update the modal with real API data
+                        updatePricingModal(result);
+                        
+                        // Show the results modal after processing API data
+                        document.getElementById('resultsModal').style.display = 'flex';
+                    })
+                    .catch((error) => {
+                        console.error('API Error:', error);
+                        
+                        // Show error message instead of static pricing
+                        showApiError(`Verbindung zum Server fehlgeschlagen: ${error.message}`);
+                        document.getElementById('resultsModal').style.display = 'flex';
+                    });
+                
             }
         });
     }
