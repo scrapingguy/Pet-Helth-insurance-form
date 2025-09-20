@@ -1,4 +1,8 @@
-// Pet Health Insurance Form JavaScript
+/**
+ * Pet Health Insurance Form JavaScript
+ * Handles form validation, breed selection, and user interactions
+ * for German pet insurance calculation form
+ */
 
 document.addEventListener('DOMContentLoaded', function() {
     // Form elements
@@ -17,7 +21,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const operationCheckbox = document.getElementById('neue_operation');
     const operationAnzahl = document.getElementById('operationAnzahl');
 
-    // German postal code to city mapping (sample)
+    // ===============================
+    // POSTAL CODE TO CITY MAPPING
+    // ===============================
+    // German postal code to city mapping (sample data)
     const plzCityMap = {
         '01067': 'Dresden',
         '10115': 'Berlin', 
@@ -29,7 +36,10 @@ document.addEventListener('DOMContentLoaded', function() {
         '40213': 'Düsseldorf'
     };
 
-    // Breed data for different animal types
+    // ===============================
+    // BREED DATA DEFINITIONS
+    // ===============================
+    // Comprehensive breed database for cats, dogs, and horses
     const breedData = {
         katze: [
             'Mischling / Hauskatze / Europäisch Kurzhaar',
@@ -1464,7 +1474,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const plz = this.value;
             if (plz.length === 5 && plzCityMap[plz]) {
                 // Could display city name here if needed
-                console.log('Valid PLZ for: ' + plzCityMap[plz]);
+                // PLZ validation successful
             }
         });
     }
@@ -1651,7 +1661,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     data[key] = value;
                 }
 
-                console.log('Form submitted with data:', data);
+                // Form validation successful - data collected
                 
                 // Show a simple alert for now
                 alert('Vielen Dank! Ihre Anfrage wurde erfasst. Sie werden nun zu den Tarifen weitergeleitet.');
