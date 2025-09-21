@@ -281,7 +281,7 @@
             font-size: 16px;
             background: transparent;
             width: 200px;
-            color: #003781;
+            color: transparent; /* Hide the native date display */
             position: relative;
         }
 
@@ -289,6 +289,18 @@
             outline: none;
             border-bottom-color: #003781;
             background: rgba(0, 102, 204, 0.05);
+        }
+
+        /* Date display overlay in German format */
+        .date-display {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #003781;
+            pointer-events: none;
+            font-weight: normal;
         }
 
         /* Style the calendar icon */
@@ -315,13 +327,14 @@
             top: 50%;
             transform: translateY(-50%);
             font-size: 12px;
-            color: #003781;
+            color: #999;
             pointer-events: none;
             font-style: italic;
+            display: block;
         }
 
-        /* Hide the hint when input has value */
-        .date-input:not(:placeholder-shown) + .date-format-hint {
+        /* Hide the hint when date is selected */
+        .date-display:not(:empty) + .date-format-hint {
             display: none;
         }
 

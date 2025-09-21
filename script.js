@@ -17,6 +17,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const operationCheckbox = document.getElementById('neue_operation');
     const operationAnzahl = document.getElementById('operationAnzahl');
 
+    // German date display function
+    function updateGermanDateDisplay() {
+        const dateInput = document.getElementById('geburtsdatum');
+        const dateDisplay = document.getElementById('dateDisplay');
+        
+        if (dateInput.value) {
+            const date = new Date(dateInput.value);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            dateDisplay.textContent = `${day}.${month}.${year}`;
+        } else {
+            dateDisplay.textContent = '';
+        }
+    }
+
     // German postal code to city mapping (expanded dataset)
     const plzCityMap = {
         // Major cities
@@ -1763,16 +1779,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const rasseSelect = document.getElementById('rasse');
         const breedCode = rasseSelect.value;
         
-        // Birth date - convert to DD.MM.YYYY format
+        // Birth date - already in DD.MM.YYYY format from German input
         const birthDateInput = document.getElementById('geburtsdatum').value;
-        let birthDate = '';
-        if (birthDateInput) {
-            const date = new Date(birthDateInput);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            birthDate = `${day}.${month}.${year}`;
-        }
+        let birthDate = birthDateInput; // Use the German format directly
         
         // Environment - convert to uppercase for cats
         const haltung = document.querySelector('input[name="haltung"]:checked').value;
@@ -2341,6 +2350,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (this.id === 'geburtsdatum' && this.value) {
                     validateBirthDateRealTime(this);
                 }
+                // Update German date display
+                if (this.id === 'geburtsdatum') {
+                    updateGermanDateDisplay();
+                }
             });
             
             field.addEventListener('input', function() {
@@ -2352,6 +2365,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Real-time validation for PLZ
                 if (this.id === 'plz' && this.value) {
                     validatePLZRealTime(this);
+                }
+                // Update German date display
+                if (this.id === 'geburtsdatum') {
+                    updateGermanDateDisplay();
                 }
             });
         });
