@@ -1814,10 +1814,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Start date in DD.MM.YYYY format (today, not tomorrow)
-        const startDay = String(today.getDate()).padStart(2, '0');
-        const startMonth = String(today.getMonth() + 1).padStart(2, '0');
-        const startYear = today.getFullYear();
+        // Start date in DD.MM.YYYY format (tomorrow's date as typical for insurance)
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const startDay = String(tomorrow.getDate()).padStart(2, '0');
+        const startMonth = String(tomorrow.getMonth() + 1).padStart(2, '0');
+        const startYear = tomorrow.getFullYear();
         const formattedStartDate = `${startDay}.${startMonth}.${startYear}`;
         
         // Generate a random session ID
