@@ -2181,8 +2181,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 //     document.getElementById('resultsModal').style.display = 'flex';
                 // }, 1000);
 
+                // Store form data for next page
+                localStorage.setItem('petInsuranceFormData', JSON.stringify(jsonData));
                 
-                // Real API call (commented out due to CORS issues)
+                // Navigate to plans page instead of showing modal
+                window.location.href = 'plans.html?from=form';
+                
+                /*
+                // Real API call (commented out - using plans page instead)
                 // Make the API call
                 fetch("https://inno-prod.allianz.de/tkv/op/graphql", requestOptions)
                     .then((response) => {
@@ -2220,6 +2226,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         showApiError(`Verbindung zum Server fehlgeschlagen: ${error.message}`);
                         document.getElementById('resultsModal').style.display = 'flex';
                     });
+                */
                 
             }
         });

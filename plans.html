@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auswahl der OP-Versicherung | Allianz</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="plans-styles.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <section class="plans-header">
+        <div class="container">
+            <div class="progress-bar">
+                <div class="progress-step completed">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Tierdaten</div>
+                </div>
+                <div class="progress-line completed"></div>
+                <div class="progress-step active">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Tarifauswahl</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Selection Options Section -->
+    <section class="selection-section">
+        <div class="container">
+            <div class="selection-row">
+                <span class="selection-text">Ich möchte</span>
+                <select id="deductible" class="selection-dropdown">
+                    <option value="no">keine</option>
+                    <option value="10">10%</option>
+                    <option value="20" selected>20%</option>
+                </select>
+                <span class="selection-text">Selbstbeteiligung</span>
+                <span class="info-icon">ⓘ</span>
+                <span class="selection-text">und zahle</span>
+                <select id="paymentFrequency" class="selection-dropdown">
+                    <option value="monthly" selected>monatlich</option>
+                    <option value="quarterly">vierteljährlich</option>
+                    <option value="semi-annually">halbjährlich</option>
+                    <option value="yearly">jährlich</option>
+                </select>
+                <span class="selection-text">.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plans Title Section -->
+    <section class="plans-title-section">
+        <div class="container">
+            <div class="progress-indicator">1 von 2</div>
+            <h1 class="plans-title">Auswahl der OP Versicherung</h1>
+            <div class="bestseller-badge">Unser Bestseller</div>
+        </div>
+    </section>
+
+    <!-- Plans Comparison Section -->
+    <section class="plans-section">
+        <div class="container">
+            <!-- Plan Cards -->
+            <div class="plan-cards">
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Basis</h3>
+                        <div class="plan-price">
+                            <span class="price">17,62 €</span>
+                            <span class="period">pro Monat</span>
+                        </div>
+                    </div>
+                    <button class="plan-button" data-plan="basis">Auswählen</button>
+                </div>
+
+                <div class="plan-card featured">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Smart</h3>
+                        <div class="plan-price">
+                            <span class="price">35,80 €</span>
+                            <span class="period">pro Monat</span>
+                        </div>
+                    </div>
+                    <button class="plan-button" data-plan="smart">Auswählen</button>
+                </div>
+
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Komfort</h3>
+                        <div class="plan-price">
+                            <span class="price">65,10 €</span>
+                            <span class="period">pro Monat</span>
+                        </div>
+                    </div>
+                    <button class="plan-button" data-plan="komfort">Auswählen</button>
+                </div>
+            </div>
+
+            <!-- Coverage Details Table -->
+            <div class="coverage-table">
+                <div class="coverage-header">
+                    <div class="coverage-title">In allen Tarifen enthalten:</div>
+                    <div class="coverage-included">
+                        <div class="included-item">
+                            <span class="checkmark">✓</span>
+                            <span>Operationen aufgrund Unfall oder Krankheit</span>
+                            <span class="info-icon">ⓘ</span>
+                        </div>
+                        <div class="included-item">
+                            <span class="checkmark">✓</span>
+                            <span>Operationen unter Vollnarkose, Teilnarkose, Lokalanästhesie oder Sedation</span>
+                            <span class="info-icon">ⓘ</span>
+                        </div>
+                        <div class="included-item">
+                            <span class="checkmark">✓</span>
+                            <span>Letzte Untersuchung vor der Operation und Nachbehandlungen</span>
+                            <span class="info-icon">ⓘ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="coverage-row">
+                    <div class="coverage-label">
+                        <span>Jahreshöchstentschädigung für Operationen</span>
+                        <span class="info-icon">ⓘ</span>
+                    </div>
+                    <div class="coverage-values">
+                        <div class="coverage-value basis">3.000 €</div>
+                        <div class="coverage-value smart">7.500 €</div>
+                        <div class="coverage-value komfort">unbegrenzt</div>
+                    </div>
+                </div>
+
+                <div class="coverage-row">
+                    <div class="coverage-label">
+                        <span>Erstattung nach Gebührenordnung für Tierärztinnen und Tierärzte (GOT)</span>
+                        <span class="info-icon">ⓘ</span>
+                    </div>
+                    <div class="coverage-values">
+                        <div class="coverage-value basis">2-fach</div>
+                        <div class="coverage-value smart">4-fach</div>
+                        <div class="coverage-value komfort">4-fach</div>
+                    </div>
+                </div>
+
+                <div class="coverage-row">
+                    <div class="coverage-label">
+                        <span>Nachbehandlungen nach einer Operation</span>
+                        <span class="info-icon">ⓘ</span>
+                    </div>
+                    <div class="coverage-values">
+                        <div class="coverage-value basis">bis 15 Tage</div>
+                        <div class="coverage-value smart">bis 15 Tage</div>
+                        <div class="coverage-value komfort">bis 20 Tage</div>
+                    </div>
+                </div>
+
+                <div class="coverage-row">
+                    <div class="coverage-label">
+                        <span>Behandlung rassespezifischer und besonderer Erkrankungen und Fehlstellungen</span>
+                        <span class="info-icon">ⓘ</span>
+                    </div>
+                    <div class="coverage-values">
+                        <div class="coverage-value basis">—</div>
+                        <div class="coverage-value smart">einmalig bis 500 €</div>
+                        <div class="coverage-value komfort">einmalig bis 2.500 €</div>
+                    </div>
+                </div>
+
+                <div class="coverage-row">
+                    <div class="coverage-label">
+                        <span>Strahlentherapie nach Operationen</span>
+                        <span class="info-icon">ⓘ</span>
+                    </div>
+                    <div class="coverage-values">
+                        <div class="coverage-value basis">500 €</div>
+                        <div class="coverage-value smart">500 €</div>
+                        <div class="coverage-value komfort">2.500 €</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expandable Sections -->
+            <div class="expandable-sections">
+                <div class="expandable-section">
+                    <div class="section-header" data-toggle="operation">
+                        <span>Mehr Leistung im Rahmen einer Operation</span>
+                        <span class="toggle-icon">⌄</span>
+                    </div>
+                    <div class="section-content" id="operation-content">
+                        <!-- Additional content will be added here -->
+                    </div>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" data-toggle="additional">
+                        <span>Mehr für Sie und Ihr Tier</span>
+                        <span class="toggle-icon">⌄</span>
+                    </div>
+                    <div class="section-content" id="additional-content">
+                        <!-- Additional content will be added here -->
+                    </div>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" data-toggle="service">
+                        <span>Mehr Service für Sie</span>
+                        <span class="toggle-icon">⌄</span>
+                    </div>
+                    <div class="section-content" id="service-content">
+                        <!-- Additional content will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn-secondary" onclick="goBack()">Zurück</button>
+                <button class="btn-primary" id="continueBtn" disabled>Weiter</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="plans-script.js"></script>
+</body>
+</html>
