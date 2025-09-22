@@ -1951,11 +1951,10 @@ document.addEventListener("DOMContentLoaded", function () {
       if (dateParts.length === 3) {
         // Convert to DD.MM.YYYY format
         birthDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
-        console.log("Birth date converted:", birthDateInput, "->", birthDate);
       }
     }
 
-    // Environment - convert to uppercase for cats
+    // Environment - convert to uppercase for cats ONLY
     const haltung = document.querySelector(
       'input[name="haltung"]:checked'
     ).value;
@@ -2086,7 +2085,8 @@ document.addEventListener("DOMContentLoaded", function () {
         birthDate: birthDate,
         age: null,
         sterilized: sterilized,
-        catHousingType: environment,
+        // Only include catHousingType for cats
+        ...(animal === "CAT" && { catHousingType: environment }),
         preExistingDiagnosis: preExistingDiagnosis,
         excludedExistingDiagnosis: excludedExistingDiagnosis,
         treatments: treatments,
@@ -2142,16 +2142,12 @@ document.addEventListener("DOMContentLoaded", function () {
   // Function to update pricing modal with real API data
   function updatePricingModal(apiResponse) {
     try {
-      console.log("Raw API Response:", apiResponse);
-
       let parsedResponse;
       if (typeof apiResponse === "string") {
         parsedResponse = JSON.parse(apiResponse);
       } else {
         parsedResponse = apiResponse;
       }
-
-      console.log("Parsed API Response:", parsedResponse);
 
       // Handle the new nested response structure
       let products = [];
@@ -2175,7 +2171,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       if (products.length === 0) {
-        console.log("No products found in API response");
         showApiError(
           "Keine Tarife für Ihre Eingaben gefunden. Bitte überprüfen Sie Ihre Angaben."
         );
@@ -2369,12 +2364,6 @@ document.addEventListener("DOMContentLoaded", function () {
           selectPlan(this);
         });
       });
-
-      console.log(
-        "Successfully updated pricing modal with API data -",
-        products.length,
-        "products loaded"
-      );
     } catch (error) {
       console.error("Error parsing API response:", error);
       showApiError("Fehler beim Verarbeiten der Server-Antwort.");
@@ -2400,15 +2389,12 @@ document.addEventListener("DOMContentLoaded", function () {
     annualPriceElement.textContent = `${totalAnnual
       .toFixed(2)
       .replace(".", ",")}€ jährlich`;
-
-    console.log("Price updated:", { basePrice, optionPrice, totalMonthly });
   }
 
   // Helper function to handle contract duration changes
   function updatePlanDuration(selectElement) {
     const duration = selectElement.value;
     const productId = selectElement.dataset.product;
-    console.log("Contract duration changed:", { productId, duration });
     // Add logic here to update pricing based on duration if needed
   }
 
@@ -2446,8 +2432,6 @@ document.addEventListener("DOMContentLoaded", function () {
       selectedDuration,
       finalPrice,
     };
-
-    console.log("Plan selected:", selectionData);
 
     // Store selection data
     localStorage.setItem("selectedPlan", JSON.stringify(selectionData));
@@ -2491,9 +2475,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Fallback function to show static pricing if API fails
   function showStaticPricing() {
-    console.log(
-      "Static pricing function called - but we now show error instead"
-    );
     showApiError();
   }
 
@@ -2509,16 +2490,18 @@ document.addEventListener("DOMContentLoaded", function () {
         // Generate JSON data
         const jsonData = generateFormJSON();
 
-        // Log the JSON to console (for testing)
-        console.log("Generated JSON:", JSON.stringify(jsonData, null, 2));
+        // Validate form data before sending
+        const validationResult = validateFormData();
+        if (!validationResult.isValid) {
+          showUserAlert(validationResult.message, 'error');
+          return;
+        }
 
+        // Store form data
         localStorage.setItem("petInsuranceFormData", JSON.stringify(jsonData));
 
-        // Navigate to plans page instead of showing modal
-        // window.location.href = 'plans.html?from=form';
-
-        // Real API call (commented out - using plans page instead)
-        // Make the API call
+        // Try API call first, but fallback to plans page if it fails
+        // Try API call first, but fallback to plans page if it fails
         fetch(
           "https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz",
           {
@@ -2533,102 +2516,320 @@ document.addEventListener("DOMContentLoaded", function () {
         )
           .then((response) => {
             if (!response.ok) {
-              throw new Error(
-                `HTTP Error: ${response.status} - ${response.statusText}`
-              );
+              // If API fails, still redirect to plans page with static data
+              window.location.href = 'plans.html?from=form&source=static';
+              return;
             }
             return response.text();
           })
           .then((result) => {
-            console.log("API Response:", result);
-
-            // Check if response contains error
+            if (!result) return; // Already redirected
+            
             try {
               const jsonResult = JSON.parse(result);
               if (jsonResult.errors && jsonResult.errors.length > 0) {
                 throw new Error(`API Error: ${jsonResult.errors[0].message}`);
               }
+              
+              // Store API response for plans page
+              localStorage.setItem("apiResponseData", result);
+              window.location.href = 'plans.html?from=form&source=api';
+              
             } catch (parseError) {
-              // If it's not JSON, that's also an error
-              if (!result.includes("data")) {
-                throw new Error("Invalid API response format");
-              }
+              window.location.href = 'plans.html?from=form&source=static';
             }
-
-            // Try to update the modal with real API data
-            updatePricingModal(result);
-
-            // Show the results modal after processing API data
-            document.getElementById("resultsModal").style.display = "flex";
           })
           .catch((error) => {
-            console.error("API Error:", error);
-
-            // Show error message instead of static pricing
-            showApiError(
-              `Verbindung zum Server fehlgeschlagen: ${error.message}`
-            );
-            document.getElementById("resultsModal").style.display = "flex";
+            // Always redirect to plans page even if API fails
+            window.location.href = 'plans.html?from=form&source=static';
           });
       }
     });
   }
 
+  // Enhanced form validation with user-friendly messages
+  function validateFormData() {
+    const tierKategorie = document.getElementById("tierKategorie")?.value;
+    const rasse = document.getElementById("rasse")?.value;
+    const geburtsdatum = document.getElementById("geburtsdatum")?.value;
+    const plz = document.getElementById("plz")?.value;
+
+    // 1. Check animal type and breed compatibility
+    if (tierKategorie && rasse) {
+      if (tierKategorie === "hund" && !rasse.startsWith("H")) {
+        return {
+          isValid: false,
+          message: "❌ Falscher Rassencode!\n\nSie haben 'Hund' ausgewählt, aber eine Katzen- oder Pferderasse gewählt.\n\n✅ Bitte wählen Sie eine Hunderasse aus der Liste."
+        };
+      }
+      
+      if (tierKategorie === "katze" && !rasse.startsWith("K")) {
+        return {
+          isValid: false,
+          message: "❌ Falscher Rassencode!\n\nSie haben 'Katze' ausgewählt, aber eine Hunde- oder Pferderasse gewählt.\n\n✅ Bitte wählen Sie eine Katzenrasse aus der Liste."
+        };
+      }
+      
+      if (tierKategorie === "pferd" && !rasse.startsWith("P")) {
+        return {
+          isValid: false,
+          message: "❌ Falscher Rassencode!\n\nSie haben 'Pferd' ausgewählt, aber eine Hunde- oder Katzenrasse gewählt.\n\n✅ Bitte wählen Sie eine Pferderasse aus der Liste."
+        };
+      }
+    }
+
+    // 2. Check birth date validity
+    if (geburtsdatum) {
+      const selectedDate = new Date(geburtsdatum);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Check for future dates
+      if (selectedDate > today) {
+        return {
+          isValid: false,
+          message: "❌ Ungültiges Geburtsdatum!\n\nDas Geburtsdatum liegt in der Zukunft.\n\n✅ Bitte wählen Sie ein Datum aus der Vergangenheit."
+        };
+      }
+
+      // Check for too old dates (more than 30 years)
+      const thirtyYearsAgo = new Date();
+      thirtyYearsAgo.setFullYear(thirtyYearsAgo.getFullYear() - 30);
+      
+      if (selectedDate < thirtyYearsAgo) {
+        return {
+          isValid: false,
+          message: "❌ Ungewöhnliches Geburtsdatum!\n\nDas Tier wäre über 30 Jahre alt.\n\n✅ Bitte überprüfen Sie das Geburtsdatum."
+        };
+      }
+
+      // Check for very young animals (less than 8 weeks old)
+      const eightWeeksAgo = new Date();
+      eightWeeksAgo.setDate(eightWeeksAgo.getDate() - 56); // 8 weeks = 56 days
+      
+      if (selectedDate > eightWeeksAgo) {
+        return {
+          isValid: false,
+          message: "⚠️ Sehr junges Tier!\n\nDas Tier ist weniger als 8 Wochen alt.\n\n✅ Für sehr junge Tiere gelten besondere Bedingungen. Bitte kontaktieren Sie unseren Kundenservice."
+        };
+      }
+    }
+
+    // 3. Check PLZ format
+    if (plz && !isValidPLZ(plz)) {
+      return {
+        isValid: false,
+        message: "❌ Ungültige Postleitzahl!\n\nBitte geben Sie eine gültige 5-stellige deutsche Postleitzahl ein.\n\n✅ Beispiel: 10115, 20095, 80331"
+      };
+    }
+
+    // 4. Check if PLZ has corresponding city
+    if (plz && !plzCityMap[plz]) {
+      return {
+        isValid: false,
+        message: "❌ Postleitzahl nicht gefunden!\n\nDiese Postleitzahl ist nicht in unserer Datenbank.\n\n✅ Bitte überprüfen Sie die PLZ oder verwenden Sie eine andere."
+      };
+    }
+
+    return { isValid: true };
+  }
+
+  // User-friendly alert system
+  function showUserAlert(message, type = 'info') {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('userAlertModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'userAlertModal';
+      modal.innerHTML = `
+        <div class="alert-modal-overlay">
+          <div class="alert-modal-content">
+            <div class="alert-icon" id="alertIcon">⚠️</div>
+            <div class="alert-message" id="alertMessage"></div>
+            <div class="alert-buttons">
+              <button class="alert-btn" onclick="closeUserAlert()">Verstanden</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      
+      // Add styles
+      const style = document.createElement('style');
+      style.textContent = `
+        #userAlertModal {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 10000;
+          backdrop-filter: blur(3px);
+        }
+        
+        .alert-modal-overlay {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
+          padding: 20px;
+        }
+        
+        .alert-modal-content {
+          background: white;
+          border-radius: 12px;
+          padding: 30px;
+          max-width: 400px;
+          width: 100%;
+          text-align: center;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+          animation: alertSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes alertSlideIn {
+          from {
+            opacity: 0;
+            transform: translateY(-30px) scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+        
+        .alert-icon {
+          font-size: 48px;
+          margin-bottom: 20px;
+        }
+        
+        .alert-message {
+          font-size: 16px;
+          line-height: 1.5;
+          color: #333;
+          margin-bottom: 25px;
+          white-space: pre-line;
+        }
+        
+        .alert-btn {
+          background: #007bff;
+          color: white;
+          border: none;
+          padding: 12px 30px;
+          border-radius: 6px;
+          font-size: 16px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+        }
+        
+        .alert-btn:hover {
+          background: #0056b3;
+        }
+        
+        .alert-error .alert-icon { color: #dc3545; }
+        .alert-warning .alert-icon { color: #ffc107; }
+        .alert-success .alert-icon { color: #28a745; }
+        .alert-info .alert-icon { color: #17a2b8; }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Set icon based on type
+    const iconMap = {
+      'error': '❌',
+      'warning': '⚠️',
+      'success': '✅',
+      'info': 'ℹ️'
+    };
+
+    document.getElementById('alertIcon').textContent = iconMap[type] || 'ℹ️';
+    document.getElementById('alertMessage').textContent = message;
+    modal.className = `alert-${type}`;
+    modal.style.display = 'block';
+
+    // Focus on button for keyboard accessibility
+    setTimeout(() => {
+      modal.querySelector('.alert-btn').focus();
+    }, 100);
+  }
+
+  // Close alert modal
+  window.closeUserAlert = function() {
+    const modal = document.getElementById('userAlertModal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeUserAlert();
+    }
+  });
+
   // Enhanced form validation with error display
   function validateFormWithErrors() {
     let isValid = true;
+    const missingFields = [];
 
     // Clear all previous errors
     clearAllErrors();
 
-    // Validate PLZ
-    const plz = document.getElementById("plz");
-    if (!plz || !plz.value || !isValidPLZ(plz.value)) {
-      showError("plzError", "plz");
-      isValid = false;
-    }
+    // Check all required fields
+    const requiredFields = [
+      { id: 'plz', name: 'Postleitzahl' },
+      { id: 'tierKategorie', name: 'Tierart' },
+      { id: 'geschlecht', name: 'Geschlecht' },
+      { id: 'rasse', name: 'Rasse' },
+      { id: 'geburtsdatum', name: 'Geburtsdatum' }
+    ];
 
-    // Validate birth date
-    const geburtsdatum = document.getElementById("geburtsdatum");
-    if (!geburtsdatum || !geburtsdatum.value) {
-      showError("geburtsdatumError", "geburtsdatum");
-      isValid = false;
-    } else {
-      // Check if the date is in the future
-      const selectedDate = new Date(geburtsdatum.value);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Set to beginning of today
-
-      if (selectedDate > today) {
-        showError("geburtsdatumFutureError", "geburtsdatum");
+    // Check regular input fields
+    requiredFields.forEach(field => {
+      const element = document.getElementById(field.id);
+      if (!element || !element.value) {
+        missingFields.push(field.name);
         isValid = false;
+        if (field.id === 'plz') showError("plzError", "plz");
+        if (field.id === 'geburtsdatum') showError("geburtsdatumError", "geburtsdatum");
       }
+    });
+
+    // Check radio button fields
+    const radioFields = [
+      { name: 'kastriert', label: 'Kastration/Sterilisation' },
+      { name: 'haltung', label: 'Haltungsart' },
+      { name: 'gesundheitsprobleme', label: 'Gesundheitsprobleme' }
+    ];
+
+    radioFields.forEach(field => {
+      const checked = document.querySelector(`input[name="${field.name}"]:checked`);
+      if (!checked) {
+        missingFields.push(field.label);
+        isValid = false;
+        showError(`${field.name}Error`, field.name);
+      }
+    });
+
+    // Show comprehensive error message if fields are missing
+    if (!isValid) {
+      showUserAlert(
+        `❌ Pflichtfelder fehlen!\n\nBitte füllen Sie folgende Felder aus:\n\n• ${missingFields.join('\n• ')}\n\n✅ Alle Felder sind für die Berechnung erforderlich.`,
+        'error'
+      );
+      return false;
     }
 
-    // Validate neutering status
-    const kastriert = document.querySelector('input[name="kastriert"]:checked');
-    if (!kastriert) {
-      showError("kastriertError", "kastriert");
-      isValid = false;
+    // Additional validation checks
+    const validationResult = validateFormData();
+    if (!validationResult.isValid) {
+      showUserAlert(validationResult.message, 'error');
+      return false;
     }
 
-    // Validate housing method
-    const haltung = document.querySelector('input[name="haltung"]:checked');
-    if (!haltung) {
-      showError("haltungError", "haltung");
-      isValid = false;
-    }
-
-    // Validate health problems
-    const gesundheitsprobleme = document.querySelector(
-      'input[name="gesundheitsprobleme"]:checked'
-    );
-    if (!gesundheitsprobleme) {
-      showError("gesundheitsproblemeError", "gesundheitsprobleme");
-      isValid = false;
-    }
-
-    return isValid;
+    return true;
   }
 
   // Show error message

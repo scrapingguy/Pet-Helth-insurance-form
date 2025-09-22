@@ -589,6 +589,61 @@
     animation: spin 1s linear infinite;
 }
 
+/* Error Modal */
+.error-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-modal.show {
+    display: flex;
+}
+
+.error-content {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.error-icon {
+    width: 60px;
+    height: 60px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 auto 20px;
+}
+
+.error-content h2 {
+    font-size: 28px;
+    color: #003781;
+    margin-bottom: 15px;
+}
+
+.error-content p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
 @keyframes spin {
     to {
         transform: translate(-50%, -50%) rotate(360deg);

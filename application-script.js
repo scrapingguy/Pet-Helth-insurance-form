@@ -336,25 +336,172 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading state
         submitBtn.classList.add('loading');
         submitBtn.disabled = true;
+        submitBtn.textContent = 'Antrag wird übermittelt...';
         
         // Collect form data
         const formData = collectFormData();
+        const petData = JSON.parse(localStorage.getItem('petInsuranceFormData') || '{}');
+        const planData = JSON.parse(localStorage.getItem('selectedPlanData') || '{}');
         
-        // Simulate API call
-        setTimeout(() => {
-            console.log('Application submitted:', formData);
-            
+        // Generate application API payload
+        const apiPayload = generateAPIPayload(formData, petData, planData);
+        
+        // Submit to API
+        fetch('https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(apiPayload)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(result => {
             // Store application data
-            localStorage.setItem('applicationData', JSON.stringify(formData));
+            const applicationData = {
+                ...formData,
+                apiResponse: result,
+                submissionTime: new Date().toISOString(),
+                applicationNumber: generateApplicationNumber()
+            };
+            localStorage.setItem('applicationData', JSON.stringify(applicationData));
             
-            // Show success modal
-            showSuccessModal();
+            // Redirect to success page
+            window.location.href = 'success.html';
+        })
+        .catch(error => {
+            console.error('Application submission error:', error);
             
+            // Store application data locally anyway
+            const applicationData = {
+                ...formData,
+                error: error.message,
+                submissionTime: new Date().toISOString(),
+                applicationNumber: generateApplicationNumber()
+            };
+            localStorage.setItem('applicationData', JSON.stringify(applicationData));
+            
+            // Show error message with retry option
+            showErrorMessage(
+                'Fehler beim Übermitteln des Antrags. Ihre Daten wurden gespeichert. ' +
+                'Bitte versuchen Sie es erneut oder kontaktieren Sie unseren Kundenservice unter 0800 4 110 110.'
+            );
+        })
+        .finally(() => {
             // Reset button
             submitBtn.classList.remove('loading');
             submitBtn.disabled = false;
-        }, 2000);
+            submitBtn.textContent = 'Antrag verbindlich stellen';
+        });
     }
+    
+    function generateAPIPayload(formData, petData, planData) {
+        const today = new Date();
+        const startDate = today.toISOString().split('T')[0];
+        
+        // Map gender
+        let gender = 'FEMALE';
+        if (petData.geschlecht === 'maennlich') {
+            gender = 'MALE';
+        }
+        
+        // Map animal category
+        let category = 'CAT';
+        if (petData.tierKategorie === 'hund') {
+            category = 'DOG';
+        } else if (petData.tierKategorie === 'pferd') {
+            category = 'HORSE';
+        }
+        
+        // Map housing type
+        let housingType = 'INDOOR';
+        if (petData.haltung === 'outdoor') {
+            housingType = 'OUTDOOR';
+        } else if (petData.haltung === 'indoor_outdoor') {
+            housingType = 'INDOOR_OUTDOOR';
+        }
+        
+        // Map salutation
+        let salutation = 'UNKNOWN';
+        if (formData.anrede === 'herr') {
+            salutation = 'MR';
+        } else if (formData.anrede === 'frau') {
+            salutation = 'MS';
+        }
+        
+        return {
+            startDate: startDate,
+            person: [
+                {
+                    salutation: salutation,
+                    zip: formData.plz_person || petData.plz,
+                    city: formData.ort || '',
+                    coverage: 65000,
+                    retention: parseInt(planData.deductible) || 20,
+                    payment_schedule: planData.paymentFrequency === 'monthly' ? 'M' : 'M',
+                    contract_term: 1
+                }
+            ],
+            animal: {
+                category: category,
+                gender: gender,
+                race: petData.rasse || '',
+                birthDate: petData.geburtsdatum || '01.01.2020',
+                sterilized: petData.kastriert === 'ja',
+                catHousingType: housingType,
+                preExistingDiagnosis: petData.gesundheitsprobleme === 'ja',
+                excludedExistingDiagnosis: false,
+                treatments: [],
+                surgeryAmount: 0
+            },
+            nlf: {
+                valid: true,
+                zip: formData.plz_person || petData.plz,
+                city: formData.ort || '',
+                animalCategory: category,
+                animalGender: gender,
+                animalRace: petData.rasse || ''
+            }
+        };
+    }
+    
+    function showErrorMessage(message) {
+        // Create or show error modal
+        let errorModal = document.getElementById('errorModal');
+        
+        if (!errorModal) {
+            errorModal = document.createElement('div');
+            errorModal.id = 'errorModal';
+            errorModal.className = 'error-modal';
+            errorModal.innerHTML = `
+                <div class="error-content">
+                    <div class="error-icon">❌</div>
+                    <h2>Fehler beim Übermitteln</h2>
+                    <p id="errorMessage">${message}</p>
+                    <button class="btn-primary" onclick="closeErrorModal()">Verstanden</button>
+                </div>
+            `;
+            document.body.appendChild(errorModal);
+        } else {
+            document.getElementById('errorMessage').textContent = message;
+        }
+        
+        errorModal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    window.closeErrorModal = function() {
+        const errorModal = document.getElementById('errorModal');
+        if (errorModal) {
+            errorModal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    };
     
     function collectFormData() {
         const formElements = applicationForm.querySelectorAll('input, select, textarea');

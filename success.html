@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antrag erfolgreich übermittelt | Allianz Tierkrankenversicherung</title>
+    <link rel="stylesheet" href="styles.css?v=1727013600">
+    <link rel="stylesheet" href="application-styles.css?v=1727013600">
+</head>
+<body>
+    <!-- Header Section -->
+    <section class="application-header">
+        <div class="container">
+            <div class="progress-bar">
+                <div class="progress-step completed">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Tierdaten</div>
+                </div>
+                <div class="progress-line completed"></div>
+                <div class="progress-step completed">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Tarifauswahl</div>
+                </div>
+                <div class="progress-line completed"></div>
+                <div class="progress-step completed">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Antrag</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Section -->
+    <section class="success-section">
+        <div class="container">
+            <div class="success-card">
+                <div class="success-icon">✓</div>
+                <h1>Vielen Dank für Ihren Antrag!</h1>
+                <p class="success-message">
+                    Ihr Antrag wurde erfolgreich übermittelt und wird nun bearbeitet. 
+                    Sie erhalten in Kürze eine Bestätigung per E-Mail.
+                </p>
+                
+                <div class="application-details">
+                    <h3>Ihre Antragsdaten:</h3>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <span class="label">Antragsnummer:</span>
+                            <span class="value" id="application-number">--</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Datum:</span>
+                            <span class="value" id="submission-date">--</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Tarif:</span>
+                            <span class="value" id="selected-plan">--</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Monatlicher Beitrag:</span>
+                            <span class="value" id="monthly-premium">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pet-summary">
+                    <h3>Ihr versichertes Tier:</h3>
+                    <div id="pet-info" class="pet-details">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="next-steps">
+                    <h3>Was passiert als nächstes?</h3>
+                    <div class="steps-list">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-text">
+                                <strong>Bestätigung per E-Mail</strong><br>
+                                Sie erhalten innerhalb von 24 Stunden eine Bestätigung.
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-text">
+                                <strong>Prüfung Ihres Antrags</strong><br>
+                                Wir prüfen Ihre Angaben und bearbeiten Ihren Antrag.
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-text">
+                                <strong>Versicherungsunterlagen</strong><br>
+                                Die Versicherungspolice wird Ihnen zugesendet.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-info">
+                    <h3>Haben Sie Fragen?</h3>
+                    <p>Bei Fragen zu Ihrem Antrag können Sie uns gerne kontaktieren:</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <strong>Telefon:</strong> 0800 4 110 110 (kostenfrei)
+                        </div>
+                        <div class="contact-item">
+                            <strong>E-Mail:</strong> tierkrankenversicherung@allianz.de
+                        </div>
+                        <div class="contact-item">
+                            <strong>Montag bis Freitag:</strong> 8:00 - 18:00 Uhr
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="printPage()">Bestätigung drucken</button>
+                    <button class="btn-primary" onclick="goToHomepage()">Zur Startseite</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .success-section {
+            padding: 40px 0;
+            background: #f8f9fa;
+            min-height: calc(100vh - 120px);
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            margin: 0 auto 30px;
+        }
+
+        .success-card h1 {
+            font-size: 32px;
+            color: #003781;
+            margin-bottom: 20px;
+        }
+
+        .success-message {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .application-details,
+        .pet-summary,
+        .next-steps,
+        .contact-info {
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .application-details h3,
+        .pet-summary h3,
+        .next-steps h3,
+        .contact-info h3 {
+            color: #003781;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-item .label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .detail-item .value {
+            color: #666;
+        }
+
+        .pet-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .step-item .step-number {
+            width: 30px;
+            height: 30px;
+            background: #003781;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            flex: 1;
+        }
+
+        .contact-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .contact-item {
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .success-card {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .success-card h1 {
+                font-size: 24px;
+            }
+
+            .success-message {
+                font-size: 16px;
+            }
+        }
+    </style>
+
+    <script>
+        // Load application data and display it
+        document.addEventListener('DOMContentLoaded', function() {
+            loadApplicationData();
+        });
+
+        function loadApplicationData() {
+            const applicationData = JSON.parse(localStorage.getItem('applicationData') || '{}');
+            const petData = JSON.parse(localStorage.getItem('petInsuranceFormData') || '{}');
+            const planData = JSON.parse(localStorage.getItem('selectedPlanData') || '{}');
+
+            // Display application number
+            const appNumber = document.getElementById('application-number');
+            if (appNumber) {
+                appNumber.textContent = applicationData.applicationNumber || 'TKV-2025-0001';
+            }
+
+            // Display submission date
+            const submissionDate = document.getElementById('submission-date');
+            if (submissionDate) {
+                const date = new Date(applicationData.submissionTime || new Date());
+                submissionDate.textContent = date.toLocaleDateString('de-DE');
+            }
+
+            // Display selected plan
+            const selectedPlan = document.getElementById('selected-plan');
+            if (selectedPlan) {
+                selectedPlan.textContent = getPlanName(planData.plan || 'smart');
+            }
+
+            // Display monthly premium
+            const monthlyPremium = document.getElementById('monthly-premium');
+            if (monthlyPremium) {
+                monthlyPremium.textContent = planData.price || '35,80 €';
+            }
+
+            // Display pet information
+            const petInfo = document.getElementById('pet-info');
+            if (petInfo) {
+                petInfo.innerHTML = `
+                    <div class="detail-item">
+                        <span class="label">Tierart:</span>
+                        <span class="value">${getPetTypeText(petData.tierKategorie)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Geschlecht:</span>
+                        <span class="value">${getGenderText(petData.geschlecht)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Rasse:</span>
+                        <span class="value">${petData.rasse || 'Nicht angegeben'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Geburtsdatum:</span>
+                        <span class="value">${petData.geburtsdatum || 'Nicht angegeben'}</span>
+                    </div>
+                `;
+            }
+        }
+
+        function getPlanName(plan) {
+            switch(plan) {
+                case 'basis': return 'Basis Tarif';
+                case 'smart': return 'Smart Tarif';
+                case 'komfort': return 'Komfort Tarif';
+                default: return 'Smart Tarif';
+            }
+        }
+
+        function getPetTypeText(type) {
+            switch(type) {
+                case 'katze': return 'Katze';
+                case 'hund': return 'Hund';
+                case 'pferd': return 'Pferd';
+                default: return type || 'Nicht angegeben';
+            }
+        }
+
+        function getGenderText(gender) {
+            switch(gender) {
+                case 'maennlich': return 'Männlich';
+                case 'weiblich': return 'Weiblich';
+                default: return gender || 'Nicht angegeben';
+            }
+        }
+
+        function printPage() {
+            window.print();
+        }
+
+        function goToHomepage() {
+            // Clear application data
+            localStorage.removeItem('applicationData');
+            localStorage.removeItem('petInsuranceFormData');
+            localStorage.removeItem('selectedPlanData');
+            localStorage.removeItem('apiResponseData');
+            
+            // Redirect to homepage
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

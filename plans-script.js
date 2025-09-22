@@ -1,17 +1,90 @@
-// Plans Page JavaScript
+// Plans Page JavaScript - SIMPLIFIED VERSION
+
+// Global variables
+let selectedPlan = null;
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Form elements
-    const deductibleSelect = document.getElementById('deductible');
-    const paymentFrequencySelect = document.getElementById('paymentFrequency');
+    console.log('Plans page loaded - SIMPLIFIED VERSION');
+    
+    // Get all plan buttons
     const planButtons = document.querySelectorAll('.plan-button');
     const continueBtn = document.getElementById('continueBtn');
-    const expandableSections = document.querySelectorAll('.section-header');
+    
+    console.log('Found plan buttons:', planButtons.length);
+    console.log('Found continue button:', !!continueBtn);
+    
+    // Make sure continue button starts disabled
+    if (continueBtn) {
+        continueBtn.disabled = true;
+        continueBtn.style.backgroundColor = '#ccc';
+        continueBtn.style.cursor = 'not-allowed';
+    }
+    
+    // Add click listeners to plan buttons
+    planButtons.forEach(function(button, index) {
+        console.log('Setting up button', index, 'with plan:', button.dataset.plan);
+        
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('PLAN BUTTON CLICKED:', this.dataset.plan);
+            
+            // Remove selection from all buttons
+            planButtons.forEach(btn => btn.classList.remove('selected'));
+            
+            // Add selection to clicked button
+            this.classList.add('selected');
+            selectedPlan = this.dataset.plan;
+            
+            // Enable continue button
+            if (continueBtn) {
+                continueBtn.disabled = false;
+                continueBtn.style.backgroundColor = '#003781';
+                continueBtn.style.cursor = 'pointer';
+                continueBtn.style.color = 'white';
+                console.log('Continue button enabled');
+            }
+        });
+    });
+    
+    // Continue button click handler
+    if (continueBtn) {
+        continueBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('CONTINUE BUTTON CLICKED');
+            console.log('Selected plan:', selectedPlan);
+            
+            if (selectedPlan) {
+                // Store plan data
+                const planData = {
+                    plan: selectedPlan,
+                    deductible: '20',
+                    paymentFrequency: 'monthly',
+                    price: '35,80 €'
+                };
+                
+                localStorage.setItem('selectedPlanData', JSON.stringify(planData));
+                console.log('Plan data stored:', planData);
+                
+                // Navigate immediately
+                console.log('Navigating to application.html...');
+                window.location.href = 'application.html';
+                
+            } else {
+                alert('Bitte wählen Sie zuerst einen Tarif aus!');
+            }
+        });
+    }
+    
+    // Back button
+    window.goBack = function() {
+        window.history.back();
+    };
+    
+    console.log('Plans page setup complete');
+});
 
-    let selectedPlan = null;
-
-    // Demo pricing data based on deductible and payment frequency
-    const pricingData = {
+    // Demo pricing data based on deductible and payment frequency (fallback)
+    const staticPricingData = {
         basis: {
             no: { monthly: 22.15, quarterly: 66.45, 'semi-annually': 132.90, yearly: 265.80 },
             '10': { monthly: 19.94, quarterly: 59.82, 'semi-annually': 119.64, yearly: 239.28 },
@@ -30,12 +103,117 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Initialize page
-    updatePricing();
+    initializePage();
     
-    // Get URL parameters if coming from form
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('from') === 'form') {
-        displayFormData();
+    function initializePage() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataSource = urlParams.get('source'); // 'api' or 'static'
+        
+        // Check if we have API data
+        const apiResponseData = localStorage.getItem('apiResponseData');
+        
+        if (dataSource === 'api' && apiResponseData) {
+            try {
+                const apiResponse = JSON.parse(apiResponseData);
+                currentPricingData = parseAPIResponse(apiResponse);
+                updatePricingFromAPI(currentPricingData);
+            } catch (error) {
+                currentPricingData = staticPricingData;
+                updatePricing();
+            }
+        } else {
+            currentPricingData = staticPricingData;
+            updatePricing();
+        }
+        
+        // Display form data if coming from form
+        if (urlParams.get('from') === 'form') {
+            displayFormData();
+        }
+    }
+    
+    function parseAPIResponse(apiResponse) {
+        // Parse the API response and convert to our pricing structure
+        try {
+            let products = [];
+            
+            // Handle nested response structure
+            if (apiResponse.success && apiResponse.data && apiResponse.data.data && 
+                apiResponse.data.data.productResponse && apiResponse.data.data.productResponse.products) {
+                products = apiResponse.data.data.productResponse.products;
+            } else if (apiResponse.data && apiResponse.data.productResponse && 
+                      apiResponse.data.productResponse.products) {
+                products = apiResponse.data.productResponse.products;
+            }
+            
+            if (products.length === 0) {
+                throw new Error("No products found in API response");
+            }
+            
+            return convertAPIToPricingData(products);
+            
+        } catch (error) {
+            console.error("Error parsing API response:", error);
+            return staticPricingData;
+        }
+    }
+    
+    function convertAPIToPricingData(products) {
+        // Convert API products to our pricing structure
+        const converted = {};
+        
+        products.forEach((product, index) => {
+            const planKey = product.ident?.toLowerCase() || `plan${index + 1}`;
+            const basePrice = product.priceAmount || 0;
+            
+            // Create pricing structure for different deductibles and frequencies
+            converted[planKey] = {
+                no: { 
+                    monthly: basePrice,
+                    quarterly: basePrice * 3,
+                    'semi-annually': basePrice * 6,
+                    yearly: basePrice * 12
+                },
+                '10': { 
+                    monthly: basePrice * 0.9,
+                    quarterly: basePrice * 0.9 * 3,
+                    'semi-annually': basePrice * 0.9 * 6,
+                    yearly: basePrice * 0.9 * 12
+                },
+                '20': { 
+                    monthly: basePrice * 0.8,
+                    quarterly: basePrice * 0.8 * 3,
+                    'semi-annually': basePrice * 0.8 * 6,
+                    yearly: basePrice * 0.8 * 12
+                }
+            };
+        });
+        
+        return converted;
+    }
+    
+    function updatePricingFromAPI(pricingData) {
+        // Update the existing pricing display with API data
+        Object.keys(pricingData).forEach((planKey, index) => {
+            const planCard = document.querySelector(`[data-plan="${planKey}"]`) || 
+                           document.querySelectorAll('.plan-card')[index];
+            
+            if (planCard) {
+                const priceElement = planCard.querySelector('.plan-price .monthly-price');
+                const annualElement = planCard.querySelector('.annual-price');
+                
+                if (priceElement && annualElement) {
+                    const deductible = deductibleSelect.value;
+                    const frequency = paymentFrequencySelect.value;
+                    
+                    const price = pricingData[planKey][deductible][frequency];
+                    const monthlyPrice = pricingData[planKey][deductible].monthly;
+                    
+                    priceElement.textContent = `${price.toFixed(2).replace('.', ',')} €`;
+                    annualElement.textContent = `${(monthlyPrice * 12).toFixed(2).replace('.', ',')}€ jährlich`;
+                }
+            }
+        });
     }
 
     // Event listeners
@@ -43,7 +221,9 @@ document.addEventListener('DOMContentLoaded', function() {
     paymentFrequencySelect.addEventListener('change', updatePricing);
 
     planButtons.forEach(button => {
+        console.log('Adding click listener to button:', button.dataset.plan);
         button.addEventListener('click', function() {
+            console.log('Button clicked:', this.dataset.plan);
             selectPlan(this);
         });
     });
@@ -56,14 +236,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Functions
     function updatePricing() {
+        if (!currentPricingData) return;
+        
         const deductible = deductibleSelect.value;
         const frequency = paymentFrequencySelect.value;
 
-        Object.keys(pricingData).forEach(plan => {
-            const price = pricingData[plan][deductible][frequency];
+        Object.keys(currentPricingData).forEach(plan => {
+            const price = currentPricingData[plan][deductible][frequency];
+            const monthlyPrice = currentPricingData[plan][deductible].monthly;
             const priceElement = document.querySelector(`.plan-card:nth-child(${getPlanIndex(plan)}) .price`);
+            const monthlyPriceElement = document.querySelector(`.plan-card:nth-child(${getPlanIndex(plan)}) .monthly-price`);
+            const annualPriceElement = document.querySelector(`.plan-card:nth-child(${getPlanIndex(plan)}) .annual-price`);
+            
             if (priceElement) {
                 priceElement.textContent = formatPrice(price, frequency);
+            }
+            if (monthlyPriceElement) {
+                monthlyPriceElement.textContent = `${monthlyPrice.toFixed(2).replace('.', ',')} €`;
+            }
+            if (annualPriceElement) {
+                annualPriceElement.textContent = `${(monthlyPrice * 12).toFixed(2).replace('.', ',')}€ jährlich`;
             }
         });
     }
@@ -89,17 +281,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function selectPlan(button) {
-        // Remove previous selection
+        console.log('Plan selected:', button.dataset.plan);
+        
+        // Remove previous selection from all plan cards and buttons
+        document.querySelectorAll('.plan-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
         planButtons.forEach(btn => {
             btn.classList.remove('selected');
         });
 
-        // Add selection to clicked button
+        // Add selection to clicked button and its parent card
         button.classList.add('selected');
+        const planCard = button.closest('.plan-card');
+        if (planCard) {
+            planCard.classList.add('selected');
+        }
+        
         selectedPlan = button.dataset.plan;
 
-        // Enable continue button
+        // Enable continue button with visual feedback
         continueBtn.disabled = false;
+        continueBtn.style.opacity = '1';
+        continueBtn.style.cursor = 'pointer';
+        continueBtn.classList.add('enabled');
+        
+        console.log('Continue button enabled');
     }
 
     function toggleSection(header) {
@@ -259,19 +467,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Continue button handler
     continueBtn.addEventListener('click', function() {
+        console.log('Continue button clicked, selected plan:', selectedPlan);
+        
         if (selectedPlan) {
             // Store selected plan data
             const planData = {
                 plan: selectedPlan,
-                deductible: deductibleSelect.value,
-                paymentFrequency: paymentFrequencySelect.value,
+                deductible: deductibleSelect ? deductibleSelect.value : '20',
+                paymentFrequency: paymentFrequencySelect ? paymentFrequencySelect.value : 'monthly',
                 price: getCurrentPrice()
             };
             
+            console.log('Storing plan data:', planData);
             localStorage.setItem('selectedPlanData', JSON.stringify(planData));
             
             // Navigate to application page
+            console.log('Navigating to application.html');
             window.location.href = 'application.html?from=plans';
+        } else {
+            console.log('No plan selected');
+            alert('Bitte wählen Sie zuerst einen Tarif aus.');
         }
     });
 
@@ -303,4 +518,3 @@ document.addEventListener('DOMContentLoaded', function() {
             default: return '';
         }
     }
-});

@@ -237,6 +237,15 @@
     background: #003781;
     border-color: #003781;
     color: white;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 55, 129, 0.3);
+}
+
+/* Plan card selection state */
+.plan-card.selected {
+    border: 3px solid #003781;
+    box-shadow: 0 8px 30px rgba(0, 55, 129, 0.2);
+    transform: translateY(-5px);
 }
 
 /* Coverage Table */
@@ -428,6 +437,20 @@
     background: #ccc;
     border-color: #ccc;
     cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-primary.enabled {
+    background: #003781;
+    color: white;
+    cursor: pointer;
+    opacity: 1;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 55, 129, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(0, 55, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 55, 129, 0); }
 }
 
 .btn-primary:not(:disabled):hover {
