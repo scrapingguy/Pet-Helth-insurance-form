@@ -2090,107 +2090,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Log the JSON to console (for testing)
                 console.log('Generated JSON:', JSON.stringify(jsonData, null, 2));
                 
-                // Store JSON data globally for access from other functions if needed
-                window.formJSONData = jsonData;
 
                 // Setup headers for GraphQL request
                 const myHeaders = new Headers();
                 myHeaders.append("accept", "application/json, text/plain, */*");
-                myHeaders.append("accept-language", "en-US,en;q=0.9,hi;q=0.8,gu;q=0.7,zh;q=0.6,zh-HK;q=0.5,zh-TW;q=0.4,zh-CN;q=0.3,am;q=0.2,de;q=0.1");
                 myHeaders.append("content-type", "application/json");
-                myHeaders.append("origin", "https://www.allianz.de");
-                myHeaders.append("priority", "u=1, i");
-                myHeaders.append("referer", "https://www.allianz.de/");
-                myHeaders.append("sec-ch-ua", "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"");
-                myHeaders.append("sec-ch-ua-mobile", "?0");
-                myHeaders.append("sec-ch-ua-platform", "\"macOS\"");
-                myHeaders.append("sec-fetch-dest", "empty");
-                myHeaders.append("sec-fetch-mode", "cors");
-                myHeaders.append("sec-fetch-site", "same-site");
-                myHeaders.append("user-agent", navigator.userAgent);
-
                 // Create GraphQL query with our form data
-                const graphql = JSON.stringify({
-                    query: "query fetch_products($order: String!) {\n  productResponse: getProducts(order: $order) {\n    products {\n      id\n      ident\n      ps20ident\n      title\n      topSeller\n      priceAmount\n      priceUnit\n      vat\n      disabled\n      options {\n        id\n        ident\n        ps20ident\n        title\n        icon\n        inclusive\n        vat\n        params {\n          id\n          type\n          title\n          config {\n            value\n            ps20Ident\n            price\n            inclusive\n            displayValue\n            disabled\n            displayValueWithPrice\n            __typename\n          }\n          initialValue\n          inclusiveValue\n          __typename\n        }\n        tracking {\n          name\n          step\n          __typename\n        }\n        tracking {\n          name\n          step\n          __typename\n        }\n        __typename\n      }\n      contractDuration {\n        allowChange\n        availableDurations\n        defaultDuration\n        __typename\n      }\n      priceListNumber\n      forceOneYearPeriod\n      __typename\n    }\n    initialOptions {\n      id\n      ident\n      ps20ident\n      title\n      icon\n      inclusive\n      vat\n      params {\n        id\n        type\n        title\n        initialValue\n        inclusiveValue\n        config {\n          value\n          ps20Ident\n          price\n          inclusive\n          displayValue\n          disabled\n          displayValueWithPrice\n          __typename\n        }\n        __typename\n      }\n      tracking {\n        name\n        step\n        __typename\n      }\n      tracking {\n        name\n        step\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}",
-                    variables: {"order": btoa(JSON.stringify(jsonData))}
-                });
 
                 const requestOptions = {
                     method: "POST",
                     headers: myHeaders,
-                    body: graphql,
+                    body: JSON.stringify(jsonData),
                     redirect: "follow"
                     ,mode:'no-cors' // Added to attempt to bypass CORS issues
                 };
 
-                // For testing - use mock data instead of real API call
-                console.log('Using mock data for testing purposes');
                 
-                // Mock API response for testing
-                // const mockResponse = {
-                //     data: {
-                //         productResponse: {
-                //             products: [
-                //                 {
-                //                     id: "basic-001",
-                //                     ident: "TKV_BASIC",
-                //                     title: "Basis Tarif",
-                //                     priceAmount: 3510,
-                //                     priceUnit: "monatlich",
-                //                     options: [
-                //                         { title: "Kostenerstattung ab 500 EUR" },
-                //                         { title: "Allgemeine Heilbehandlung ab 6 Monate" },
-                //                         { title: "Notfallbehandlung" }
-                //                     ]
-                //                 },
-                //                 {
-                //                     id: "smart-001", 
-                //                     ident: "TKV_SMART",
-                //                     title: "Smart Tarif",
-                //                     priceAmount: 5110,
-                //                     priceUnit: "monatlich",
-                //                     options: [
-                //                         { title: "Kostenerstattung ab 0 EUR" },
-                //                         { title: "Allgemeine Heilbehandlung ab 6 Monate" },
-                //                         { title: "Vorsorge: 5 Mal" },
-                //                         { title: "Notfallbehandlung" }
-                //                     ]
-                //                 },
-                //                 {
-                //                     id: "optimal-001",
-                //                     ident: "TKV_OPTIMAL", 
-                //                     title: "Optimal Tarif",
-                //                     priceAmount: 7330,
-                //                     priceUnit: "monatlich",
-                //                     options: [
-                //                         { title: "Kostenerstattung ab 0 EUR" },
-                //                         { title: "Allgemeine Heilbehandlung ab 0 Monate" },
-                //                         { title: "Vorsorge: 5 Mal" },
-                //                         { title: "Premium Abdeckung" }
-                //                     ]
-                //                 }
-                //             ]
-                //         }
-                //     }
-                // };
-
-                // // Simulate API delay
-                // setTimeout(() => {
-                //     console.log('Mock API Response:', mockResponse);
-                //     updatePricingModal(JSON.stringify(mockResponse));
-                //     document.getElementById('resultsModal').style.display = 'flex';
-                // }, 1000);
-
-                // Store form data for next page
                 localStorage.setItem('petInsuranceFormData', JSON.stringify(jsonData));
                 
                 // Navigate to plans page instead of showing modal
-                window.location.href = 'plans.html?from=form';
+                // window.location.href = 'plans.html?from=form';
                 
-                /*
+                
                 // Real API call (commented out - using plans page instead)
                 // Make the API call
-                fetch("https://inno-prod.allianz.de/tkv/op/graphql", requestOptions)
+                fetch("https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz", requestOptions)
                     .then((response) => {
                         if (!response.ok) {
                             throw new Error(`HTTP Error: ${response.status} - ${response.statusText}`);
@@ -2226,7 +2150,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         showApiError(`Verbindung zum Server fehlgeschlagen: ${error.message}`);
                         document.getElementById('resultsModal').style.display = 'flex';
                     });
-                */
+                
                 
             }
         });
