@@ -85,12 +85,12 @@
 
         .form-input, .form-select {
             border: none;
-            border-bottom: 2px solid #003781;
+            border-bottom: 2px solid #000000;
             padding: 5px 8px;
             font-size: 16px;
             background: transparent;
             min-width: 120px;
-            color: #003781;
+            color: #c80a50;
             transition: all 0.3s ease;
             font-weight: bold;
             height: 32px; /* Fixed height to prevent layout shifts */
@@ -99,8 +99,8 @@
 
         .form-input:focus, .form-select:focus {
             outline: none;
-            border-bottom-color: #003781;
-            background: rgba(0, 102, 204, 0.05);
+            border-bottom-color: #000000;
+            background: rgba(92, 175, 175, 0.05);
         }
 
         .form-select {
@@ -200,7 +200,7 @@
         }
 
         .city-display {
-            color: #003781;
+            color: #c80a50;
             font-weight: 500;
             margin-left: 5px;
             font-style: italic;
@@ -212,7 +212,7 @@
         .city-display.show {
             opacity: 1;
             display: inline;
-            color: #003781;
+            color: #c80a50;
             font-size: larger;
             font-weight: bold;
         }
@@ -223,10 +223,10 @@
         }
 
         .question-title {
-            color: #1a4b6b;
+            color: #000000;
             font-size: 16px;
             margin-bottom: 15px;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .question-header {
@@ -237,10 +237,10 @@
         }
 
         .info-icon {
-            color: #003781;
+            color: #000000;
             font-size: 14px;
             cursor: help;
-            background: #e7f3ff;
+           
             border-radius: 50%;
             width: 18px;
             height: 18px;
@@ -276,7 +276,7 @@
 
         .date-input {
             border: none;
-            border-bottom: 2px solid #003781;
+            border-bottom: 2px solid #000000;
             padding: 8px 35px 8px 12px;
             font-size: 16px;
             background: transparent;
@@ -287,8 +287,8 @@
 
         .date-input:focus {
             outline: none;
-            border-bottom-color: #003781;
-            background: rgba(0, 102, 204, 0.05);
+            border-bottom-color: #000000;
+            background: rgba(38, 39, 39, 0.05);
         }
 
         /* Date display overlay in German format */
@@ -298,7 +298,7 @@
             top: 50%;
             transform: translateY(-50%);
             font-size: 16px;
-            color: #003781;
+            color: #c80a50;
             pointer-events: none;
             font-weight: normal;
         }
@@ -312,7 +312,7 @@
             width: 18px;
             height: 18px;
             cursor: pointer;
-            background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23003781' stroke-width='2'%3e%3crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3e%3c/rect%3e%3cline x1='16' y1='2' x2='16' y2='6'%3e%3c/line%3e%3cline x1='8' y1='2' x2='8' y2='6'%3e%3c/line%3e%3cline x1='3' y1='10' x2='21' y2='10'%3e%3c/line%3e%3c/svg%3e") no-repeat center;
+            background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c80a50' stroke-width='2'%3e%3crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3e%3c/rect%3e%3cline x1='16' y1='2' x2='16' y2='6'%3e%3c/line%3e%3cline x1='8' y1='2' x2='8' y2='6'%3e%3c/line%3e%3cline x1='3' y1='10' x2='21' y2='10'%3e%3c/line%3e%3c/svg%3e") no-repeat center;
             background-size: 14px;
             opacity: 0.8;
         }
@@ -360,7 +360,7 @@
         .radio-custom {
             width: 20px;
             height: 20px;
-            border: 2px solid #003781;
+            border: 2px solid #c80a50;
             border-radius: 50%;
             position: relative;
             transition: all 0.3s ease;
@@ -371,7 +371,7 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: #003781;
+            background: #c80a50;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -384,7 +384,7 @@
         }
 
         .radio-option:hover .radio-custom {
-            border-color: #003781;
+            border-color: #c80a50;
             background: rgba(0, 102, 204, 0.05);
         }
 
@@ -409,7 +409,7 @@
         .checkbox-custom {
             width: 20px;
             height: 20px;
-            border: 2px solid #003781;
+            border: 2px solid #c80a50;
             border-radius: 3px;
             position: relative;
             transition: all 0.3s ease;
@@ -427,8 +427,8 @@
         }
 
         .checkbox-option input[type="checkbox"]:checked + .checkbox-custom {
-            background: #003781;
-            border-color: #003781;
+            background: #c80a50;
+            border-color: #c80a50;
         }
 
         .checkbox-option input[type="checkbox"]:checked + .checkbox-custom::after {
@@ -486,30 +486,28 @@
             content: '•';
             position: absolute;
             left: 0;
-            color: #003781;
+            color: #c80a50;
         }
 
         /* CTA Button */
         .cta-button {
-            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            background: #c80a50;
             color: white;
             border: none;
             padding: 15px 40px;
             font-size: 16px;
             font-weight: bold;
-            border-radius: 6px;
+            border-radius:25px ;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             transition: all 0.3s ease;
             margin: 40px 0 20px;
-            box-shadow: 0 4px 15px rgba(247, 147, 30, 0.3);
         }
 
         .cta-button:hover {
-            background: linear-gradient(135deg, #ff7a47 0%, #f89c32 100%);
+            background: #dc1961;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(247, 147, 30, 0.4);
         }
 
         /* Results Modal */
@@ -923,9 +921,9 @@
         .number-btn {
             width: 40px;
             height: 40px;
-            border: 2px solid #003781;
+            border: 2px solid #c80a50;
             background: #fff;
-            color: #003781;
+            color: #c80a50;
             font-size: 20px;
             font-weight: bold;
             cursor: pointer;
@@ -937,16 +935,16 @@
 
         .minus-btn {
             border-radius: 6px 0 0 6px;
-            border-right: 1px solid #003781;
+            border-right: 1px solid #c80a50;
         }
 
         .plus-btn {
             border-radius: 0 6px 6px 0;
-            border-left: 1px solid #003781;
+            border-left: 1px solid #c80a50;
         }
 
         .number-btn:hover {
-            background: #003781;
+            background: #c80a50;
             color: #fff;
         }
 
@@ -957,20 +955,17 @@
         .number-input {
             width: 60px;
             height: 40px;
-            border: 2px solid #003781;
+            border: 2px solid #c80a50;
             border-left: none;
             border-right: none;
             background: #fff;
             text-align: center;
             font-size: 16px;
             font-weight: bold;
-            color: #333;
+            color: #c80a50;
             outline: none;
         }
 
-        .number-input:focus {
-            background: rgba(0, 102, 204, 0.05);
-        }
 
         /* Error Validation Styles */
         .error-box {
