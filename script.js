@@ -1779,9 +1779,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const rasseSelect = document.getElementById('rasse');
         const breedCode = rasseSelect.value;
         
-        // Birth date - already in DD.MM.YYYY format from German input
+        // Birth date - convert from YYYY-MM-DD to DD.MM.YYYY format
         const birthDateInput = document.getElementById('geburtsdatum').value;
-        let birthDate = birthDateInput; // Use the German format directly
+        let birthDate = '';
+        if (birthDateInput) {
+            // birthDateInput is in YYYY-MM-DD format from HTML date input
+            const dateParts = birthDateInput.split('-');
+            if (dateParts.length === 3) {
+                // Convert to DD.MM.YYYY format
+                birthDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
+                console.log('Birth date converted:', birthDateInput, '->', birthDate);
+            }
+        }
         
         // Environment - convert to uppercase for cats
         const haltung = document.querySelector('input[name="haltung"]:checked').value;
