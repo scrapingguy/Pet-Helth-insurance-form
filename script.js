@@ -1960,8 +1960,28 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to update pricing modal with real API data
     function updatePricingModal(apiResponse) {
         try {
-            const response = JSON.parse(apiResponse);
-            const products = response.data?.productResponse?.products || [];
+            console.log('Raw API Response:', apiResponse);
+            
+            let parsedResponse;
+            if (typeof apiResponse === 'string') {
+                parsedResponse = JSON.parse(apiResponse);
+            } else {
+                parsedResponse = apiResponse;
+            }
+            
+            console.log('Parsed API Response:', parsedResponse);
+            
+            // Handle the new nested response structure
+            let products = [];
+            if (parsedResponse.success && parsedResponse.data && parsedResponse.data.data && 
+                parsedResponse.data.data.productResponse && parsedResponse.data.data.productResponse.products) {
+                products = parsedResponse.data.data.productResponse.products;
+            } else if (parsedResponse.data && parsedResponse.data.productResponse && parsedResponse.data.productResponse.products) {
+                // Fallback for old structure
+                products = parsedResponse.data.productResponse.products;
+            } else {
+                throw new Error('Products not found in response structure');
+            }
             
             if (products.length === 0) {
                 console.log('No products found in API response');
@@ -1983,67 +2003,205 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create plan cards from API data
             products.forEach((product, index) => {
                 const planCard = document.createElement('div');
-                planCard.className = `plan-card${index === 1 ? ' recommended' : ''}`;
+                planCard.className = `plan-card${product.topSeller ? ' recommended' : ''}`;
                 
-                // Format price (assuming priceAmount might be in cents or as decimal)
+                // Add top seller badge if applicable
+                const topSellerBadge = product.topSeller ? '<div class="top-seller-badge">Beliebteste</div>' : '';
+                
+                // Format price (monthly)
                 let formattedPrice = '0,00';
                 if (product.priceAmount) {
-                    // Convert to German format with comma as decimal separator
-                    const price = product.priceAmount > 1000 ? 
-                        (product.priceAmount / 100) : product.priceAmount;
-                    formattedPrice = price.toFixed(2).replace('.', ',');
+                    formattedPrice = product.priceAmount.toFixed(2).replace('.', ',');
                 }
                 
-                const priceUnit = product.priceUnit || 'monatlich';
+                // Calculate annual price
+                const annualPrice = (product.priceAmount * 12).toFixed(2).replace('.', ',');
                 
-                // Build features list from product options
-                let featuresHtml = '';
+                // Build treatment options HTML
+                let treatmentOptionsHtml = '';
                 if (product.options && product.options.length > 0) {
-                    featuresHtml = product.options.slice(0, 6).map(option => 
-                        `<li>${option.title}</li>`
-                    ).join('');
-                } else {
-                    // Default features if no options provided
-                    featuresHtml = `
-                        <li>Allgemeine Heilbehandlung</li>
-                        <li>Operationen und Eingriffe</li>
-                        <li>Notfallbehandlung</li>
-                        <li>Vorsorgeuntersuchungen</li>
+                    const hbOption = product.options.find(opt => opt.ident === 'HB');
+                    if (hbOption && hbOption.params && hbOption.params.length > 0) {
+                        const config = hbOption.params[0].config;
+                        if (config && config.length > 0) {
+                            const availableOptions = config.filter(c => !c.disabled);
+                            if (availableOptions.length > 0) {
+                                treatmentOptionsHtml = `
+                                    <div class="treatment-options">
+                                        <h4>Heilbehandlungsschutz (optional)</h4>
+                                        <div class="options-group">
+                                            ${availableOptions.map(opt => 
+                                                `<div class="treatment-option" data-price="${opt.price}" data-value="${opt.value}">
+                                                    <input type="radio" name="treatment_${product.id}" value="${opt.value}" 
+                                                           ${opt.value === hbOption.params[0].initialValue ? 'checked' : ''}
+                                                           id="treatment_${product.id}_${opt.value}">
+                                                    <label for="treatment_${product.id}_${opt.value}">${opt.displayValue}</label>
+                                                    ${opt.price > 0 ? `<span class="option-price">+${opt.price.toFixed(2).replace('.', ',')}€</span>` : ''}
+                                                </div>`
+                                            ).join('')}
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        }
+                    }
+                }
+                
+                // Contract duration options
+                let durationHtml = '';
+                if (product.contractDuration && product.contractDuration.allowChange) {
+                    durationHtml = `
+                        <div class="contract-duration">
+                            <h4>Vertragslaufzeit</h4>
+                            <select class="duration-select" data-product="${product.id}">
+                                ${product.contractDuration.availableDurations.map(duration => 
+                                    `<option value="${duration}" ${duration === product.contractDuration.defaultDuration ? 'selected' : ''}>
+                                        ${duration} Jahr${duration > 1 ? 'e' : ''}
+                                    </option>`
+                                ).join('')}
+                            </select>
+                        </div>
                     `;
                 }
                 
                 planCard.innerHTML = `
-                    <div class="plan-name">${product.title || `Plan ${index + 1}`}</div>
-                    <div class="plan-price">${formattedPrice} €<br><small>${priceUnit}</small></div>
-                    <ul class="plan-features">
-                        ${featuresHtml}
-                    </ul>
-                    <button class="plan-button" data-product-id="${product.id}" data-product-ident="${product.ident}">Auswählen</button>
+                    ${topSellerBadge}
+                    <div class="plan-header">
+                        <div class="plan-name">${product.title || `Plan ${index + 1}`}</div>
+                        <div class="plan-price">
+                            <span class="monthly-price">${formattedPrice} €</span>
+                            <span class="price-period">/Monat</span>
+                        </div>
+                        <div class="annual-price">${annualPrice}€ jährlich</div>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <div class="base-coverage">
+                            <h4>Grundschutz</h4>
+                            <ul>
+                                <li>✓ OP-Kostenschutz</li>
+                                <li>✓ Nachbehandlung nach Operationen</li>
+                                <li>✓ Keine Wartezeiten bei Unfällen</li>
+                                <li>✓ 24/7 Notfallschutz</li>
+                            </ul>
+                        </div>
+                        
+                        ${treatmentOptionsHtml}
+                        ${durationHtml}
+                    </div>
+                    
+                    <div class="plan-footer">
+                        <button class="plan-button" data-product-id="${product.id}" 
+                                data-product-ident="${product.ident}" 
+                                data-product-title="${product.title}"
+                                data-base-price="${product.priceAmount}">
+                            ${product.title} auswählen
+                        </button>
+                    </div>
                 `;
                 
                 planOptions.appendChild(planCard);
+            });
+
+            // Add event listeners for treatment options
+            document.querySelectorAll('input[name^="treatment_"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    updatePlanPrice(this);
+                });
+            });
+            
+            // Add event listeners for duration changes
+            document.querySelectorAll('.duration-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    updatePlanDuration(this);
+                });
             });
 
             // Add click handlers to new plan buttons
             const planButtons = planOptions.querySelectorAll('.plan-button');
             planButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    const productId = this.getAttribute('data-product-id');
-                    const productIdent = this.getAttribute('data-product-ident');
-                    console.log('Selected plan:', productId, productIdent);
-                    
-                    // You can add logic here to handle plan selection
-                    // For example, redirect to next step or store selection
-                    alert(`Sie haben Plan "${this.closest('.plan-card').querySelector('.plan-name').textContent}" ausgewählt!`);
+                    selectPlan(this);
                 });
             });
 
-            console.log('Successfully updated pricing modal with API data');
+            console.log('Successfully updated pricing modal with API data -', products.length, 'products loaded');
             
         } catch (error) {
             console.error('Error parsing API response:', error);
             showApiError('Fehler beim Verarbeiten der Server-Antwort.');
         }
+    }
+    
+    // Helper function to update plan price when treatment options change
+    function updatePlanPrice(radioInput) {
+        const planCard = radioInput.closest('.plan-card');
+        const selectButton = planCard.querySelector('.plan-button');
+        const monthlyPriceElement = planCard.querySelector('.monthly-price');
+        const annualPriceElement = planCard.querySelector('.annual-price');
+        
+        const basePrice = parseFloat(selectButton.dataset.basePrice);
+        const optionPrice = parseFloat(radioInput.closest('.treatment-option').dataset.price) || 0;
+        const totalMonthly = basePrice + optionPrice;
+        const totalAnnual = totalMonthly * 12;
+        
+        monthlyPriceElement.textContent = `${totalMonthly.toFixed(2).replace('.', ',')} €`;
+        annualPriceElement.textContent = `${totalAnnual.toFixed(2).replace('.', ',')}€ jährlich`;
+        
+        console.log('Price updated:', {basePrice, optionPrice, totalMonthly});
+    }
+    
+    // Helper function to handle contract duration changes
+    function updatePlanDuration(selectElement) {
+        const duration = selectElement.value;
+        const productId = selectElement.dataset.product;
+        console.log('Contract duration changed:', {productId, duration});
+        // Add logic here to update pricing based on duration if needed
+    }
+    
+    // Helper function to handle plan selection
+    function selectPlan(buttonElement) {
+        const productId = buttonElement.dataset.productId;
+        const productIdent = buttonElement.dataset.productIdent;
+        const productTitle = buttonElement.dataset.productTitle;
+        const planCard = buttonElement.closest('.plan-card');
+        
+        // Get selected treatment option
+        const selectedTreatment = planCard.querySelector('input[name^="treatment_"]:checked');
+        const treatmentValue = selectedTreatment ? selectedTreatment.value : null;
+        const treatmentPrice = selectedTreatment ? 
+            parseFloat(selectedTreatment.closest('.treatment-option').dataset.price) || 0 : 0;
+        
+        // Get selected duration
+        const durationSelect = planCard.querySelector('.duration-select');
+        const selectedDuration = durationSelect ? durationSelect.value : 1;
+        
+        // Get final price
+        const finalPrice = planCard.querySelector('.monthly-price').textContent;
+        
+        const selectionData = {
+            productId,
+            productIdent,
+            productTitle,
+            treatmentValue,
+            treatmentPrice,
+            selectedDuration,
+            finalPrice
+        };
+        
+        console.log('Plan selected:', selectionData);
+        
+        // Store selection data
+        localStorage.setItem('selectedPlan', JSON.stringify(selectionData));
+        
+        // Close modal
+        document.getElementById('resultsModal').style.display = 'none';
+        
+        // Show confirmation
+        alert(`Sie haben den Tarif "${productTitle}" für ${finalPrice}/Monat ausgewählt.`);
+        
+        // You can redirect to next step here
+        // window.location.href = 'next-step.html';
     }
 
     // Function to show error message when API fails
