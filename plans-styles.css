@@ -165,7 +165,7 @@ body {
 .pricing-table.is-fixed { position: fixed; top: 0; left: 0; right: 0; z-index: 20;  }
 #pricingPlaceholder { height: 0; }
 .pricing-grid .ph-cell { padding: 22px 20px; text-align: center; position: relative; background: #fff; border-left: 1px solid #e5edf2; }
-.pricing-grid .ph-empty { background: #eef6f8; text-align: left; border-left: none; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+.pricing-grid .ph-empty { background: #c80a5008; text-align: left; border-left: none; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
 .pricing-grid .ph-empty-info { background: #fff; border-left: 1px solid #e5edf2; }
 
 
@@ -182,7 +182,7 @@ body {
 }
 
 .ph-empty {
-    background: #eef6f8;
+    background: #c80a5008;
     text-align: left;
     border-left: none;
 }
@@ -253,7 +253,7 @@ body {
     .btn-outline-magenta:hover { background: #fff3f7; }
 
 .pr-row .cell:nth-child(1) {
-    background: #eef6f8;
+    background: #c80a5008;
     border-left: none;
 }
 
@@ -477,7 +477,7 @@ body {
 .expandable-sections {
     max-width: 1000px;
     margin: auto;
-    background: #fff;
+    background: #c80a5008;
     margin-bottom: 40px;
 }
 
@@ -863,7 +863,7 @@ body {
 
 .op-row:first-child .op-cell { border-top: none; }
 .op-row .op-cell:nth-child(1) {
-    background: #eef6f8;
+    background: #c80a5008;
     border-left: none;
     font-weight: 600;
     color: #2b2f33;
