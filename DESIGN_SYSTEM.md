@@ -7,9 +7,10 @@ Based on the analysis of vierbeinerabsicherung.de, I've implemented a profession
 ## Color Palette
 
 ### Primary Colors
-- **Primary Blue**: `#1a4b6b` - Main brand color for buttons, headings, and key elements
-- **Primary Blue Hover**: `#0052a3` - Darker shade for hover states
+- **Primary Blue**: `#c80a50` - Brand color for headings, borders, accents
+- **Primary Blue Hover**: `#0052a3` - Darker shade for hover states on blue accents
 - **Primary Blue Light**: `rgba(0, 102, 204, 0.1)` - Light version for backgrounds and subtle accents
+- **Primary Action Pink**: `#c80a50` - Main CTA/action color for buttons
 
 ### Secondary Colors
 - **Accent Orange**: `#ff6b35` - For highlights and special callouts
@@ -52,20 +53,16 @@ Based on the analysis of vierbeinerabsicherung.de, I've implemented a profession
 
 ## Button Design
 
-### Primary Buttons (CTA)
-- **Background**: Primary Blue (`#1a4b6b`)
-- **Border Radius**: Pill shape (`30px`)
-- **Padding**: `16px 48px`
-- **Font Weight**: `600` (semi-bold)
-- **Shadow**: Subtle blue shadow for depth
-- **Hover Effect**: Darker blue + lift animation
+### Shared Variants
+- `.btn`: Base styles (padding, radius, transitions)
+- `.btn-primary`: Pink fill (`#c80a50`) with white text; hover uses slight darken via `filter: brightness(0.95)`; disabled uses `#ccc`.
+- `.btn-secondary`: Transparent with pink border/text; hover inverts to pink fill with white text.
+- Focus: `box-shadow: 0 0 0 3px rgba(200, 10, 80, 0.2)` for accessibility.
 
-### Secondary Buttons (Plan Selection)
-- **Background**: Primary Blue (`#1a4b6b`)
-- **Border Radius**: Rounded corners (`8px`)
-- **Padding**: `16px 32px`
-- **Full width for plan cards
-- **Hover Effect**: Darker shade + subtle lift
+### Contextual Buttons
+- Index page `.cta-button`: Pink fill CTA consistent with `.btn-primary`.
+- Plans page `.plan-button`: Outlined pink select buttons on cards (kept as outlined for contrast), and bottom action `.btn-primary`/`.btn-secondary` use pink system.
+- Modal/Index plan selection `.plan-button` (results modal): Pink fill to match primary action.
 
 ## Layout & Spacing
 

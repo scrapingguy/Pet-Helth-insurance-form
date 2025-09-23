@@ -118,6 +118,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize pricing
     updatePricing();
     
+    // Initialize expandable sections
+    initializeExpandableSections();
+    
     // Helper functions
     function getCurrentPrice(plan, deductible, frequency) {
         if (staticPricingData[plan] && staticPricingData[plan][deductible] && staticPricingData[plan][deductible][frequency]) {
@@ -125,6 +128,144 @@ document.addEventListener('DOMContentLoaded', function() {
             return `${price.toFixed(2).replace('.', ',')} €`;
         }
         return '35,80 €';
+    }
+    
+    function initializeExpandableSections() {
+        const sectionHeaders = document.querySelectorAll('.section-header');
+        console.log('Found', sectionHeaders.length, 'expandable section headers');
+        
+        // First populate content, then add event listeners
+        populateExpandableContent();
+        
+        sectionHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                const toggleTarget = this.getAttribute('data-toggle');
+                const content = document.getElementById(toggleTarget + '-content');
+                const toggleIcon = this.querySelector('.toggle-icon');
+                
+                console.log('Clicked section:', toggleTarget);
+                
+                if (content) {
+                    const isExpanded = content.classList.contains('active');
+                    
+                    if (isExpanded) {
+                        // Collapse
+                        content.style.maxHeight = '0px';
+                        content.classList.remove('active');
+                        this.classList.remove('active');
+                        if (toggleIcon) {
+                            toggleIcon.style.transform = 'rotate(0deg)';
+                        }
+                    } else {
+                        // Expand
+                        content.classList.add('active');
+                        this.classList.add('active');
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        if (toggleIcon) {
+                            toggleIcon.style.transform = 'rotate(180deg)';
+                        }
+                        
+                        // After animation, set to auto for dynamic content
+                        setTimeout(() => {
+                            if (content.classList.contains('active')) {
+                                content.style.maxHeight = 'auto';
+                            }
+                        }, 300);
+                    }
+                } else {
+                    console.error('Content element not found for:', toggleTarget + '-content');
+                }
+            });
+        });
+    }
+    
+    function populateExpandableContent() {
+        // Add content for operation section
+        const operationContent = document.getElementById('operation-content');
+        if (operationContent) {
+            operationContent.innerHTML = `
+                <div class="coverage-row">
+                    <div class="coverage-label">
+                        <span>Physiotherapie nach einer Operation</span>
+                        <span class="info-icon">ⓘ</span>
+                    </div>
+                    <div class="coverage-values">
+                        <div class="coverage-value basis">—</div>
+                        <div class="coverage-value smart">bis 500 €</div>
+                        <div class="coverage-value komfort">bis 1.000 €</div>
+                    </div>
+                </div>
+                <div class="coverage-row">
+                    <div class="coverage-label">
+                        <span>Alternative Heilmethoden (nach OP)</span>
+                        <span class="info-icon">ⓘ</span>
+                    </div>
+                    <div class="coverage-values">
+                        <div class="coverage-value basis">—</div>
+                        <div class="coverage-value smart">bis 250 €</div>
+                        <div class="coverage-value komfort">bis 500 €</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Add content for additional section
+        const additionalContent = document.getElementById('additional-content');
+        if (additionalContent) {
+            additionalContent.innerHTML = `
+                <div class="coverage-row">
+                    <div class="coverage-label">
+                        <span>Unterbringung bei stationärer Behandlung</span>
+                        <span class="info-icon">ⓘ</span>
+                    </div>
+                    <div class="coverage-values">
+                        <div class="coverage-value basis">bis 14 Tage</div>
+                        <div class="coverage-value smart">bis 20 Tage</div>
+                        <div class="coverage-value komfort">bis 30 Tage</div>
+                    </div>
+                </div>
+                <div class="coverage-row">
+                    <div class="coverage-label">
+                        <span>Freie Tierarztwahl</span>
+                        <span class="info-icon">ⓘ</span>
+                    </div>
+                    <div class="coverage-values">
+                        <div class="coverage-value basis">✓</div>
+                        <div class="coverage-value smart">✓</div>
+                        <div class="coverage-value komfort">✓</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Add content for service section
+        const serviceContent = document.getElementById('service-content');
+        if (serviceContent) {
+            serviceContent.innerHTML = `
+                <div class="coverage-row">
+                    <div class="coverage-label">
+                        <span>24/7 Tierärztlicher Notdienst Hotline</span>
+                        <span class="info-icon">ⓘ</span>
+                    </div>
+                    <div class="coverage-values">
+                        <div class="coverage-value basis">—</div>
+                        <div class="coverage-value smart">✓</div>
+                        <div class="coverage-value komfort">✓</div>
+                    </div>
+                </div>
+                <div class="coverage-row">
+                    <div class="coverage-label">
+                        <span>Online Kundenbereich</span>
+                        <span class="info-icon">ⓘ</span>
+                    </div>
+                    <div class="coverage-values">
+                        <div class="coverage-value basis">✓</div>
+                        <div class="coverage-value smart">✓</div>
+                        <div class="coverage-value komfort">✓</div>
+                    </div>
+                </div>
+            `;
+        }
     }
     
     function updatePricing() {
