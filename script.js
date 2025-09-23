@@ -2713,7 +2713,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         .alert-btn {
-          background: #007bff;
+          background: #c80a50;
           color: white;
           border: none;
           padding: 12px 30px;
@@ -2724,7 +2724,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         .alert-btn:hover {
-          background: #0056b3;
+          background: #da0e59ee;
         }
         
         .alert-error .alert-icon { color: #dc3545; }

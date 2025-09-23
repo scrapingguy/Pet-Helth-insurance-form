@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Make sure continue button starts disabled
     if (continueBtn) {
         continueBtn.disabled = true;
-        continueBtn.style.backgroundColor = '#ccc';
+    continueBtn.style.backgroundColor = '#ccc';
         continueBtn.style.cursor = 'not-allowed';
     }
     
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Enable continue button
             if (continueBtn) {
                 continueBtn.disabled = false;
-                continueBtn.style.backgroundColor = '#003781';
+                continueBtn.style.backgroundColor = '#c80a50';
                 continueBtn.style.cursor = 'pointer';
                 continueBtn.style.color = 'white';
                 console.log('Continue button enabled');
@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedPlan = button.dataset.plan;
 
         // Enable continue button with visual feedback
-        continueBtn.disabled = false;
+    continueBtn.disabled = false;
         continueBtn.style.opacity = '1';
         continueBtn.style.cursor = 'pointer';
         continueBtn.classList.add('enabled');

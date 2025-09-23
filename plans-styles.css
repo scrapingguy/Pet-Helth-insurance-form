@@ -2,9 +2,10 @@
 
 /* Header Section */
 .plans-header {
-    background: #f8f9fa;
-    padding: 20px 0;
+    background: #ffffff;
+    padding: 24px 0;
     border-bottom: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .progress-bar {
@@ -37,11 +38,12 @@
 }
 
 .progress-step.completed .step-number {
-    background: #003781;
+    background: #1a4b6b;
 }
 
 .progress-step.active .step-number {
-    background: #0066cc;
+    background: #1a4b6b;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
 }
 
 .step-label {
@@ -59,7 +61,7 @@
 }
 
 .progress-line.completed {
-    background: #003781;
+    background: #1a4b6b;
 }
 
 /* Selection Section */
@@ -85,11 +87,11 @@
 
 .selection-dropdown {
     border: none;
-    border-bottom: 2px solid #0066cc;
+    border-bottom: 2px solid #1a4b6b;
     padding: 8px 30px 8px 12px;
     font-size: 18px;
     background: transparent;
-    color: #0066cc;
+    color: #1a4b6b;
     font-weight: 500;
     cursor: pointer;
     appearance: none;
@@ -105,7 +107,7 @@
 }
 
 .info-icon {
-    color: #0066cc;
+    color: #1a4b6b;
     cursor: help;
     font-size: 16px;
     margin: 0 5px;
@@ -126,21 +128,11 @@
 
 .plans-title {
     font-size: 32px;
-    color: #333;
-    font-weight: 300;
+    color: #c80a50;
+    font-weight: 600;
     margin-bottom: 20px;
 }
 
-.bestseller-badge {
-    background: #d4a5d4;
-    color: white;
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-    display: inline-block;
-    margin-bottom: 30px;
-}
 
 /* Plans Section */
 .plans-section {
@@ -174,7 +166,7 @@
 }
 
 .plan-card.featured {
-    border: 2px solid #d4a5d4;
+    border: 2px solid #c80a50;
 }
 
 .plan-card.featured::before {
@@ -183,7 +175,7 @@
     top: -10px;
     left: 50%;
     transform: translateX(-50%);
-    background: #d4a5d4;
+    background: #c80a50;
     color: white;
     padding: 5px 15px;
     border-radius: 10px;
@@ -198,7 +190,7 @@
 .plan-name {
     font-size: 24px;
     color: #333;
-    font-weight: 400;
+    font-weight: 600;
     margin-bottom: 15px;
 }
 
@@ -217,25 +209,29 @@
 
 .plan-button {
     background: transparent;
-    border: 2px solid #0066cc;
-    color: #0066cc;
+    border: 2px solid #c80a50;
+    color: #c80a50;
     padding: 12px 30px;
-    border-radius: 4px;
+    border-radius: 25px;
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
     width: 140px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; /* center horizontally */
 }
 
 .plan-button:hover {
-    background: #0066cc;
+    background: #c80a50;
     color: white;
 }
 
 .plan-button.selected {
-    background: #003781;
-    border-color: #003781;
+    background: #c80a50;
+    border-color:#c80a50 ;
     color: white;
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(0, 55, 129, 0.3);
@@ -331,14 +327,14 @@
 }
 
 .coverage-value.smart {
-    color: #0066cc;
+    color: #1a4b6b;
     background: rgba(0, 102, 204, 0.1);
     border-radius: 4px;
 }
 
 .coverage-value.komfort {
     color: #333;
-    background: rgba(0, 0, 0, 0.05);
+    background: #c80a5020;
     border-radius: 4px;
 }
 
@@ -376,7 +372,7 @@
 
 .toggle-icon {
     font-size: 20px;
-    color: #0066cc;
+    color: #1a4b6b;
     transition: transform 0.3s ease;
 }
 
@@ -406,10 +402,10 @@
 
 .btn-secondary {
     background: transparent;
-    border: 2px solid #666;
-    color: #666;
+    border: 2px solid #c80a50;
+    color: #c80a50;
     padding: 12px 30px;
-    border-radius: 4px;
+    border-radius: 25px;
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
@@ -417,16 +413,16 @@
 }
 
 .btn-secondary:hover {
-    background: #666;
+    background: #c80a50;
     color: white;
 }
 
 .btn-primary {
-    background: #0066cc;
-    border: 2px solid #0066cc;
+    background: #c80a50;
+    border: 2px solid #c80a50;
     color: white;
     padding: 12px 30px;
-    border-radius: 4px;
+    border-radius: 25px;
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
@@ -441,7 +437,7 @@
 }
 
 .btn-primary.enabled {
-    background: #003781;
+    background: #c80a50;
     color: white;
     cursor: pointer;
     opacity: 1;
@@ -454,8 +450,28 @@
 }
 
 .btn-primary:not(:disabled):hover {
-    background: #003781;
-    border-color: #003781;
+    background: #c80a50;
+    border-color: #c80a50;
+}
+
+/* Focus states for accessibility */
+.btn-secondary:focus,
+.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(200, 10, 80, 0.2);
+}
+
+/* Explicit override to ensure Weiter button (action .btn-primary) is pink */
+.action-buttons .btn-primary,
+.action-buttons .btn-primary.enabled {
+    background: #c80a50;
+    border-color: #c80a50;
+    color: #ffffff;
+}
+.action-buttons .btn-primary:not(:disabled):hover {
+    background: #c80a50;
+    border-color: #c80a50;
+    filter: brightness(0.95);
 }
 
 /* Responsive Design */
@@ -499,6 +515,7 @@
 @media (max-width: 480px) {
     .plans-title {
         font-size: 24px;
+        
     }
     
     .coverage-table,

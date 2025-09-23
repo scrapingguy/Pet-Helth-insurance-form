@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Enable continue button
             if (continueBtn) {
                 continueBtn.disabled = false;
-                continueBtn.style.backgroundColor = '#003781';
+                continueBtn.style.backgroundColor = '#c80a50';
                 continueBtn.style.cursor = 'pointer';
                 continueBtn.style.color = 'white';
                 continueBtn.style.opacity = '1';
@@ -154,16 +154,16 @@ document.addEventListener('DOMContentLoaded', function() {
 const style = document.createElement('style');
 style.textContent = `
     .plan-card.selected {
-        border: 2px solid #003781 !important;
-        box-shadow: 0 4px 20px rgba(0, 55, 129, 0.15) !important;
+        border: 2px solid #c80a50 !important;
+        box-shadow: 0 4px 20px rgba(200, 10, 80, 0.15) !important;
         transform: translateY(-2px) !important;
         transition: all 0.3s ease !important;
     }
     
     .plan-button.selected {
-        background: #003781 !important;
+        background: #c80a50 !important;
         color: white !important;
-        border-color: #003781 !important;
+        border-color: #c80a50 !important;
         transition: all 0.3s ease !important;
     }
     
@@ -172,7 +172,7 @@ style.textContent = `
     }
     
     .btn-primary:not(:disabled):hover {
-        background: #004499 !important;
+        background: #c80a50 !important;
         transform: translateY(-1px) !important;
     }
 `;
