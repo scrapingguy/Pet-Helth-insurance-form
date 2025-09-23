@@ -60,135 +60,151 @@
     <!-- Plans Comparison Section -->
     <section class="plans-section">
         <div class="container">
-            <!-- Plan Cards -->
-            <div class="plan-cards">
-                <div class="plan-card">
-                    <div class="plan-header">
-                        <h3 class="plan-name">Basis</h3>
-                        <div class="plan-price">
-                            <span class="price">17,62 €</span>
-                            <span class="period">pro Monat</span>
+            <!-- Sticky Pricing Table (separate) -->
+            <section class="pricing-table" id="pricingTable">
+                <div class="pricing-scroll" id="pricingScroll">
+                    <div class="pricing-grid pricing-sticky">
+                        <div class="ph-cell ph-empty"></div>
+                        <div class="ph-cell">
+                            <div class="ph-name">Basis</div>
+                            <div class="ph-price">8,14 €</div>
+                            <div class="ph-period">pro Monat</div>
+                            <button class="plan-button btn-outline-magenta" data-plan="basis">Auswählen</button>
                         </div>
-                    </div>
-                    <button class="plan-button" data-plan="basis">Auswählen</button>
-                </div>
-
-                <div class="plan-card featured">
-                    <div class="plan-header">
-                        <h3 class="plan-name">Smart</h3>
-                        <div class="plan-price">
-                            <span class="price">35,80 €</span>
-                            <span class="period">pro Monat</span>
+                        <div class="ph-cell">
+                            <div class="ph-name">Smart</div>
+                            <div class="ph-price">12,28 €</div>
+                            <div class="ph-period">pro Monat</div>
+                            <button class="plan-button btn-outline-magenta" data-plan="smart">Auswählen</button>
                         </div>
-                    </div>
-                    <button class="plan-button" data-plan="smart">Auswählen</button>
-                </div>
-
-                <div class="plan-card">
-                    <div class="plan-header">
-                        <h3 class="plan-name">Komfort</h3>
-                        <div class="plan-price">
-                            <span class="price">65,10 €</span>
-                            <span class="period">pro Monat</span>
-                        </div>
-                    </div>
-                    <button class="plan-button" data-plan="komfort">Auswählen</button>
-                </div>
-            </div>
-
-            <!-- Coverage Details Table -->
-            <div class="coverage-table">
-                <div class="coverage-header">
-                    <div class="coverage-title">In allen Tarifen enthalten:</div>
-                    <div class="coverage-included">
-                        <div class="included-item">
-                            <span class="checkmark">✓</span>
-                            <span>Operationen aufgrund Unfall oder Krankheit</span>
-                            <span class="info-icon">ⓘ</span>
-                        </div>
-                        <div class="included-item">
-                            <span class="checkmark">✓</span>
-                            <span>Operationen unter Vollnarkose, Teilnarkose, Lokalanästhesie oder Sedation</span>
-                            <span class="info-icon">ⓘ</span>
-                        </div>
-                        <div class="included-item">
-                            <span class="checkmark">✓</span>
-                            <span>Letzte Untersuchung vor der Operation und Nachbehandlungen</span>
-                            <span class="info-icon">ⓘ</span>
+                        <div class="ph-cell ph-featured">
+                            <div class="ph-ribbon">Unser Bestseller</div>
+                            <div class="ph-name">Komfort</div>
+                            <div class="ph-price">20,40 €</div>
+                            <div class="ph-period">pro Monat</div>
+                            <button class="plan-button btn-outline-magenta" data-plan="komfort">Auswählen</button>
                         </div>
                     </div>
                 </div>
+            </section>
+            <div id="pricingPlaceholder" aria-hidden="true"></div>
 
-                <div class="coverage-row">
-                    <div class="coverage-label">
-                        <span>Jahreshöchstentschädigung für Operationen</span>
-                        <span class="info-icon">ⓘ</span>
+            <!-- Coverage Comparison (separate) -->
+            <section class="comparison" id="comparisonSection">
+                <div class="comparison-scroll" id="comparisonScroll">
+                    <!-- Included in all tariffs -->
+                    <div class="comparison-grid pr-row pr-row--included">
+                        <div class="cell cell-title">
+                            In allen Tarifen enthalten:
+                        </div>
+                        <div class="cell cell-included" style="grid-column: 2 / 5;">
+                            <ul class="included-list">
+                                <li>
+                                    <span class="check-green">✓</span>
+                                    Operationen aufgrund Unfall oder Krankheit
+                                    <span class="i-circle" aria-label="Info">i</span>
+                                </li>
+                                <li>
+                                    <span class="check-green">✓</span>
+                                    Operationen unter Vollnarkose, Teilnarkose, Lokalanästhesie oder Sedation
+                                    <span class="i-circle" aria-label="Info">i</span>
+                                </li>
+                                <li>
+                                    <span class="check-green">✓</span>
+                                    Letzte Untersuchung vor der Operation und Nachbehandlungen
+                                    <span class="i-circle" aria-label="Info">i</span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="coverage-values">
-                        <div class="coverage-value basis">3.000 €</div>
-                        <div class="coverage-value smart">7.500 €</div>
-                        <div class="coverage-value komfort">unbegrenzt</div>
+
+                    <!-- Data rows -->
+                    <div class="comparison-grid pr-row">
+                        <div class="cell cell-title">Jahreshöchstentschädigung für Operationen <span class="i-circle" aria-label="Info">i</span></div>
+                        <div class="cell">3.000 €</div>
+                        <div class="cell">7.500 €</div>
+                        <div class="cell">unbegrenzt</div>
+                    </div>
+
+                    <div class="comparison-grid pr-row">
+                        <div class="cell cell-title">Erstattung nach Gebührenordnung für Tierärztinnen und Tierärzte (GOT) <span class="i-circle" aria-label="Info">i</span></div>
+                        <div class="cell">2-fach</div>
+                        <div class="cell">4-fach</div>
+                        <div class="cell">4-fach</div>
+                    </div>
+
+                    <div class="comparison-grid pr-row">
+                        <div class="cell cell-title">Nachbehandlungen nach einer Operation <span class="i-circle" aria-label="Info">i</span></div>
+                        <div class="cell">bis 15 Tage</div>
+                        <div class="cell">bis 15 Tage</div>
+                        <div class="cell">bis 20 Tage</div>
+                    </div>
+
+                    <div class="comparison-grid pr-row">
+                        <div class="cell cell-title">Behandlung rassespezifischer und besonderer Erkrankungen und Fehlstellungen <span class="i-circle" aria-label="Info">i</span></div>
+                        <div class="cell">—</div>
+                        <div class="cell">einmalig bis 500 €</div>
+                        <div class="cell">einmalig bis 2.500 €</div>
+                    </div>
+
+                    <div class="comparison-grid pr-row">
+                        <div class="cell cell-title">Strahlentherapie nach Operationen <span class="i-circle" aria-label="Info">i</span></div>
+                        <div class="cell">—</div>
+                        <div class="cell">500 €</div>
+                        <div class="cell">2.500 €</div>
                     </div>
                 </div>
+            </section>
 
-                <div class="coverage-row">
-                    <div class="coverage-label">
-                        <span>Erstattung nach Gebührenordnung für Tierärztinnen und Tierärzte (GOT)</span>
-                        <span class="info-icon">ⓘ</span>
-                    </div>
-                    <div class="coverage-values">
-                        <div class="coverage-value basis">2-fach</div>
-                        <div class="coverage-value smart">4-fach</div>
-                        <div class="coverage-value komfort">4-fach</div>
-                    </div>
-                </div>
-
-                <div class="coverage-row">
-                    <div class="coverage-label">
-                        <span>Nachbehandlungen nach einer Operation</span>
-                        <span class="info-icon">ⓘ</span>
-                    </div>
-                    <div class="coverage-values">
-                        <div class="coverage-value basis">bis 15 Tage</div>
-                        <div class="coverage-value smart">bis 15 Tage</div>
-                        <div class="coverage-value komfort">bis 20 Tage</div>
-                    </div>
-                </div>
-
-                <div class="coverage-row">
-                    <div class="coverage-label">
-                        <span>Behandlung rassespezifischer und besonderer Erkrankungen und Fehlstellungen</span>
-                        <span class="info-icon">ⓘ</span>
-                    </div>
-                    <div class="coverage-values">
-                        <div class="coverage-value basis">—</div>
-                        <div class="coverage-value smart">einmalig bis 500 €</div>
-                        <div class="coverage-value komfort">einmalig bis 2.500 €</div>
-                    </div>
-                </div>
-
-                <div class="coverage-row">
-                    <div class="coverage-label">
-                        <span>Strahlentherapie nach Operationen</span>
-                        <span class="info-icon">ⓘ</span>
-                    </div>
-                    <div class="coverage-values">
-                        <div class="coverage-value basis">500 €</div>
-                        <div class="coverage-value smart">500 €</div>
-                        <div class="coverage-value komfort">2.500 €</div>
-                    </div>
-                </div>
-            </div>
+            
 
             <!-- Expandable Sections -->
-            <!-- <div class="expandable-sections">
+            <div class="expandable-sections">
                 <div class="expandable-section">
                     <div class="section-header" data-toggle="operation">
                         <span>Mehr Leistung im Rahmen einer Operation</span>
                         <span class="toggle-icon">⌄</span>
                     </div>
                     <div class="section-content" id="operation-content">
-                       
+                        <div class="op-comparison">
+                            <div class="op-scroll">
+                                <!-- Rows (no separate header row, matching screenshot) -->
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Physiotherapie <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell">500 €</div>
+                                    <div class="op-cell">500 €</div>
+                                    <div class="op-cell">500 €</div>
+                                </div>
+
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Zahnbehandlungen unter Narkose (z. B. Zahnextraktion, Wurzelbehandlung) <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell">—</div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                </div>
+
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Bildgebende Verfahren (z. B. Röntgen, MRT, CT) <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell">—</div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                </div>
+
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Prothesen &amp; Implantate <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell">—</div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                </div>
+
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Orthesen &amp; Hilfsmittel <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell">—</div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -198,7 +214,44 @@
                         <span class="toggle-icon">⌄</span>
                     </div>
                     <div class="section-content" id="additional-content">
-                        
+                        <div class="op-comparison">
+                            <div class="op-scroll">
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Telemedizin <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                </div>
+
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Schutz im Ausland <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell">12 Monate weltweit</div>
+                                    <div class="op-cell">12 Monate weltweit</div>
+                                    <div class="op-cell">12 Monate weltweit</div>
+                                </div>
+
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Futterberatung <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell">—</div>
+                                    <div class="op-cell">—</div>
+                                    <div class="op-cell">—</div>
+                                </div>
+
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Trächtigkeitsuntersuchungen <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell">—</div>
+                                    <div class="op-cell">—</div>
+                                    <div class="op-cell">—</div>
+                                </div>
+
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Kosten für Einschläferung <span class="i-circle" aria-label="Info">i</span></div>
+                                   <div class="op-cell">—</div>
+                                    <div class="op-cell">—</div>
+                                    <div class="op-cell">—</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -208,10 +261,61 @@
                         <span class="toggle-icon">⌄</span>
                     </div>
                     <div class="section-content" id="service-content">
-                       
+                        <div class="op-comparison">
+                            <div class="op-scroll">
+                                <!-- Rows -->
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Direkte Abrechnung mit der Tierärztin oder dem Tierarzt <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                </div>
+
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Freie Tierarztwahl <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                </div>
+
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Notfallgebühr <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                    <div class="op-cell"><span class="check-green">✓</span></div>
+                                </div>
+
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Wartezeit bei Krankheit &amp; Fehlentwicklung <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell">—</div>
+                                    <div class="op-cell">3 Monate</div>
+                                    <div class="op-cell">3 Monate</div>
+                                </div>
+
+                                <div class="op-grid op-row">
+                                    <div class="op-cell op-cell-title">Wartezeit bei Unfall <span class="i-circle" aria-label="Info">i</span></div>
+                                    <div class="op-cell">—</div>
+                                    <div class="op-cell">keine</div>
+                                    <div class="op-cell">keine</div>
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div> -->
+            </div>
+
+            <!-- CTA Buttons Table placed below 'Mehr Service für Sie' -->
+            <section class="cta-table" id="ctaTable">
+                <div class="cta-scroll" id="ctaScroll">
+                    <div class="cta-grid cta-row">
+                        <div class="cta-cell"></div>
+                        <div class="cta-cell"><button class="plan-button btn-outline-blue" data-plan="basis">Auswählen</button></div>
+                        <div class="cta-cell"><button class="plan-button btn-outline-blue" data-plan="smart">Auswählen</button></div>
+                        <div class="cta-cell"><button class="plan-button btn-outline-blue" data-plan="komfort">Auswählen</button></div>
+                    </div>
+                </div>
+            </section>
 
             
             <div class="action-buttons">

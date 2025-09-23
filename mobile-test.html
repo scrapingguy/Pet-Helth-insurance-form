@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Responsiveness Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .test-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .mobile-sizes {
+            display: grid;
+            gap: 10px;
+        }
+        .size-button {
+            padding: 10px 15px;
+            background: #c80a50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        iframe {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Mobile Responsiveness Test</h1>
+        <p>Test your dashboard at different mobile screen sizes:</p>
+        
+        <div class="mobile-sizes">
+            <button class="size-button" onclick="resizeFrame(375, 667)">iPhone SE (375x667)</button>
+            <button class="size-button" onclick="resizeFrame(390, 844)">iPhone 12 (390x844)</button>
+            <button class="size-button" onclick="resizeFrame(393, 851)">Pixel 7 (393x851)</button>
+            <button class="size-button" onclick="resizeFrame(360, 640)">Galaxy S5 (360x640)</button>
+            <button class="size-button" onclick="resizeFrame(414, 896)">iPhone 11 Pro Max (414x896)</button>
+            <button class="size-button" onclick="resizeFrame(768, 1024)">iPad (768x1024)</button>
+            <button class="size-button" onclick="resizeFrame('100%', 800)">Full Width</button>
+        </div>
+        
+        <div style="margin: 20px 0;">
+            <p><strong>Current size:</strong> <span id="currentSize">100% width</span></p>
+        </div>
+        
+        <div style="text-align: center; border: 2px solid #ddd; border-radius: 10px; overflow: hidden;">
+            <iframe id="testFrame" src="plans.html" height="800"></iframe>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <h3>Mobile Features to Test:</h3>
+            <ul>
+                <li>✅ Plan cards stack vertically on mobile</li>
+                <li>✅ Coverage table scrolls horizontally</li>
+                <li>✅ Buttons are full-width with good touch targets</li>
+                <li>✅ Text sizes are optimized for mobile reading</li>
+                <li>✅ Accordion sections work with touch</li>
+                <li>✅ Selection dropdowns are touch-friendly</li>
+                <li>✅ Info icons have proper touch targets</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function resizeFrame(width, height) {
+            const frame = document.getElementById('testFrame');
+            const sizeDisplay = document.getElementById('currentSize');
+            
+            if (width === '100%') {
+                frame.style.width = '100%';
+                sizeDisplay.textContent = 'Full Width x ' + height + 'px';
+            } else {
+                frame.style.width = width + 'px';
+                sizeDisplay.textContent = width + 'px x ' + height + 'px';
+            }
+            frame.style.height = height + 'px';
+        }
+
+        // Set default size
+        window.onload = function() {
+            resizeFrame(375, 667); // Default to iPhone SE size
+        };
+    </script>
+</body>
+</html>

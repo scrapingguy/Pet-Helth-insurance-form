@@ -96,7 +96,6 @@
                 const productDiv = document.createElement('div');
                 productDiv.className = 'product-card';
                 productDiv.innerHTML = `
-                    <h3>${product.title} ${product.topSeller ? '<span class="top-seller-badge">Bestseller</span>' : ''}</h3>
                     <p>Price: ${product.priceAmount.toFixed(2).replace('.', ',')} € per ${product.priceUnit}</p>
                     <p>Product ID: ${product.id}</p>
                     <p>Disabled: ${product.disabled}</p>

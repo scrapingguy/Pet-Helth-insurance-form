@@ -184,6 +184,7 @@ async function loadProductsFromAPI() {
 document.addEventListener('DOMContentLoaded', function() {
     initializeProducts();
     setupEventHandlers();
+    setupStickyPricing();
 });
 
 async function initializeProducts() {
@@ -323,6 +324,62 @@ function setupEventHandlers() {
     initExpandableSections();
 }
 
+// Sticky pricing header logic
+function setupStickyPricing() {
+    const pricingTable = document.getElementById('pricingTable');
+    const pricingScroll = document.getElementById('pricingScroll');
+    const placeholder = document.getElementById('pricingPlaceholder');
+    const comparisonScroll = document.getElementById('comparisonScroll');
+    const ctaScroll = document.getElementById('ctaScroll');
+    if (!pricingTable || !pricingScroll || !placeholder) return;
+
+    let pricingTop = pricingTable.offsetTop;
+    const pricingHeight = () => pricingTable.offsetHeight;
+
+    function onScroll() {
+        const y = window.scrollY || document.documentElement.scrollTop;
+        if (y >= pricingTop) {
+            pricingTable.classList.add('is-fixed');
+            placeholder.style.height = pricingHeight() + 'px';
+        } else {
+            pricingTable.classList.remove('is-fixed');
+            placeholder.style.height = '0px';
+        }
+    }
+
+    // Recompute top on resize/content load
+    function recalc() { pricingTop = pricingTable.getBoundingClientRect().top + window.scrollY; onScroll(); }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', recalc);
+    window.addEventListener('orientationchange', recalc);
+    setTimeout(recalc, 0);
+
+    // Keep pricing horizontal scroll in sync with comparison on touch devices
+    if (comparisonScroll) {
+        let syncing = false;
+        pricingScroll.addEventListener('scroll', () => {
+            if (syncing) return; syncing = true;
+            comparisonScroll.scrollLeft = pricingScroll.scrollLeft;
+            if (ctaScroll) ctaScroll.scrollLeft = pricingScroll.scrollLeft;
+            syncing = false;
+        }, { passive: true });
+        comparisonScroll.addEventListener('scroll', () => {
+            if (syncing) return; syncing = true;
+            pricingScroll.scrollLeft = comparisonScroll.scrollLeft;
+            if (ctaScroll) ctaScroll.scrollLeft = comparisonScroll.scrollLeft;
+            syncing = false;
+        }, { passive: true });
+        if (ctaScroll) {
+            ctaScroll.addEventListener('scroll', () => {
+                if (syncing) return; syncing = true;
+                pricingScroll.scrollLeft = ctaScroll.scrollLeft;
+                comparisonScroll.scrollLeft = ctaScroll.scrollLeft;
+                syncing = false;
+            }, { passive: true });
+        }
+    }
+}
+
 function handleContinueClick(e) {
     e.preventDefault();
     if (selectedPlan) {
@@ -429,6 +486,18 @@ function initExpandableSections() {
                 }
             }
         });
+        
+        // Add mobile-friendly touch feedback
+        if ('ontouchstart' in window) {
+            header.addEventListener('touchstart', function() {
+                this.style.backgroundColor = '#f0f0f0';
+            });
+            header.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    this.style.backgroundColor = '';
+                }, 150);
+            });
+        }
     });
     
     populateExpandableContent();
