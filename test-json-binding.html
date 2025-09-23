@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Data Binding Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; }
+        .product-card { border: 1px solid #ccc; margin: 10px; padding: 15px; }
+        .product-options { background: #f5f5f5; margin: 10px 0; padding: 10px; }
+        .top-seller-badge { background: red; color: white; padding: 2px 8px; }
+    </style>
+</head>
+<body>
+    <h1>JSON Data Binding Test</h1>
+    
+    <div class="test-section">
+        <h2>Raw JSON Data</h2>
+        <pre id="json-display"></pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>Rendered Products</h2>
+        <div id="products-container"></div>
+    </div>
+
+    <script>
+        // Your JSON response
+        const jsonResponse = {
+            "success": true,
+            "data": {
+                "data": {
+                    "productResponse": {
+                        "products": [
+                            {
+                                "id": "1",
+                                "title": "Basis",
+                                "topSeller": false,
+                                "priceAmount": 9.72,
+                                "priceUnit": "M",
+                                "disabled": false,
+                                "options": [
+                                    {
+                                        "id": "1",
+                                        "title": "Heilbehandlungs- und Vorsorgeschutz",
+                                        "params": [
+                                            {
+                                                "id": "1",
+                                                "type": "RADIO",
+                                                "config": [
+                                                    {
+                                                        "value": 2000,
+                                                        "price": 26.26,
+                                                        "displayValue": "Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "2",
+                                "title": "Smart",
+                                "topSeller": false,
+                                "priceAmount": 17.91,
+                                "priceUnit": "M",
+                                "disabled": false,
+                                "options": []
+                            },
+                            {
+                                "id": "3",
+                                "title": "Komfort",
+                                "topSeller": true,
+                                "priceAmount": 31.82,
+                                "priceUnit": "M",
+                                "disabled": false,
+                                "options": []
+                            }
+                        ]
+                    }
+                }
+            }
+        };
+
+        // Display JSON
+        document.getElementById('json-display').textContent = JSON.stringify(jsonResponse, null, 2);
+
+        // Render products
+        function renderProducts() {
+            const container = document.getElementById('products-container');
+            const products = jsonResponse.data.data.productResponse.products;
+
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product-card';
+                productDiv.innerHTML = `
+                    <h3>${product.title} ${product.topSeller ? '<span class="top-seller-badge">Bestseller</span>' : ''}</h3>
+                    <p>Price: ${product.priceAmount.toFixed(2).replace('.', ',')} € per ${product.priceUnit}</p>
+                    <p>Product ID: ${product.id}</p>
+                    <p>Disabled: ${product.disabled}</p>
+                    ${product.options.length > 0 ? `
+                        <div class="product-options">
+                            <h4>Options:</h4>
+                            ${product.options.map(option => `
+                                <div>
+                                    <strong>${option.title}</strong>
+                                    ${option.params ? option.params.map(param => `
+                                        <div>
+                                            Type: ${param.type}
+                                            ${param.config ? param.config.map(config => `
+                                                <div style="margin-left: 20px;">
+                                                    Value: ${config.value}<br>
+                                                    Price: ${config.price}<br>
+                                                    Display: ${config.displayValue}
+                                                </div>
+                                            `).join('') : ''}
+                                        </div>
+                                    `).join('') : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : '<p>No options available</p>'}
+                `;
+                container.appendChild(productDiv);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', renderProducts);
+    </script>
+</body>
+</html>
