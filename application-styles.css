@@ -71,15 +71,13 @@
 /* Header Section */
 .application-header {
     background: var(--background-primary);
-    padding: 40px 0 30px;
+    padding-bottom: 30px;
     border-bottom: 1px solid var(--border-light);
 }
 
 /* Main Layout */
 .application-section {
     background: #f8f9fa;
-    padding: 48px 0 80px;
-    min-height: 100vh;
 }
 
 .application-layout {
@@ -619,14 +617,6 @@
 }
 
 @media (max-width: 480px) {
-    .application-section {
-        padding: 20px 0 40px;
-    }
-    
-    .container {
-        padding: 0 15px;
-    }
-    
     .form-header h1 {
         font-size: 24px;
     }

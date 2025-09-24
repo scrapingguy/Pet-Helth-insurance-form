@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="styles.css?v=1727013600">
     <link rel="stylesheet" href="application-styles.css?v=1727013600">
 </head>
-<body>
-    <!-- Header Section -->
-    <section class="application-header">
-        <div class="container">
+<body class="embedded-full">
+    <main class="full-screen-scroll">
+        <!-- Header Section -->
+        <section class="application-header full-width-section">
             <div class="progress-bar">
                 <div class="progress-step completed">
                     <div class="step-number">1</div>
@@ -27,12 +27,10 @@
                     <div class="step-label">Antrag</div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Success Section -->
-    <section class="success-section">
-        <div class="container">
+        <!-- Success Section -->
+        <section class="success-section full-width-section">
             <div class="success-card">
                 <div class="success-icon">✓</div>
                 <h1>Vielen Dank für Ihren Antrag!</h1>
@@ -114,18 +112,16 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn-secondary" onclick="printPage()">Bestätigung drucken</button>
-                    <button class="btn-primary" onclick="goToHomepage()">Zur Startseite</button>
+                    <button class="btn-back" onclick="printPage()">Bestätigung drucken</button>
+                    <button class="btn-continue" onclick="goToHomepage()">Zur Startseite</button>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <style>
         .success-section {
-            padding: 40px 0;
             background: #f8f9fa;
-            min-height: calc(100vh - 120px);
         }
 
         .success-card {

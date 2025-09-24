@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="simple-pricing.css?v=1727070000">
 </head>
 <body class="embedded-full">
-    <!-- Header Section -->
-    <section class="plans-header">
-        <div class="container">
+    <main class="full-screen-scroll">
+        <!-- Header Section -->
+        <section class="plans-header full-width-section">
             <div class="progress-bar">
                 <div class="progress-step completed">
                     <div class="step-number">1</div>
@@ -22,13 +22,10 @@
                     <div class="step-label">Tarifauswahl</div>
                 </div>
             </div>
-        </div>
-    </section>
-    <main class="full-screen-scroll">
+        </section>
 
-    <!-- Selection Options Section -->
-    <section class="selection-section">
-        <div class="container">
+        <!-- Selection Options Section -->
+        <section class="selection-section full-width-section">
             <div class="selection-row">
                 <span class="selection-text">Ich möchte</span>
                 <select id="deductible" class="selection-dropdown">
@@ -47,24 +44,16 @@
                 </select>
                 <span class="selection-text">.</span>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Plans Title Section -->
-    <section class="plans-title-section">
-        <div class="container">
+        <!-- Plans Title Section -->
+        <section class="plans-title-section full-width-section">
             <div class="progress-indicator">1 von 2</div>
             <h1 class="plans-title">Auswahl der OP Versicherung</h1>
-        </div>
-    </section>
-    <section class="plans-title-section full-width-section">
-        <div class="progress-indicator">1 von 2</div>
-        <h1 class="plans-title">Auswahl der OP Versicherung</h1>
-    </section>
+        </section>
 
-    <!-- Plans Comparison Section -->
-    <section class="pricing-section">
-        <div class="container">
+        <!-- Plans Comparison Section -->
+        <section class="pricing-section full-width-section">
             <div class="pricing-cards">
                 <!-- Basis Plan -->
                 <div class="price-card" data-plan="basis">
@@ -127,14 +116,11 @@
                     <button class="select-btn featured" data-plan="komfort">Komfort auswählen</button>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Compare Plans Table -->
-    <section class="comparison-section">
-        <div class="container">
+        <!-- Compare Plans Table -->
+        <section class="comparison-section full-width-section">
             <h2>Tarife im Vergleich</h2>
-            
             <div class="table-wrapper">
                 <table class="comparison-table">
                     <thead>
@@ -237,18 +223,15 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Actions -->
-    <section class="actions">
-        <div class="container">
+        <!-- Actions -->
+        <section class="actions full-width-section">
             <div class="action-buttons">
                 <button class="btn-back" onclick="goBack()">← Zurück</button>
                 <button class="btn-continue" id="continueBtn" disabled>Weiter →</button>
             </div>
-        </div>
-    </section>
+        </section>
     </main>
     <script src="simple-pricing.js?v=1727070000"></script>
 </body>
