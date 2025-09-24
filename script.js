@@ -2516,8 +2516,8 @@ document.addEventListener("DOMContentLoaded", function () {
         )
           .then((response) => {
             if (!response.ok) {
-              // If API fails, still redirect to plans page with static data
-              window.location.href = 'plans.html?from=form&source=static';
+              // If API fails, still redirect to pricing page with static data
+              window.location.href = 'simple-pricing.html?from=form&source=static';
               return;
             }
             return response.text();
@@ -2533,15 +2533,15 @@ document.addEventListener("DOMContentLoaded", function () {
               
               // Store API response for plans page
               localStorage.setItem("apiResponseData", result);
-              window.location.href = 'plans.html?from=form&source=api';
+              window.location.href = 'simple-pricing.html?from=form&source=api';
               
             } catch (parseError) {
-              window.location.href = 'plans.html?from=form&source=static';
+              window.location.href = 'simple-pricing.html?from=form&source=static';
             }
           })
           .catch((error) => {
-            // Always redirect to plans page even if API fails
-            window.location.href = 'plans.html?from=form&source=static';
+            // Always redirect to pricing page even if API fails
+            window.location.href = 'simple-pricing.html?from=form&source=static';
           });
       }
     });

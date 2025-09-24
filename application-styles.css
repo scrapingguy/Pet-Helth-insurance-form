@@ -1,11 +1,78 @@
 /* Application Page Specific Styles */
 
+/* CSS Variables for consistency */
+:root {
+    --primary-color: #c80a50;
+    --primary-hover: #a00842;
+    --primary-light: rgba(200, 10, 80, 0.1);
+    --accent-green: #28a745;
+    --accent-green-hover: #1e7e34;
+    --text-primary: #2c3e50;
+    --text-secondary: #6c757d;
+    --background-primary: #ffffff;
+    --background-secondary: #f8f9fa;
+    --border-light: #e9ecef;
+    --border-medium: #dee2e6;
+}
+
+/* Progress Bar Styles */
+.progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--border-medium);
+    color: white;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.progress-step.completed .step-number,
+.progress-step.active .step-number {
+    background: var(--primary-color);
+}
+
+.step-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.progress-line {
+    flex: 1;
+    height: 2px;
+    background: var(--border-medium);
+    margin: 0 20px 25px;
+    max-width: 120px;
+}
+
+.progress-line.completed {
+    background: var(--primary-color);
+}
+
 /* Header Section */
 .application-header {
-    background: #ffffff;
-    padding: 24px 0;
-    border-bottom: 1px solid #e9ecef;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background: var(--background-primary);
+    padding: 40px 0 30px;
+    border-bottom: 1px solid var(--border-light);
 }
 
 /* Main Layout */
@@ -700,4 +767,45 @@
     to {
         transform: translate(-50%, -50%) rotate(360deg);
     }
+}
+
+/* Navigation Buttons */
+.btn-back,
+.btn-continue {
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-back {
+    background: var(--background-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-medium);
+}
+
+.btn-back:hover {
+    background: var(--border-light);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-continue {
+    background: var(--primary-color);
+    color: white;
+    border: 1px solid var(--primary-color);
+}
+
+.btn-continue:hover {
+    background: var(--primary-hover);
+}
+
+.btn-continue:disabled {
+    background: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.6;
 }

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auswahl der OP-Versicherung | Allianz</title>
+    <link rel="stylesheet" href="styles.css?v=1727060000">
+    <link rel="stylesheet" href="simple-pricing.css?v=1727070000">
+</head>
+<body>
+    <!-- Header Section -->
+    <section class="plans-header">
+        <div class="container">
+            <div class="progress-bar">
+                <div class="progress-step completed">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Tierdaten</div>
+                </div>
+                <div class="progress-line completed"></div>
+                <div class="progress-step active">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Tarifauswahl</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Selection Options Section -->
+    <section class="selection-section">
+        <div class="container">
+            <div class="selection-row">
+                <span class="selection-text">Ich möchte</span>
+                <select id="deductible" class="selection-dropdown">
+                    <option value="no">keine</option>
+                    <option value="10">10%</option>
+                    <option value="20" selected>20%</option>
+                </select>
+                <span class="selection-text">Selbstbeteiligung</span>
+                <span class="info-icon">ⓘ</span>
+                <span class="selection-text">und zahle</span>
+                <select id="paymentFrequency" class="selection-dropdown">
+                    <option value="monthly" selected>monatlich</option>
+                    <option value="quarterly">vierteljährlich</option>
+                    <option value="semi-annually">halbjährlich</option>
+                    <option value="yearly">jährlich</option>
+                </select>
+                <span class="selection-text">.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plans Title Section -->
+    <section class="plans-title-section">
+        <div class="container">
+            <div class="progress-indicator">1 von 2</div>
+            <h1 class="plans-title">Auswahl der OP Versicherung</h1>
+        </div>
+    </section>
+
+    <!-- Plans Comparison Section -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="pricing-cards">
+                <!-- Basis Plan -->
+                <div class="price-card" data-plan="basis">
+                    <div class="card-header">
+                        <h3>Basis</h3>
+                        <p>Grundschutz für Operationen</p>
+                    </div>
+                    <div class="price">
+                        <span class="currency">€</span>
+                        <span class="amount">7.33</span>
+                        <span class="period">pro Monat</span>
+                    </div>
+                    <div class="features">
+                        <div class="feature">✓ OP-Schutz bis 5.000€</div>
+                        <div class="feature">✓ Notfallgebühr</div>
+                        <div class="feature">✓ Freie Tierarztwahl</div>
+                        <div class="feature">✓ Direkte Abrechnung</div>
+                    </div>
+                    <button class="select-btn" data-plan="basis">Basis auswählen</button>
+                </div>
+
+                <!-- Smart Plan -->
+                <div class="price-card" data-plan="smart">
+                    <div class="card-header">
+                        <h3>Smart</h3>
+                        <p>Erweiterte Absicherung mit Vorsorge</p>
+                    </div>
+                    <div class="price">
+                        <span class="currency">€</span>
+                        <span class="amount">11.05</span>
+                        <span class="period">pro Monat</span>
+                    </div>
+                    <div class="features">
+                        <div class="feature">✓ Alles aus Basis</div>
+                        <div class="feature">✓ OP-Schutz bis 10.000€</div>
+                        <div class="feature">✓ Orthesen & Hilfsmittel</div>
+                        <div class="feature">✓ 3 Monate Wartezeit</div>
+                    </div>
+                    <button class="select-btn" data-plan="smart">Smart auswählen</button>
+                </div>
+
+                <!-- Komfort Plan -->
+                <div class="price-card popular" data-plan="komfort">
+                    <div class="popular-badge">Unser Bestseller</div>
+                    <div class="card-header">
+                        <h3>Komfort</h3>
+                        <p>Vollschutz mit allen Leistungen</p>
+                    </div>
+                    <div class="price">
+                        <span class="currency">€</span>
+                        <span class="amount">18.36</span>
+                        <span class="period">pro Monat</span>
+                    </div>
+                    <div class="features">
+                        <div class="feature">✓ Alles aus Smart</div>
+                        <div class="feature">✓ Unbegrenzter OP-Schutz</div>
+                        <div class="feature">✓ Alternative Therapien</div>
+                        <div class="feature">✓ Keine Wartezeit bei Unfall</div>
+                    </div>
+                    <button class="select-btn featured" data-plan="komfort">Komfort auswählen</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compare Plans Table -->
+    <section class="comparison-section">
+        <div class="container">
+            <h2>Tarife im Vergleich</h2>
+            
+            <div class="table-wrapper">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th class="feature-col">Leistungen</th>
+                            <th class="plan-col">Basis</th>
+                            <th class="plan-col">Smart</th>
+                            <th class="plan-col featured">Komfort</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- OP-Schutz -->
+                        <tr class="category-row">
+                            <td class="category-header" colspan="4">OP-Schutz</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Versicherungssumme</td>
+                            <td class="feature-value">bis €5.000</td>
+                            <td class="feature-value">bis €10.000</td>
+                            <td class="feature-value">unbegrenzt</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Operationen</td>
+                            <td class="feature-value">✓ Basis-OPs</td>
+                            <td class="feature-value">✓ Alle OPs</td>
+                            <td class="feature-value">✓ Alle OPs</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Notfallgebühr</td>
+                            <td class="feature-value">✓</td>
+                            <td class="feature-value">✓</td>
+                            <td class="feature-value">✓</td>
+                        </tr>
+                        
+                        <!-- Zusätzliche Leistungen -->
+                        <tr class="category-row">
+                            <td class="category-header" colspan="4">Zusätzliche Leistungen</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Orthesen & Hilfsmittel</td>
+                            <td class="feature-value not-included">—</td>
+                            <td class="feature-value">✓</td>
+                            <td class="feature-value">✓</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Telemedizin</td>
+                            <td class="feature-value">✓</td>
+                            <td class="feature-value">✓</td>
+                            <td class="feature-value">✓</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Schutz im Ausland</td>
+                            <td class="feature-value">12 Monate weltweit</td>
+                            <td class="feature-value">12 Monate weltweit</td>
+                            <td class="feature-value">12 Monate weltweit</td>
+                        </tr>
+                        
+                        <!-- Service -->
+                        <tr class="category-row">
+                            <td class="category-header" colspan="4">Service</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Direkte Abrechnung</td>
+                            <td class="feature-value">✓</td>
+                            <td class="feature-value">✓</td>
+                            <td class="feature-value">✓</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Freie Tierarztwahl</td>
+                            <td class="feature-value">✓</td>
+                            <td class="feature-value">✓</td>
+                            <td class="feature-value">✓</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Wartezeit bei Krankheit</td>
+                            <td class="feature-value not-included">—</td>
+                            <td class="feature-value">3 Monate</td>
+                            <td class="feature-value">3 Monate</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Wartezeit bei Unfall</td>
+                            <td class="feature-value not-included">—</td>
+                            <td class="feature-value">keine</td>
+                            <td class="feature-value">keine</td>
+                        </tr>
+                        
+                        <!-- Action Row -->
+                        <tr class="action-row">
+                            <td class="feature-name"><strong>Tarif wählen</strong></td>
+                            <td class="feature-value">
+                                <button class="table-select-btn" data-plan="basis">Auswählen</button>
+                            </td>
+                            <td class="feature-value">
+                                <button class="table-select-btn" data-plan="smart">Auswählen</button>
+                            </td>
+                            <td class="feature-value">
+                                <button class="table-select-btn featured" data-plan="komfort">Auswählen</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Actions -->
+    <section class="actions">
+        <div class="container">
+            <div class="action-buttons">
+                <button class="btn-back" onclick="goBack()">← Zurück</button>
+                <button class="btn-continue" id="continueBtn" disabled>Weiter →</button>
+            </div>
+        </div>
+    </section>
+    <script src="simple-pricing.js?v=1727070000"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Pricing Page</title>
+    <link rel="stylesheet" href="simple-pricing.css">
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .test-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <div>Selected Plan: <span id="testSelectedPlan">None</span></div>
+        <div>Button Status: <span id="testButtonStatus">Disabled</span></div>
+    </div>
+
+    <!-- Test simple pricing elements -->
+    <div class="container">
+        <h1>Test Pricing Page</h1>
+        
+        <!-- Progress Bar Test -->
+        <div class="progress-bar" style="margin: 20px 0;">
+            <div class="progress-step completed">
+                <div class="step-number">1</div>
+                <div class="step-label">Tierdaten</div>
+            </div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step active">
+                <div class="step-number">2</div>
+                <div class="step-label">Tarifauswahl</div>
+            </div>
+        </div>
+
+        <!-- Simple test buttons -->
+        <div style="margin: 20px 0;">
+            <button class="select-btn" data-plan="basis" style="margin: 5px;">Select Basis</button>
+            <button class="select-btn" data-plan="smart" style="margin: 5px;">Select Smart</button>
+            <button class="select-btn" data-plan="komfort" style="margin: 5px;">Select Komfort</button>
+        </div>
+
+        <!-- Continue button -->
+        <div style="margin: 20px 0;">
+            <button class="btn-continue" id="continueBtn" disabled>Weiter →</button>
+        </div>
+    </div>
+
+    <script src="simple-pricing.js"></script>
+    <script>
+        // Additional test script
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Test page loaded');
+            
+            // Update test info
+            setInterval(function() {
+                document.getElementById('testSelectedPlan').textContent = selectedPlan || 'None';
+                const btn = document.getElementById('continueBtn');
+                document.getElementById('testButtonStatus').textContent = btn.disabled ? 'Disabled' : 'Enabled';
+            }, 500);
+        });
+    </script>
+</body>
+</html>
