@@ -82,8 +82,8 @@ function setupEventListeners() {
                 localStorage.setItem('selectedPlanData', JSON.stringify(selectedPlanData));
                 console.log('Plan data stored:', selectedPlanData);
                 
-                // Navigate to application form
-                window.location.href = 'application.html?from=pricing';
+                // Open Calendly meeting scheduling
+                window.open('https://calendly.com/kaikossendey/rueckruf', '_blank');
             } else {
                 alert('Bitte wählen Sie zuerst einen Tarif aus.');
             }

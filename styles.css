@@ -90,7 +90,6 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -101,7 +100,6 @@
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding: var(--spacing-xl) var(--spacing-lg);
             background: var(--background-primary);
         }
 
