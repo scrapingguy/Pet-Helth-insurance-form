@@ -1,6 +1,7 @@
 // Simple Pricing JavaScript - Clean Working Version
 
 let selectedPlan = null;
+let addonSection = null;
 
 // Pricing data
 const planPrices = {
@@ -27,6 +28,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Make sure continue button starts disabled
     disableContinueButton();
+
+    addonSection = document.getElementById('addonSection');
+    if (addonSection) {
+        addonSection.hidden = true;
+    }
     
     console.log('Initialization complete');
 });
@@ -111,6 +117,7 @@ function selectPlan(planName) {
     selectedPlan = planName;
     highlightTableColumn(planName);
     showSelectedPlan();
+    showAddonSection();
     enableContinueButton();
     
     console.log('Plan selected successfully:', selectedPlan);
@@ -168,6 +175,14 @@ function showSelectedPlan() {
     if (selectedPlanName) selectedPlanName.textContent = planName;
     if (selectedPlanPrice) selectedPlanPrice.textContent = `€${price}${period}`;
     if (selectedPlanElement) selectedPlanElement.style.display = 'block';
+}
+
+function showAddonSection() {
+    if (!addonSection) return;
+    if (addonSection.hidden) {
+        addonSection.hidden = false;
+    }
+    addonSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function hideSelectedPlan() {
