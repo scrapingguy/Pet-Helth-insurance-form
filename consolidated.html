@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tierkrankenversicherung Komplett | Allianz</title>
+</head>
+<body>
+    <!-- Main Application Container -->
+    <div id="app-container">
+        
+        <!-- Step 1: Pet Information Form -->
+        <section class="app-section" id="step1" style="display: block;">
+            <div class="container">
+                <!-- Progress Bar -->
+                <div class="progress-bar">
+                    <div class="progress-step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Tierdaten</div>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Tarifauswahl</div>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Antrag</div>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <div class="form-card">
+                        <form id="insuranceForm">
+                            <!-- Inline Form Row -->
+                            <div class="inline-form">
+                                <div class="form-line">
+                                    <span class="form-text">Ich wohne in</span>
+                                    <input type="text" id="plz" class="form-input plz-input" placeholder="PLZ" maxlength="5">
+                                    <span id="cityName" class="form-text city-display"></span>
+                                </div>
+                                <div class="error-box" id="plzError">
+                                    <div class="error-icon"></div>
+                                    <div class="error-message">Bitte geben Sie eine gültige Postleitzahl ein.</div>
+                                </div>
+                                
+                                <div class="form-line">
+                                    <select id="tierKategorie" class="form-select">
+                                        <option value="katze" selected>Meine Katze</option>
+                                        <option value="hund">Mein Hund</option>
+                                        <option value="pferd">Mein Pferd</option>
+                                    </select>
+                                    
+                                    <span class="form-text">ist</span>
+                                    
+                                    <select id="geschlecht" class="form-select">
+                                        <option value="maennlich" selected>männlich</option>
+                                        <option value="weiblich">weiblich</option>
+                                    </select>
+
+                                    <span class="form-text">und ein</span>
+                                    
+                                    <select id="rasse" class="form-select">
+                                        <option value="" selected>Rasse auswählen...</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Birth Date Question -->
+                            <div class="form-question">
+                                <div class="question-header">
+                                    <span class="question-title">Wann wurde Ihr Tier geboren?</span>
+                                    <span class="info-icon">ⓘ</span>
+                                </div>
+                                <div class="date-input-container">
+                                    <label class="date-label">Geburtsdatum</label>
+                                    <div class="date-input-wrapper">
+                                        <input type="date" id="geburtsdatum" class="date-input">
+                                        <span class="date-display" id="dateDisplay"></span>
+                                    </div>
+                                </div>
+                                <div class="error-box" id="geburtsdatumError">
+                                    <div class="error-icon"></div>
+                                    <div class="error-message">Bitte geben Sie das Geburtsdatum Ihres Tieres ein.</div>
+                                </div>
+                                <div class="error-box" id="geburtsdatumFutureError">
+                                    <div class="error-icon"></div>
+                                    <div class="error-message">Das Geburtsdatum kann nicht in der Zukunft liegen.</div>
+                                </div>
+                            </div>
+
+                            <!-- Neutered Question -->
+                            <div class="form-question">
+                                <div class="question-title">Wurde Ihr Tier kastriert oder sterilisiert?</div>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="kastriert" value="ja">
+                                        <span class="radio-custom"></span>
+                                        <span>Ja</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="kastriert" value="nein">
+                                        <span class="radio-custom"></span>
+                                        <span>Nein</span>
+                                    </label>
+                                </div>
+                                <div class="error-box" id="kastriertError">
+                                    <div class="error-icon"></div>
+                                    <div class="error-message">Bitte geben Sie an, ob ihr Tier kastriert oder sterilisiert ist.</div>
+                                </div>
+                            </div>
+
+                            <!-- Housing Question -->
+                            <div class="form-question">
+                                <div class="question-header">
+                                    <span class="question-title" id="haltungTitle">Wie wird Ihre Katze gehalten?</span>
+                                    <span class="info-icon">ⓘ</span>
+                                </div>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="haltung" value="wohnung">
+                                        <span class="radio-custom"></span>
+                                        <span id="indoorText">ausschließlich in der Wohnung</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="haltung" value="freigang">
+                                        <span class="radio-custom"></span>
+                                        <span id="outdoorText">Freigänger</span>
+                                    </label>
+                                </div>
+                                <div class="error-box" id="haltungError">
+                                    <div class="error-icon"></div>
+                                    <div class="error-message">Bitte wählen Sie aus, wie Ihr Tier gehalten wird.</div>
+                                </div>
+                            </div>
+
+                            <!-- Health Issues Question -->
+                            <div class="form-question">
+                                <div class="question-title">Sind Ihnen Krankheiten, Fehlentwicklungen oder Unfälle Ihres Tieres bekannt?</div>
+                                <div class="question-help">
+                                    Es zählen alle gesundheitlichen Beeinträchtigungen, die aktuell bestehen oder innerhalb der letzten 5 Jahre aufgetreten sind (dazu gehören nicht: Impfungen, Zahnpflege und Routineuntersuchungen).
+                                </div>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="gesundheitsprobleme" value="ja" id="gesundheitsprobleme_ja">
+                                        <span class="radio-custom"></span>
+                                        <span>Ja</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="gesundheitsprobleme" value="nein" id="gesundheitsprobleme_nein">
+                                        <span class="radio-custom"></span>
+                                        <span>Nein</span>
+                                    </label>
+                                </div>
+                                <div class="error-box" id="gesundheitsproblemeError">
+                                    <div class="error-icon"></div>
+                                    <div class="error-message">Bitte geben Sie an, ob Ihnen Krankheiten Ihres Tieres bekannt sind.</div>
+                                </div>
+                            </div>
+
+                            <!-- Conditional Treatment Question -->
+                            <div class="form-question" id="behandlungsFrage" style="display: none;">
+                                <div class="question-title">Fanden deshalb bereits Behandlungen bei einer Tierärztin oder bei einem Tierarzt statt?</div>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="neue_behandlung" value="heilbehandlung" id="neue_heilbehandlung">
+                                        <span class="checkbox-custom"></span>
+                                        <span>Behandlung ohne Operation (Heilbehandlung)</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="neue_behandlung" value="kein_besuch" id="neue_kein_besuch">
+                                        <span class="checkbox-custom"></span>
+                                        <span>bisher kein Tierarztbesuch erfolgt</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="neue_behandlung" value="operation" id="neue_operation">
+                                        <span class="checkbox-custom"></span>
+                                        <span>Operation</span>
+                                    </label>
+                                </div>
+                                
+                                <!-- Operation Count Field -->
+                                <div class="form-question" id="operationAnzahl" style="display: none;">
+                                    <div class="question-title">Anzahl der Operationen</div>
+                                    <div class="number-input-container">
+                                        <button type="button" class="number-btn minus-btn" id="decreaseBtn">−</button>
+                                        <input type="number" id="anzahl_operationen" class="number-input" value="1" min="1" readonly>
+                                        <button type="button" class="number-btn plus-btn" id="increaseBtn">+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="button-container">
+                                <button type="submit" class="cta-button" id="berechnenButton">
+                                    JETZT TARIF BERECHNEN
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 2: Plan Selection -->
+        <section class="app-section" id="step2" style="display: none;">
+            <div class="container">
+                <!-- Progress Bar -->
+                <div class="progress-bar">
+                    <div class="progress-step completed" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Tierdaten</div>
+                    </div>
+                    <div class="progress-line completed"></div>
+                    <div class="progress-step active" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Tarifauswahl</div>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Antrag</div>
+                    </div>
+                </div>
+
+                <!-- Selection Options -->
+                <div class="selection-section">
+                    <div class="selection-row">
+                        <span class="selection-text">Ich möchte</span>
+                        <select id="deductible" class="selection-dropdown">
+                            <option value="no">keine</option>
+                            <option value="10">10%</option>
+                            <option value="20" selected>20%</option>
+                        </select>
+                        <span class="selection-text">Selbstbeteiligung</span>
+                        <span class="info-icon">ⓘ</span>
+                        <span class="selection-text">und zahle</span>
+                        <select id="paymentFrequency" class="selection-dropdown">
+                            <option value="monthly" selected>monatlich</option>
+                            <option value="quarterly">vierteljährlich</option>
+                            <option value="semi-annually">halbjährlich</option>
+                            <option value="yearly">jährlich</option>
+                        </select>
+                        <span class="selection-text">.</span>
+                    </div>
+                </div>
+
+                <!-- Plans Title -->
+                <div class="plans-title-section">
+                    <div class="progress-indicator">1 von 2</div>
+                    <h1 class="plans-title">Auswahl der OP Versicherung</h1>
+                </div>
+
+                <!-- Plans Comparison -->
+                <div class="pricing-section">
+                    <div class="pricing-cards">
+                        <!-- Basis Plan -->
+                        <div class="price-card" data-plan="basis">
+                            <div class="card-header">
+                                <h3>Basis</h3>
+                                <p>Grundschutz für Operationen</p>
+                            </div>
+                            <div class="price">
+                                <span class="currency">€</span>
+                                <span class="amount">7.33</span>
+                                <span class="period">pro Monat</span>
+                            </div>
+                            <div class="features">
+                                <div class="feature">✓ OP-Schutz bis 5.000€</div>
+                                <div class="feature">✓ Notfallgebühr</div>
+                                <div class="feature">✓ Freie Tierarztwahl</div>
+                                <div class="feature">✓ Direkte Abrechnung</div>
+                            </div>
+                            <button class="select-btn" data-plan="basis">Basis auswählen</button>
+                        </div>
+
+                        <!-- Smart Plan -->
+                        <div class="price-card" data-plan="smart">
+                            <div class="card-header">
+                                <h3>Smart</h3>
+                                <p>Erweiterte Absicherung mit Vorsorge</p>
+                            </div>
+                            <div class="price">
+                                <span class="currency">€</span>
+                                <span class="amount">11.05</span>
+                                <span class="period">pro Monat</span>
+                            </div>
+                            <div class="features">
+                                <div class="feature">✓ Alles aus Basis</div>
+                                <div class="feature">✓ OP-Schutz bis 10.000€</div>
+                                <div class="feature">✓ Orthesen & Hilfsmittel</div>
+                                <div class="feature">✓ 3 Monate Wartezeit</div>
+                            </div>
+                            <button class="select-btn" data-plan="smart">Smart auswählen</button>
+                        </div>
+
+                        <!-- Komfort Plan -->
+                        <div class="price-card popular" data-plan="komfort">
+                            <div class="popular-badge">Unser Bestseller</div>
+                            <div class="card-header">
+                                <h3>Komfort</h3>
+                                <p>Vollschutz mit allen Leistungen</p>
+                            </div>
+                            <div class="price">
+                                <span class="currency">€</span>
+                                <span class="amount">18.36</span>
+                                <span class="period">pro Monat</span>
+                            </div>
+                            <div class="features">
+                                <div class="feature">✓ Alles aus Smart</div>
+                                <div class="feature">✓ Unbegrenzter OP-Schutz</div>
+                                <div class="feature">✓ Alternative Therapien</div>
+                                <div class="feature">✓ Keine Wartezeit bei Unfall</div>
+                            </div>
+                            <button class="select-btn featured" data-plan="komfort">Komfort auswählen</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="actions">
+                    <div class="action-buttons">
+                        <button class="btn-back" onclick="goToStep(1)">← Zurück</button>
+                        <button class="btn-continue" id="continueBtn" disabled>Weiter →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3: Application Form -->
+        <section class="app-section" id="step3" style="display: none;">
+            <div class="container">
+                <!-- Progress Bar -->
+                <div class="progress-bar">
+                    <div class="progress-step completed" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Tierdaten</div>
+                    </div>
+                    <div class="progress-line completed"></div>
+                    <div class="progress-step completed" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Tarifauswahl</div>
+                    </div>
+                    <div class="progress-line completed"></div>
+                    <div class="progress-step active" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Antrag</div>
+                    </div>
+                </div>
+
+                <div class="application-layout">
+                    <!-- Left Side - Form -->
+                    <div class="application-form">
+                        <div class="form-header">
+                            <h1>Jetzt Antrag stellen</h1>
+                            <p>Füllen Sie das Formular aus, um Ihre Tierkrankenversicherung abzuschließen.</p>
+                        </div>
+
+                        <form id="applicationForm" class="application-main-form">
+                            <!-- Personal Information Section -->
+                            <div class="form-section">
+                                <h2>Persönliche Daten</h2>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="anrede" class="required">Anrede</label>
+                                        <select id="anrede" name="anrede" class="form-control" required>
+                                            <option value="">Bitte wählen</option>
+                                            <option value="herr">Herr</option>
+                                            <option value="frau">Frau</option>
+                                            <option value="divers">Divers</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="titel">Titel</label>
+                                        <select id="titel" name="titel" class="form-control">
+                                            <option value="">Kein Titel</option>
+                                            <option value="dr">Dr.</option>
+                                            <option value="prof">Prof.</option>
+                                            <option value="prof_dr">Prof. Dr.</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="vorname" class="required">Vorname</label>
+                                        <input type="text" id="vorname" name="vorname" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="nachname" class="required">Nachname</label>
+                                        <input type="text" id="nachname" name="nachname" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="geburtsdatum_person" class="required">Geburtsdatum</label>
+                                        <input type="date" id="geburtsdatum_person" name="geburtsdatum_person" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact Information Section -->
+                            <div class="form-section">
+                                <h2>Kontaktdaten</h2>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="strasse" class="required">Straße und Hausnummer</label>
+                                        <input type="text" id="strasse" name="strasse" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="plz_person" class="required">Postleitzahl</label>
+                                        <input type="text" id="plz_person" name="plz_person" class="form-control" maxlength="5" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ort" class="required">Ort</label>
+                                        <input type="text" id="ort" name="ort" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="telefon">Telefon</label>
+                                        <input type="tel" id="telefon" name="telefon" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email" class="required">E-Mail-Adresse</label>
+                                        <input type="email" id="email" name="email" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Information Section -->
+                            <div class="form-section">
+                                <h2>Zahlungsdaten</h2>
+                                
+                                <div class="payment-method">
+                                    <div class="payment-option">
+                                        <input type="radio" id="sepa" name="zahlungsart" value="sepa" checked>
+                                        <label for="sepa">
+                                            <span class="radio-custom"></span>
+                                            <span>SEPA-Lastschrift</span>
+                                            <span class="recommended-badge">Empfohlen</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="sepa-details">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="iban" class="required">IBAN</label>
+                                            <input type="text" id="iban" name="iban" class="form-control" placeholder="DE__ ____ ____ ____ ____ __" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="kontoinhaber" class="required">Kontoinhaber</label>
+                                            <input type="text" id="kontoinhaber" name="kontoinhaber" class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Legal Declarations Section -->
+                            <div class="form-section legal-section">
+                                <h2>Rechtliche Erklärungen</h2>
+                                
+                                <div class="checkbox-group required-checkbox">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="datenschutz" value="ja" id="datenschutz" required>
+                                        <span class="checkbox-custom"></span>
+                                        <span>Ich habe die <a href="#" target="_blank">Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Daten zu.</span>
+                                    </label>
+                                </div>
+
+                                <div class="checkbox-group required-checkbox">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="agb" value="ja" id="agb" required>
+                                        <span class="checkbox-custom"></span>
+                                        <span>Ich akzeptiere die <a href="#" target="_blank">Allgemeinen Versicherungsbedingungen (AVB)</a> und <a href="#" target="_blank">Versicherungsbedingungen</a>.</span>
+                                    </label>
+                                </div>
+
+                                <div class="checkbox-group required-checkbox">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="sepa_mandat" value="ja" id="sepa_mandat" required>
+                                        <span class="checkbox-custom"></span>
+                                        <span>Ich erteile der Allianz ein SEPA-Lastschriftmandat für die Einziehung der Versicherungsbeiträge.</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Submit Buttons -->
+                            <div class="form-actions">
+                                <button type="button" class="btn-back" onclick="goToStep(2)">← Zurück</button>
+                                <button type="submit" class="btn-continue">Antrag verbindlich stellen →</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Right Side - Order Summary -->
+                    <div class="order-summary">
+                        <div class="summary-card">
+                            <h3>Ihre Auswahl</h3>
+                            
+                            <!-- Pet Information -->
+                            <div class="summary-section">
+                                <h4>Ihr Tier</h4>
+                                <div id="pet-summary" class="summary-details">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <!-- Selected Plan -->
+                            <div class="summary-section">
+                                <h4>Gewählter Tarif</h4>
+                                <div id="plan-summary" class="summary-details">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <!-- Pricing Details -->
+                            <div class="summary-section">
+                                <h4>Kosten</h4>
+                                <div class="pricing-details">
+                                    <div class="price-row">
+                                        <span>Monatlicher Beitrag:</span>
+                                        <span id="monthly-price" class="price">--,-- €</span>
+                                    </div>
+                                    <div class="price-row total">
+                                        <span>Gesamtbeitrag:</span>
+                                        <span id="total-price" class="price">--,-- €</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 4: Success Page -->
+        <section class="app-section" id="step4" style="display: none;">
+            <div class="container">
+                <!-- Progress Bar -->
+                <div class="progress-bar">
+                    <div class="progress-step completed" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Tierdaten</div>
+                    </div>
+                    <div class="progress-line completed"></div>
+                    <div class="progress-step completed" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Tarifauswahl</div>
+                    </div>
+                    <div class="progress-line completed"></div>
+                    <div class="progress-step completed" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Antrag</div>
+                    </div>
+                </div>
+
+                <div class="success-section">
+                    <div class="success-card">
+                        <div class="success-icon">✓</div>
+                        <h1>Vielen Dank für Ihren Antrag!</h1>
+                        <p class="success-message">
+                            Ihr Antrag wurde erfolgreich übermittelt und wird nun bearbeitet. 
+                            Sie erhalten in Kürze eine Bestätigung per E-Mail.
+                        </p>
+                        
+                        <div class="application-details">
+                            <h3>Ihre Antragsdaten:</h3>
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <span class="label">Antragsnummer:</span>
+                                    <span class="value" id="application-number">TKV-2025-0001</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Datum:</span>
+                                    <span class="value" id="submission-date">--</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Tarif:</span>
+                                    <span class="value" id="selected-plan-final">--</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Monatlicher Beitrag:</span>
+                                    <span class="value" id="monthly-premium">--</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="next-steps">
+                            <h3>Was passiert als nächstes?</h3>
+                            <div class="steps-list">
+                                <div class="step-item">
+                                    <div class="step-number">1</div>
+                                    <div class="step-text">
+                                        <strong>Bestätigung per E-Mail</strong><br>
+                                        Sie erhalten innerhalb von 24 Stunden eine Bestätigung.
+                                    </div>
+                                </div>
+                                <div class="step-item">
+                                    <div class="step-number">2</div>
+                                    <div class="step-text">
+                                        <strong>Prüfung Ihres Antrags</strong><br>
+                                        Wir prüfen Ihre Angaben und bearbeiten Ihren Antrag.
+                                    </div>
+                                </div>
+                                <div class="step-item">
+                                    <div class="step-number">3</div>
+                                    <div class="step-text">
+                                        <strong>Versicherungsunterlagen</strong><br>
+                                        Die Versicherungspolice wird Ihnen zugesendet.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn-primary" onclick="restartApplication()">Neue Anfrage starten</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
