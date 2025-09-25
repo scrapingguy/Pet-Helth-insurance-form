@@ -56,7 +56,11 @@
                             <div class="date-input-container">
                                 <label class="date-label">Geburtsdatum</label>
                                 <div class="date-input-wrapper">
-                                    <input type="date" id="geburtsdatum" class="date-input">
+                                    <input type="date" id="geburtsdatum" class="date-input" 
+                                           min="1900-01-01" 
+                                           max="2024-12-31" 
+                                           pattern="\d{4}-\d{2}-\d{2}"
+                                           title="Bitte geben Sie ein gültiges Datum ein">
                                     <span class="date-display" id="dateDisplay"></span>
                                 </div>
                             </div>

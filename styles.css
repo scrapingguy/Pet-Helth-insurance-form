@@ -82,7 +82,6 @@
             display: flex;
             flex-direction: column;
             background: var(--background-primary);
-            overflow: hidden;
         }
 
         .full-screen-scroll {
@@ -374,7 +373,7 @@
             font-size: 16px;
             background: transparent;
             width: 200px;
-            /* color: transparent;  Hide the native date display */
+            color: transparent; /* Hide the native date display completely */
             position: relative;
         }
 
@@ -394,6 +393,7 @@
             color: #ff8c42;
             pointer-events: none;
             font-weight: normal;
+            display: block; /* Always visible, even when empty */
         }
 
         /* Style the calendar icon */
@@ -413,6 +413,13 @@
         .date-input::-webkit-calendar-picker-indicator:hover {
             opacity: 1;
         }
+
+        /* Hide the date picker popup/dropdown completely */
+        .date-input::-webkit-datetime-edit-fields-wrapper { color: transparent; }
+        .date-input::-webkit-datetime-edit-text { color: transparent; padding: 0; }
+        .date-input::-webkit-datetime-edit-month-field { color: transparent; }
+        .date-input::-webkit-datetime-edit-day-field { color: transparent; }  
+        .date-input::-webkit-datetime-edit-year-field { color: transparent; }
 
         .date-format-hint {
             position: absolute;

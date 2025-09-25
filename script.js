@@ -25,10 +25,46 @@ document.addEventListener("DOMContentLoaded", function () {
     const dateDisplay = document.getElementById("dateDisplay");
 
     if (dateInput.value) {
-      dateDisplay.style.display = "none";
+      const date = new Date(dateInput.value);
+      // Check if the date is valid
+      if (!isNaN(date.getTime())) {
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        dateDisplay.textContent = `${day}.${month}.${year}`;
+        dateDisplay.style.display = "block";
+      } else {
+        // Invalid date, show placeholder
+        dateDisplay.textContent = "TT.MM.JJJJ";
+        dateDisplay.style.textTransform = "uppercase";
+        dateDisplay.style.display = "block";
+      }
     } else {
-      dateDisplay.textContent = "DD.MM.YYYY";
+      dateDisplay.textContent = "TT.MM.JJJJ";
+      dateDisplay.style.textTransform = "uppercase";
       dateDisplay.style.display = "block";
+    }
+  }
+
+  // Date input validation function
+  function validateDateInput(input) {
+    // Remove any characters that aren't numbers or hyphens
+    input.value = input.value.replace(/[^0-9-]/g, '');
+    
+    // Ensure correct format YYYY-MM-DD
+    const value = input.value;
+    if (value.length > 10) {
+      input.value = value.substring(0, 10);
+    }
+    
+    // Validate the actual date
+    if (value.length === 10) {
+      const date = new Date(value);
+      if (isNaN(date.getTime())) {
+        input.setCustomValidity('Bitte geben Sie ein gültiges Datum ein.');
+      } else {
+        input.setCustomValidity('');
+      }
     }
   }
 
@@ -1939,14 +1975,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const rasseSelect = document.getElementById("rasse");
     const breedCode = rasseSelect.value;
 
-    // Birth date - convert from YYYY-MM-DD to DD.MM.YYYY format
+    // Birth date - convert from YYYY-MM-DD to DD.MM.YYYY format (German)
     const birthDateInput = document.getElementById("geburtsdatum").value;
     let birthDate = "";
     if (birthDateInput) {
       // birthDateInput is in YYYY-MM-DD format from HTML date input
       const dateParts = birthDateInput.split("-");
       if (dateParts.length === 3) {
-        // Convert to DD.MM.YYYY format
+        // Convert to DD.MM.YYYY format (German)
         birthDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
       }
     }
@@ -2912,6 +2948,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         // Update German date display
         if (this.id === "geburtsdatum") {
+          validateDateInput(this);
           updateGermanDateDisplay();
         }
       });
@@ -2928,6 +2965,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         // Update German date display
         if (this.id === "geburtsdatum") {
+          validateDateInput(this);
           updateGermanDateDisplay();
         }
       });
@@ -3088,4 +3126,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+
+  // Initialize German date display on page load
+  updateGermanDateDisplay();
 });
