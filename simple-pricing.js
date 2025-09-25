@@ -393,8 +393,8 @@ function continueToApplication() {
     
     localStorage.setItem('insuranceSelection', JSON.stringify(selectionData));
     
-    // Navigate to application form
-    window.location.href = 'application.html';
+    // Open Calendly booking page
+    window.open('https://calendly.com/kaikossendey/rueckruf', '_blank');
 }
 
 function goBack() {
