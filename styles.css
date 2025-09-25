@@ -2,7 +2,7 @@
         /* CSS Variables for Consistent Design System */
         :root {
             /* Primary Colors - Based on vierbeinerabsicherung.de */
-            --primary-blue: #c80a50;
+            --primary-blue: #ff8c42;
             --primary-blue-hover: #0052a3;
             --primary-blue-light: rgba(0, 102, 204, 0.1);
             
@@ -82,7 +82,7 @@
             display: flex;
             flex-direction: column;
             background: var(--background-primary);
-            /* overflow: hidden; */
+            overflow: hidden;
         }
 
         .full-screen-scroll {
@@ -183,7 +183,7 @@
             font-size: 16px;
             background: transparent;
             min-width: 120px;
-            color:#c80a50;
+            color:#ff8c42;
             transition: all 0.3s ease;
             font-weight: bold;
             height: 32px; /* Fixed height to prevent layout shifts */
@@ -198,7 +198,7 @@
 
         .form-select {
             appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c80a50' stroke-width='2'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff8c42' stroke-width='2'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right 5px center;
             background-size: 12px;
@@ -237,12 +237,12 @@
 
         .form-select option:hover {
             background: #f0f8ff;
-            color: #c80a50;
+            color: #ff8c42;
         }
 
         .form-select option:checked,
         .form-select option:selected {
-            background: #c80a50;
+            background: #ff8c42;
             color: #fff;
             font-weight: bold;
         }
@@ -293,7 +293,7 @@
         }
 
         .city-display {
-            color: #c80a50;
+            color: #ff8c42;
             font-weight: 500;
             margin-left: 5px;
             font-style: italic;
@@ -305,7 +305,7 @@
         .city-display.show {
             opacity: 1;
             display: inline;
-            color: #c80a50;
+            color: #ff8c42;
             font-size: larger;
             font-weight: bold;
         }
@@ -374,7 +374,7 @@
             font-size: 16px;
             background: transparent;
             width: 200px;
-            color: transparent; /* Hide the native date display */
+            /* color: transparent;  Hide the native date display */
             position: relative;
         }
 
@@ -391,7 +391,7 @@
             top: 50%;
             transform: translateY(-50%);
             font-size: 16px;
-            color: #c80a50;
+            color: #ff8c42;
             pointer-events: none;
             font-weight: normal;
         }
@@ -405,7 +405,7 @@
             width: 18px;
             height: 18px;
             cursor: pointer;
-            background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c80a50' stroke-width='2'%3e%3crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3e%3c/rect%3e%3cline x1='16' y1='2' x2='16' y2='6'%3e%3c/line%3e%3cline x1='8' y1='2' x2='8' y2='6'%3e%3c/line%3e%3cline x1='3' y1='10' x2='21' y2='10'%3e%3c/line%3e%3c/svg%3e") no-repeat center;
+            background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff8c42' stroke-width='2'%3e%3crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3e%3c/rect%3e%3cline x1='16' y1='2' x2='16' y2='6'%3e%3c/line%3e%3cline x1='8' y1='2' x2='8' y2='6'%3e%3c/line%3e%3cline x1='3' y1='10' x2='21' y2='10'%3e%3c/line%3e%3c/svg%3e") no-repeat center;
             background-size: 14px;
             opacity: 0.8;
         }
@@ -453,7 +453,7 @@
         .radio-custom {
             width: 20px;
             height: 20px;
-            border: 2px solid #c80a50;
+            border: 2px solid #ff8c42;
             border-radius: 50%;
             position: relative;
             transition: all 0.3s ease;
@@ -464,7 +464,7 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: #c80a50;
+            background: #ff8c42;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -477,7 +477,7 @@
         }
 
         .radio-option:hover .radio-custom {
-            border-color: #c80a50;
+            border-color: #ff8c42;
             background: rgba(0, 102, 204, 0.05);
         }
 
@@ -502,7 +502,7 @@
         .checkbox-custom {
             width: 20px;
             height: 20px;
-            border: 2px solid #c80a50;
+            border: 2px solid #ff8c42;
             border-radius: 3px;
             position: relative;
             transition: all 0.3s ease;
@@ -520,8 +520,8 @@
         }
 
         .checkbox-option input[type="checkbox"]:checked + .checkbox-custom {
-            background: #c80a50;
-            border-color: #c80a50;
+            background: #ff8c42;
+            border-color: #ff8c42;
         }
 
         .checkbox-option input[type="checkbox"]:checked + .checkbox-custom::after {
@@ -579,12 +579,12 @@
             content: '•';
             position: absolute;
             left: 0;
-            color: #c80a50;
+            color: #ff8c42;
         }
 
         /* CTA Button */
         .cta-button {
-            background:#c80a50;
+            background:#ff8c42;
             color: white;
             border: none;
             padding: var(--spacing-md) var(--spacing-2xl);
@@ -600,7 +600,7 @@
         }
 
         .cta-button:hover {
-            background: #da0e59ee;
+            background: #ff7a28;
             transform: translateY(-2px);
         }
 
@@ -633,7 +633,7 @@
         }
 
         .results-title {
-            color: #c80a50;
+            color: #ff8c42;
             font-size: 24px;
             text-align: center;
             margin-bottom: 30px;
@@ -698,7 +698,7 @@
         }
 
         .plan-name {
-            color: #c80a50;
+            color: #ff8c42;
             font-size: 20px;
             font-weight: bold;
             margin-bottom: 10px;
@@ -709,7 +709,7 @@
         }
 
         .monthly-price {
-            color: #c80a50;
+            color: #ff8c42;
             font-size: 28px;
             font-weight: bold;
         }
@@ -732,7 +732,7 @@
         }
 
         .base-coverage h4 {
-            color: #c80a50;
+            color: #ff8c42;
             font-size: 16px;
             margin-bottom: 10px;
             border-bottom: 2px solid #e8f4fd;
@@ -768,7 +768,7 @@
         }
 
         .treatment-options h4 {
-            color: #c80a50;
+            color: #ff8c42;
             font-size: 16px;
             margin-bottom: 12px;
         }
@@ -792,7 +792,7 @@
         }
 
         .treatment-option:hover {
-            border-color: #c80a50;
+            border-color: #ff8c42;
             box-shadow: 0 2px 5px rgba(0,55,129,0.1);
         }
 
@@ -809,7 +809,7 @@
         }
 
         .option-price {
-            color: #c80a50;
+            color: #ff8c42;
             font-weight: bold;
             font-size: 13px;
         }
@@ -822,7 +822,7 @@
         }
 
         .contract-duration h4 {
-            color: #c80a50;
+            color: #ff8c42;
             font-size: 16px;
             margin-bottom: 10px;
         }
@@ -839,7 +839,7 @@
 
         .duration-select:focus {
             outline: none;
-            border-color: #c80a50;
+            border-color: #ff8c42;
             box-shadow: 0 0 0 2px rgba(0,55,129,0.1);
         }
 
@@ -849,7 +849,7 @@
         }
 
         .plan-button {
-            background: #c80a50; /* unify with primary action color */
+            background: #ff8c42; /* unify with primary action color */
             color: white;
             border: none;
             padding: 16px 32px;
@@ -864,7 +864,7 @@
         }
 
         .plan-button:hover {
-            background: #c80a50;
+            background: #ff8c42;
             filter: brightness(0.95);
             transform: translateY(-2px);
             box-shadow: 0 4px 16px rgba(200, 10, 80, 0.3);
@@ -1018,9 +1018,9 @@
         .number-btn {
             width: 40px;
             height: 40px;
-            border: 2px solid #c80a50;
+            border: 2px solid #ff8c42;
             background: #fff;
-            color: #c80a50;
+            color: #ff8c42;
             font-size: 20px;
             font-weight: bold;
             cursor: pointer;
@@ -1032,16 +1032,16 @@
 
         .minus-btn {
             border-radius: 6px 0 0 6px;
-            border-right: 1px solid #c80a50;
+            border-right: 1px solid #ff8c42;
         }
 
         .plus-btn {
             border-radius: 0 6px 6px 0;
-            border-left: 1px solid #c80a50;
+            border-left: 1px solid #ff8c42;
         }
 
         .number-btn:hover {
-            background: #c80a50;
+            background: #ff8c42;
             color: #fff;
         }
 
@@ -1052,14 +1052,14 @@
         .number-input {
             width: 60px;
             height: 40px;
-            border: 2px solid #c80a50;
+            border: 2px solid #ff8c42;
             border-left: none;
             border-right: none;
             background: #fff;
             text-align: center;
             font-size: 16px;
             font-weight: bold;
-            color: #c80a50;
+            color: #ff8c42;
             outline: none;
         }
 

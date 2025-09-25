@@ -2,7 +2,7 @@
 
 /* CSS Variables for consistency */
 :root {
-    --primary-color: #c80a50;
+    --primary-color: #ff8c42;
     --primary-hover: #a00842;
     --primary-light: rgba(200, 10, 80, 0.1);
     --accent-green: #28a745;
@@ -130,7 +130,7 @@
 
 .form-section h2 {
     font-size: 22px;
-    color: #c80a50;
+    color: #ff8c42;
     font-weight: 600;
     margin-bottom: 28px;
     display: flex;
@@ -142,7 +142,7 @@
     content: "";
     width: 4px;
     height: 22px;
-    background: #c80a50;
+    background: #ff8c42;
     border-radius: 2px;
 }
 
@@ -191,7 +191,7 @@
 
 .form-control:focus {
     outline: none;
-    border-color: #c80a50;
+    border-color: #ff8c42;
     box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
 }
 
@@ -230,7 +230,7 @@
 }
 
 .payment-option label:hover {
-    border-color: #c80a50;
+    border-color: #ff8c42;
     background: rgba(0, 102, 204, 0.05);
 }
 
@@ -239,7 +239,7 @@
 }
 
 .payment-option input[type="radio"]:checked + label {
-    border-color: #c80a50;
+    border-color: #ff8c42;
     background: rgba(0, 102, 204, 0.1);
 }
 
@@ -253,7 +253,7 @@
 }
 
 .payment-option input[type="radio"]:checked + label .radio-custom {
-    border-color: #c80a50;
+    border-color: #ff8c42;
 }
 
 .payment-option input[type="radio"]:checked + label .radio-custom::after {
@@ -264,12 +264,12 @@
     transform: translate(-50%, -50%);
     width: 8px;
     height: 8px;
-    background: #c80a50;
+    background: #ff8c42;
     border-radius: 50%;
 }
 
 .recommended-badge {
-    background: #c80a50;
+    background: #ff8c42;
     color: white;
     padding: 4px 8px;
     border-radius: 12px;
@@ -316,8 +316,8 @@
 }
 
 .checkbox-option input[type="checkbox"]:checked + .checkbox-custom {
-    border-color: #c80a50;
-    background: #c80a50;
+    border-color: #ff8c42;
+    background: #ff8c42;
 }
 
 .checkbox-option input[type="checkbox"]:checked + .checkbox-custom::after {
@@ -337,7 +337,7 @@
 }
 
 .checkbox-option a {
-    color: #c80a50;
+    color: #ff8c42;
     text-decoration: none;
 }
 
@@ -354,12 +354,12 @@
 }
 
 .required-checkbox .checkbox-custom {
-    border-color: #c80a50;
+    border-color: #ff8c42;
 }
 
 .required-checkbox input[type="checkbox"]:checked + .checkbox-custom {
-    border-color:#c80a50 ;
-    background: #c80a50;
+    border-color:#ff8c42 ;
+    background: #ff8c42;
 }
 
 /* Form Actions */
@@ -422,7 +422,7 @@
 
 .summary-section h4 {
     font-size: 16px;
-    color: #c80a50;
+    color: #ff8c42;
     font-weight: 500;
     margin-bottom: 12px;
 }
@@ -455,21 +455,21 @@
 }
 
 .price-row.total {
-    border-top: 2px solid #c80a50;
+    border-top: 2px solid #ff8c42;
     padding-top: 15px;
     margin-top: 15px;
     font-weight: 600;
     font-size: 16px;
-    color: #c80a50;
+    color: #ff8c42;
 }
 
 .price {
     font-weight: 600;
-    color: #c80a50;
+    color: #ff8c42;
 }
 
 .price-row.total .price {
-    color: #c80a50;
+    color: #ff8c42;
     font-size: 18px;
 }
 
@@ -543,7 +543,7 @@
 
 .success-content h2 {
     font-size: 28px;
-    color: #c80a50;
+    color: #ff8c42;
     margin-bottom: 15px;
 }
 
@@ -708,7 +708,7 @@
 
 .error-content h2 {
     font-size: 28px;
-    color: #c80a50;
+    color: #ff8c42;
     margin-bottom: 15px;
 }
 

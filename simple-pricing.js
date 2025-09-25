@@ -196,7 +196,7 @@ function enableContinueButton() {
     const btn = document.getElementById('continueBtn');
     if (btn) {
         btn.disabled = false;
-        btn.style.backgroundColor = '#c80a50';
+        btn.style.backgroundColor = '#ff8c42';
         btn.style.color = 'white';
         btn.style.cursor = 'pointer';
         btn.style.opacity = '1';
@@ -282,30 +282,30 @@ function goBack() {
 const style = document.createElement('style');
 style.textContent = `
     .price-card.selected {
-        border: 2px solid #c80a50 !important;
+        border: 2px solid #ff8c42 !important;
         box-shadow: 0 4px 20px rgba(200, 10, 80, 0.15) !important;
         transform: translateY(-2px) !important;
     }
     
     .select-btn.selected,
     .table-select-btn.selected {
-        background: #c80a50 !important;
+        background: #ff8c42 !important;
         color: white !important;
-        border-color: #c80a50 !important;
+        border-color: #ff8c42 !important;
     }
     
     .selected-column {
         background: rgba(200, 10, 80, 0.05) !important;
-        border-left: 2px solid #c80a50 !important;
-        border-right: 2px solid #c80a50 !important;
+        border-left: 2px solid #ff8c42 !important;
+        border-right: 2px solid #ff8c42 !important;
     }
     
     .comparison-table .selected-column:first-of-type {
-        border-left: 2px solid #c80a50 !important;
+        border-left: 2px solid #ff8c42 !important;
     }
     
     .comparison-table .selected-column:last-of-type {
-        border-right: 2px solid #c80a50 !important;
+        border-right: 2px solid #ff8c42 !important;
     }
 `;
 document.head.appendChild(style);

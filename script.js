@@ -25,13 +25,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const dateDisplay = document.getElementById("dateDisplay");
 
     if (dateInput.value) {
-      const date = new Date(dateInput.value);
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      dateDisplay.textContent = `${day}.${month}.${year}`;
+      dateDisplay.style.display = "none";
     } else {
-      dateDisplay.textContent = "";
+      dateDisplay.textContent = "DD.MM.YYYY";
+      dateDisplay.style.display = "block";
     }
   }
 
@@ -2713,7 +2710,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         .alert-btn {
-          background: #c80a50;
+          background: #ff8c42;
           color: white;
           border: none;
           padding: 12px 30px;
@@ -2724,7 +2721,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         .alert-btn:hover {
-          background: #da0e59ee;
+          background: #ff7a28;
         }
         
         .alert-error .alert-icon { color: #dc3545; }
