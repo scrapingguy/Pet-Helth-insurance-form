@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadOrderSummary();
     setupFormValidation();
     setupIbanFormatting();
+    setupDateInputs();
     
     // Load saved form data from previous steps
     function loadFormData() {
@@ -311,6 +312,232 @@ document.addEventListener('DOMContentLoaded', function() {
         if (iban.length !== 22 || !iban.startsWith('DE')) {
             showFieldError(field, 'Bitte geben Sie eine gültige deutsche IBAN ein.');
             return false;
+        }
+        
+        clearFieldError(field);
+        return true;
+    }
+    
+    // Date input setup and backspace fix - Enhanced for complete dot clearing
+    function setupDateInputs() {
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        
+        dateInputs.forEach(dateInput => {
+            let lastValue = '';
+            let isClearing = false;
+            
+            // Store original placeholder and value
+            const originalPlaceholder = dateInput.placeholder || '';
+            
+            // Create a wrapper for enhanced functionality
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'relative';
+            wrapper.style.display = 'inline-block';
+            wrapper.style.width = '100%';
+            
+            // Insert wrapper before the input and move input inside
+            dateInput.parentNode.insertBefore(wrapper, dateInput);
+            wrapper.appendChild(dateInput);
+            
+            // Create clear button
+            const clearBtn = document.createElement('button');
+            clearBtn.type = 'button';
+            clearBtn.innerHTML = '×';
+            clearBtn.style.cssText = `
+                position: absolute;
+                right: 30px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                font-size: 18px;
+                color: #999;
+                cursor: pointer;
+                padding: 0;
+                width: 20px;
+                height: 20px;
+                display: none;
+                z-index: 10;
+            `;
+            
+            clearBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                forceClearDateInput(dateInput);
+            });
+            
+            wrapper.appendChild(clearBtn);
+            
+            // Show/hide clear button based on content
+            function updateClearButton() {
+                if (dateInput.value && dateInput.value.length > 0) {
+                    clearBtn.style.display = 'block';
+                } else {
+                    clearBtn.style.display = 'none';
+                }
+            }
+            
+            // Track value changes
+            dateInput.addEventListener('focus', function() {
+                lastValue = this.value || '';
+                isClearing = false;
+                updateClearButton();
+            });
+            
+            // Handle keydown for backspace detection
+            dateInput.addEventListener('keydown', function(e) {
+                const currentValue = this.value || '';
+                
+                if (e.keyCode === 8) { // Backspace
+                    // If field has content and user is backspacing
+                    if (currentValue && currentValue.length > 0) {
+                        isClearing = true;
+                        
+                        // Set a timer to check and clear after browser processes the backspace
+                        setTimeout(() => {
+                            const newValue = this.value || '';
+                            
+                            // Check if we have partial date or just separators
+                            if (newValue.length < 10 && (newValue.includes('-') || newValue.includes('.') || newValue.includes('/'))) {
+                                forceClearDateInput(this);
+                            }
+                            
+                            // If field is now empty or has invalid content, ensure it's completely clear
+                            if (!newValue || newValue.length === 0 || this.validity.badInput) {
+                                forceClearDateInput(this);
+                            }
+                            
+                            updateClearButton();
+                            isClearing = false;
+                        }, 1);
+                    }
+                }
+                
+                // Allow essential keys
+                const allowedKeys = [8, 9, 27, 13, 46, 37, 38, 39, 40]; // backspace, tab, esc, enter, delete, arrows
+                if (allowedKeys.includes(e.keyCode)) {
+                    return;
+                }
+                
+                // Allow Ctrl combinations
+                if (e.ctrlKey && [65, 67, 86, 88].includes(e.keyCode)) {
+                    return;
+                }
+            });
+            
+            // Handle input changes
+            dateInput.addEventListener('input', function(e) {
+                clearFieldError(this);
+                updateClearButton();
+                
+                const value = this.value || '';
+                
+                // If we detect partial dates or separator artifacts, clear completely
+                if (value && (value.match(/^[\.\-\/\s]*$/) || (value.length < 10 && value.includes('-')))) {
+                    forceClearDateInput(this);
+                }
+            });
+            
+            // Handle keyup for additional clearing
+            dateInput.addEventListener('keyup', function(e) {
+                if (e.keyCode === 8 && isClearing) {
+                    const value = this.value || '';
+                    
+                    // If we still have artifacts, clear them
+                    if (value && (value.length < 10 || this.validity.badInput)) {
+                        forceClearDateInput(this);
+                    }
+                }
+                updateClearButton();
+            });
+            
+            // Double-click to clear
+            dateInput.addEventListener('dblclick', function(e) {
+                forceClearDateInput(this);
+                updateClearButton();
+            });
+            
+            // Handle paste events
+            dateInput.addEventListener('paste', function(e) {
+                setTimeout(() => {
+                    const value = this.value || '';
+                    if (value && !value.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                        forceClearDateInput(this);
+                    }
+                    updateClearButton();
+                }, 1);
+            });
+            
+            // Validation on change
+            dateInput.addEventListener('change', function(e) {
+                const value = this.value || '';
+                
+                // Final validation - if not empty and not valid, clear
+                if (value && (this.validity.badInput || !value.match(/^\d{4}-\d{2}-\d{2}$/))) {
+                    forceClearDateInput(this);
+                } else if (value) {
+                    validateDateInput(this);
+                }
+                updateClearButton();
+            });
+            
+            // Handle blur to ensure final cleanup
+            dateInput.addEventListener('blur', function() {
+                const value = this.value || '';
+                if (value && this.validity.badInput) {
+                    forceClearDateInput(this);
+                }
+                updateClearButton();
+            });
+        });
+    }
+    
+    // Helper function to force clear date input completely
+    function forceClearDateInput(input) {
+        const originalPlaceholder = input.placeholder || '';
+        
+        // Multiple approaches to ensure complete clearing
+        input.value = '';
+        input.type = 'text';
+        input.value = '';
+        input.setAttribute('value', '');
+        input.removeAttribute('value');
+        input.type = 'date';
+        input.value = '';
+        input.placeholder = originalPlaceholder;
+        
+        // Trigger events to update UI
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        // Clear any validation errors
+        clearFieldError(input);
+    }
+    
+    function validateDateInput(field) {
+        const value = field.value;
+        
+        if (field.hasAttribute('required') && !value) {
+            showFieldError(field, 'Dieses Feld ist erforderlich.');
+            return false;
+        }
+        
+        if (value) {
+            const selectedDate = new Date(value);
+            const today = new Date();
+            const minAge = new Date();
+            minAge.setFullYear(today.getFullYear() - 100); // 100 years ago
+            
+            // Check if date is in valid range
+            if (selectedDate > today) {
+                showFieldError(field, 'Das Datum kann nicht in der Zukunft liegen.');
+                return false;
+            }
+            
+            if (selectedDate < minAge) {
+                showFieldError(field, 'Bitte geben Sie ein gültiges Datum ein.');
+                return false;
+            }
         }
         
         clearFieldError(field);

@@ -565,6 +565,230 @@ body {
     border: 0;
 }
 
+/* Addon Confirmation Section */
+.addon-confirmation {
+    width: min(1100px, calc(100% - 48px));
+    margin: 30px auto 0;
+    background: var(--background-primary);
+    border: 1px solid var(--border-medium);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(44, 62, 80, 0.08);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.confirmation-content h2 {
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 35px;
+}
+
+.confirmation-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 25px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.confirmation-item:first-of-type {
+    padding-top: 0;
+}
+
+.confirmation-item:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.confirmation-details h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.confirmation-details p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.remove-addon-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: underline;
+    padding: 4px 0;
+    transition: color 0.2s ease;
+}
+
+.remove-addon-btn:hover {
+    color: var(--primary-hover);
+}
+
+.remove-icon {
+    font-size: 0.85rem;
+}
+
+.confirmation-price {
+    text-align: right;
+    min-width: 140px;
+}
+
+.confirmation-price span:first-child {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    display: block;
+    line-height: 1.2;
+}
+
+.confirmation-price span:last-child {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: block;
+    margin-top: 2px;
+}
+
+.confirmation-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 0 0;
+    border-top: 2px solid var(--primary-color);
+    margin-top: 20px;
+}
+
+.confirmation-total .confirmation-details h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.confirmation-total .confirmation-price span:first-child {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.confirmation-buttons {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.btn-consultation,
+.btn-continue-app {
+    padding: 12px 30px;
+    margin: 0 8px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    border: 2px solid transparent;
+}
+
+.btn-consultation {
+    background: var(--background-primary);
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-consultation:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-continue-app {
+    background: var(--primary-color);
+    color: white;
+    border: 2px solid var(--primary-color);
+}
+
+.btn-continue-app:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.next-step-text {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .addon-confirmation {
+        padding: 25px 20px;
+        margin: 25px auto 0;
+    }
+    
+    .confirmation-content h2 {
+        font-size: 1.5rem;
+        margin-bottom: 25px;
+    }
+    
+    .confirmation-item {
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px 0;
+    }
+    
+    .confirmation-price {
+        text-align: left;
+        min-width: auto;
+    }
+    
+    .confirmation-total {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        padding: 20px 0 0;
+    }
+    
+    .confirmation-buttons {
+        margin-top: 30px;
+    }
+    
+    .btn-consultation,
+    .btn-continue-app {
+        display: block;
+        margin: 8px auto;
+        width: 100%;
+        max-width: 280px;
+    }
+    
+    .next-step-text {
+        margin-top: 15px;
+        font-size: 0.85rem;
+    }
+}
+
 @media (max-width: 768px) {
     .addon-card {
         padding: 20px;

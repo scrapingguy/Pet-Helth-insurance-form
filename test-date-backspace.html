@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Input Test - Backspace Functionality</title>
+    <link rel="stylesheet" href="application-styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+            background: #f8f9fa;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+        .test-section {
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        .test-results {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+        .status.pass { background: #d4edda; color: #155724; }
+        .status.fail { background: #f8d7da; color: #721c24; }
+        .status.pending { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Date Input Backspace Test</h1>
+        
+        <div class="instructions">
+            <h3>Test Instructions:</h3>
+            <ol>
+                <li>Click on the date input field below</li>
+                <li>Enter a date (e.g., use the date picker or type manually)</li>
+                <li><strong>Try to delete characters using the Backspace key</strong></li>
+                <li><strong>Pay attention to dots/separators - they should be completely cleared</strong></li>
+                <li>You should be able to clear the entire date using backspace</li>
+                <li><strong>Double-click the field to clear it instantly</strong></li>
+                <li>The field should be completely empty with no remaining dots or formatting</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <div class="form-group">
+                <label for="test-date">Test Date Input (Required):</label>
+                <input type="date" id="test-date" name="test-date" class="form-control" required>
+                <div class="field-error" id="test-date-error" style="display: none;"></div>
+                <small style="color: #666; font-size: 12px;">Try backspace to clear completely. Notice the × button appears when you have content.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="birth-date">Geburtsdatum (Birth Date):</label>
+                <input type="date" id="birth-date" name="birth-date" class="form-control">
+                <div class="field-error" id="birth-date-error" style="display: none;"></div>
+                <small style="color: #666; font-size: 12px;">Double-click to clear instantly or use the × button.</small>
+            </div>
+        </div>
+
+        <div class="test-results">
+            <h3>Test Status:</h3>
+            <p>Backspace Key Detection: <span id="backspace-status" class="status pending">Testing...</span></p>
+            <p>Date Clear Functionality: <span id="clear-status" class="status pending">Testing...</span></p>
+            <p>Date Validation: <span id="validation-status" class="status pending">Testing...</span></p>
+            
+            <div id="event-log" style="margin-top: 15px;">
+                <h4>Event Log:</h4>
+                <div id="log-content" style="background: #f1f1f1; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;">
+                    Ready for testing...<br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Error handling functions (simplified versions from main app)
+        function showFieldError(field, message) {
+            const errorDiv = document.getElementById(field.id + '-error');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                errorDiv.style.color = '#dc3545';
+                errorDiv.style.fontSize = '14px';
+                errorDiv.style.marginTop = '5px';
+            }
+            field.classList.add('error');
+        }
+
+        function clearFieldError(field) {
+            const errorDiv = document.getElementById(field.id + '-error');
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+            field.classList.remove('error');
+        }
+
+        // Date input setup (enhanced version from main application)
+        function setupDateInputs() {
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            
+            dateInputs.forEach(dateInput => {
+                // Fix backspace functionality for date inputs
+                dateInput.addEventListener('keydown', function(e) {
+                    logEvent(`Keydown: ${e.key} (code: ${e.keyCode})`);
+                    
+                    // Allow backspace, delete, tab, escape, enter
+                    const allowedKeys = [8, 9, 27, 13, 46];
+                    
+                    if (allowedKeys.includes(e.keyCode)) {
+                        if (e.keyCode === 8) {
+                            updateStatus('backspace-status', 'pass', 'Detected ✓');
+                            // Special handling for backspace to ensure complete clearing
+                            setTimeout(() => {
+                                // Check if field is empty or has only formatting characters after backspace
+                                const value = this.value;
+                                logEvent(`After backspace, value: "${value}"`);
+                                if (!value || value === '' || value.match(/^[\.\-\/\s]*$/)) {
+                                    // Force complete clearing
+                                    this.value = '';
+                                    this.blur();
+                                    this.focus();
+                                    logEvent('Field force-cleared due to remaining separators');
+                                    updateStatus('clear-status', 'pass', 'Dots cleared ✓');
+                                }
+                            }, 10);
+                        }
+                        return; // Allow these keys
+                    }
+                    
+                    // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                    if (e.ctrlKey && [65, 67, 86, 88].includes(e.keyCode)) {
+                        return; // Allow copy/paste/select all/cut
+                    }
+                    
+                    // Allow arrow keys
+                    if (e.keyCode >= 37 && e.keyCode <= 40) {
+                        return; // Allow arrow keys
+                    }
+                });
+                
+                // Enhanced input handling for complete clearing
+                dateInput.addEventListener('input', function(e) {
+                    logEvent(`Input changed: "${this.value}"`);
+                    // Clear any previous error when user starts typing
+                    clearFieldError(this);
+                    
+                    // Check if the value contains only separators/formatting
+                    if (this.value && this.value.match(/^[\.\-\/\s]*$/)) {
+                        this.value = '';
+                        logEvent('Cleared separators-only value');
+                    }
+                });
+                
+                // Handle backspace specifically for clearing the date
+                dateInput.addEventListener('keyup', function(e) {
+                    if (e.keyCode === 8) { // Backspace
+                        const value = this.value;
+                        logEvent(`Backspace released, value: "${value}"`);
+                        // If the field is empty, has only separators, or is invalid, clear it completely
+                        if (!value || value === '' || value.match(/^[\.\-\/\s]*$/) || value.length < 8) {
+                            this.value = '';
+                            this.setAttribute('data-cleared', 'true');
+                            // Force browser to recognize the empty state
+                            this.type = 'text';
+                            this.type = 'date';
+                            updateStatus('clear-status', 'pass', 'Complete clear ✓');
+                            logEvent('Date field cleared completely including dots');
+                        }
+                    }
+                });
+                
+                // Double-click to clear completely
+                dateInput.addEventListener('dblclick', function(e) {
+                    logEvent('Double-click detected - clearing field');
+                    this.value = '';
+                    this.focus();
+                    updateStatus('clear-status', 'pass', 'Double-click clear ✓');
+                });
+                
+                // Fix for browsers that might have issues with date input clearing
+                dateInput.addEventListener('focus', function(e) {
+                    logEvent(`Field focused: ${this.id}`);
+                    if (this.getAttribute('data-cleared') === 'true') {
+                        this.value = '';
+                        this.removeAttribute('data-cleared');
+                    }
+                });
+                
+                // Enhanced change event to handle clearing
+                dateInput.addEventListener('change', function(e) {
+                    logEvent(`Date changed: "${this.value}"`);
+                    // If value is empty or only contains separators, ensure it's completely empty
+                    if (!this.value || this.value.match(/^[\.\-\/\s]*$/)) {
+                        this.value = '';
+                        logEvent('Ensured complete clearing on change');
+                    }
+                    if (validateDateInput(this)) {
+                        updateStatus('validation-status', 'pass', 'Valid ✓');
+                    } else {
+                        updateStatus('validation-status', 'fail', 'Invalid ✗');
+                    }
+                });
+            });
+        }
+
+        function validateDateInput(field) {
+            const value = field.value;
+            
+            if (field.hasAttribute('required') && !value) {
+                showFieldError(field, 'Dieses Feld ist erforderlich.');
+                return false;
+            }
+            
+            if (value) {
+                const selectedDate = new Date(value);
+                const today = new Date();
+                const minAge = new Date();
+                minAge.setFullYear(today.getFullYear() - 100); // 100 years ago
+                
+                // Check if date is in valid range
+                if (selectedDate > today) {
+                    showFieldError(field, 'Das Datum kann nicht in der Zukunft liegen.');
+                    return false;
+                }
+                
+                if (selectedDate < minAge) {
+                    showFieldError(field, 'Bitte geben Sie ein gültiges Datum ein.');
+                    return false;
+                }
+            }
+            
+            clearFieldError(field);
+            return true;
+        }
+
+        // Test utilities
+        function logEvent(message) {
+            const logContent = document.getElementById('log-content');
+            const timestamp = new Date().toLocaleTimeString();
+            logContent.innerHTML += `[${timestamp}] ${message}<br>`;
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        function updateStatus(elementId, status, text) {
+            const element = document.getElementById(elementId);
+            element.className = `status ${status}`;
+            element.textContent = text;
+        }
+
+        // Initialize the date inputs when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDateInputs();
+            logEvent('Date input setup completed');
+        });
+    </script>
+</body>
+</html>

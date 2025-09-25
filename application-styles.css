@@ -203,6 +203,112 @@
     color: #999;
 }
 
+/* Date input specific styles */
+input[type="date"].form-control {
+    position: relative;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+input[type="date"].form-control::-webkit-datetime-edit {
+    padding: 0;
+    color: #333;
+}
+
+input[type="date"].form-control::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+}
+
+input[type="date"].form-control::-webkit-datetime-edit-text {
+    color: #666;
+    padding: 0 3px;
+}
+
+input[type="date"].form-control::-webkit-datetime-edit-month-field,
+input[type="date"].form-control::-webkit-datetime-edit-day-field,
+input[type="date"].form-control::-webkit-datetime-edit-year-field {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: inherit;
+    color: inherit;
+    padding: 1px;
+    min-width: 0;
+}
+
+input[type="date"].form-control::-webkit-datetime-edit-month-field:focus,
+input[type="date"].form-control::-webkit-datetime-edit-day-field:focus,
+input[type="date"].form-control::-webkit-datetime-edit-year-field:focus {
+    background: rgba(255, 140, 66, 0.1);
+    outline: none;
+}
+
+input[type="date"].form-control::-webkit-calendar-picker-indicator {
+    background: transparent;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 3px;
+    opacity: 0.7;
+}
+
+input[type="date"].form-control::-webkit-calendar-picker-indicator:hover {
+    background: rgba(255, 140, 66, 0.1);
+    opacity: 1;
+}
+
+/* Firefox date input */
+input[type="date"].form-control::-moz-focus-inner {
+    border: none;
+    outline: none;
+}
+
+/* Ensure date inputs are properly styled and clearable */
+input[type="date"].form-control {
+    min-width: 150px;
+}
+
+/* When date input is empty, ensure no artifacts remain */
+input[type="date"].form-control:invalid:not(:focus):not(:placeholder-shown) {
+    border-color: #ddd;
+}
+
+/* Style for completely empty date inputs */
+input[type="date"].form-control[value=""] {
+    color: #999;
+}
+
+/* Ensure clear behavior on focus */
+input[type="date"].form-control:focus {
+    outline: none;
+    border-color: #ff8c42;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1);
+}
+
+/* Force proper clearing behavior */
+input[type="date"].form-control:empty {
+    color: #999;
+}
+
+input[type="date"].form-control:not(:valid):not(:focus) {
+    color: #999;
+}
+
+/* Ensure date separators are properly handled */
+input[type="date"].form-control::-webkit-datetime-edit-text {
+    color: #666;
+    padding: 0 3px;
+}
+
+/* Hide invalid date indicators */
+input[type="date"].form-control:invalid {
+    box-shadow: none;
+}
+
+input[type="date"].form-control:invalid:not(:focus) {
+    border-color: #ddd;
+    background-color: transparent;
+}
+
 /* Single column form groups */
 .form-row.single {
     grid-template-columns: 1fr;

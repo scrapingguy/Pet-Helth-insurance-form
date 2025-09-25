@@ -257,14 +257,63 @@
                     </label>
                 </fieldset>
             </div>
+            
+            <!-- Addon Confirmation Section (Hidden by default) -->
+            <div id="addonConfirmation" class="addon-confirmation" style="display: none;">
+                <div class="confirmation-content">
+                    <h2>Glückwunsch, Sie haben Ihr passendes Produkt gefunden</h2>
+                    
+                    <!-- Selected Tariff Info -->
+                    <div class="confirmation-item">
+                        <div class="confirmation-details">
+                            <h3 id="selectedTariffTitle">Ihr Tarif: Komfort</h3>
+                            <p>Selbstbeteiligung: 20 %</p>
+                        </div>
+                        <div class="confirmation-price">
+                            <span id="selectedTariffPrice">20,40 €</span>
+                            <span>pro Monat</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Addon Treatment Info -->
+                    <div class="confirmation-item">
+                        <div class="confirmation-details">
+                            <h3>Heilbehandlungs- und Vorsorgeschutz</h3>
+                            <p id="addonSelectedOption">Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss</p>
+                            <button type="button" class="remove-addon-btn" aria-label="Remove addon">
+                                <span>entfernen</span>
+                                <span class="remove-icon">🗑</span>
+                            </button>
+                        </div>
+                        <div class="confirmation-price">
+                            <span id="addonSelectedPrice">28,62 €</span>
+                            <span>pro Monat</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Total Amount -->
+                    <div class="confirmation-total">
+                        <div class="confirmation-details">
+                            <h3>Ihr Gesamtbeitrag</h3>
+                        </div>
+                        <div class="confirmation-price">
+                            <span id="totalPrice">49,02 €</span>
+                            <span>pro Monat</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                <button class="btn-back" onclick="goBack()">← Zurück</button>
+                <button class="btn-continue" id="continueBtn" disabled>Beratungstermin vereinbaren →</button>
+            </div>
+                </div>
+            </div>
         </section>
 
         <!-- Actions -->
         <section class="actions full-width-section">
-            <div class="action-buttons">
-                <button class="btn-back" onclick="goBack()">← Zurück</button>
-                <button class="btn-continue" id="continueBtn" disabled>Beratungstermin vereinbaren →</button>
-            </div>
+            
         </section>
     </main>
     <script src="simple-pricing.js?v=1727070000"></script>

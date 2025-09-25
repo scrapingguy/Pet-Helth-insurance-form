@@ -63,6 +63,46 @@ function setupEventListeners() {
         paymentSelect.addEventListener('change', updatePrices);
     }
     
+    // Addon select button
+    const addonSelectBtn = document.querySelector('.addon-select-btn');
+    if (addonSelectBtn) {
+        addonSelectBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Addon select button clicked');
+            selectAddon();
+        });
+    }
+    
+    // Remove addon button
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-addon-btn')) {
+            e.preventDefault();
+            console.log('Remove addon button clicked');
+            removeAddon();
+        }
+    });
+    
+    // Addon coverage radio buttons
+    const addonRadios = document.querySelectorAll('input[name="addonCoverage"]');
+    addonRadios.forEach(radio => {
+        radio.addEventListener('change', updateAddonPricing);
+    });
+    
+    // Consultation and continue app buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'consultationBtn') {
+            e.preventDefault();
+            console.log('Back button clicked from confirmation');
+            goBack();
+        }
+        
+        if (e.target.id === 'continueAppBtn') {
+            e.preventDefault();
+            console.log('Continue to application button clicked');
+            continueToApplication();
+        }
+    });
+    
     // Continue button
     const continueBtn = document.getElementById('continueBtn');
     if (continueBtn) {
@@ -272,6 +312,148 @@ function getBillingPeriodText(billing) {
     return billing === 'monthly' ? 'Monat' :
            billing === 'quarterly' ? 'Quartal' :
            billing === 'yearly' ? 'Jahr' : 'Monat';
+}
+
+// Addon management functions
+function selectAddon() {
+    const confirmationSection = document.getElementById('addonConfirmation');
+    const addonSelectBtn = document.querySelector('.addon-select-btn');
+    
+    if (confirmationSection && addonSelectBtn) {
+        // Show confirmation section
+        confirmationSection.style.display = 'block';
+        
+        // Update button text to indicate selection
+        addonSelectBtn.textContent = 'Ausgewählt ✓';
+        addonSelectBtn.style.backgroundColor = '#28a745';
+        addonSelectBtn.disabled = true;
+        
+        // Update the confirmation section with current data
+        updateConfirmationSection();
+        
+        // Scroll to confirmation section
+        confirmationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        console.log('Addon selected and confirmation shown');
+    }
+}
+
+function removeAddon() {
+    const confirmationSection = document.getElementById('addonConfirmation');
+    const addonSelectBtn = document.querySelector('.addon-select-btn');
+    
+    if (confirmationSection && addonSelectBtn) {
+        // Hide confirmation section
+        confirmationSection.style.display = 'none';
+        
+        // Reset button
+        addonSelectBtn.textContent = 'Auswählen';
+        addonSelectBtn.style.backgroundColor = '';
+        addonSelectBtn.disabled = false;
+        
+        console.log('Addon removed and confirmation hidden');
+    }
+}
+
+function updateAddonPricing() {
+    const selectedOption = document.querySelector('input[name="addonCoverage"]:checked');
+    if (selectedOption) {
+        const addonPriceElement = document.querySelector('.addon-price-amount');
+        const value = selectedOption.value;
+        
+        // Update pricing based on selection
+        if (value === '2000') {
+            if (addonPriceElement) addonPriceElement.textContent = '23,38 €';
+        } else if (value === '5000') {
+            if (addonPriceElement) addonPriceElement.textContent = '33,33 €';
+        }
+        
+        // Update confirmation section if visible
+        const confirmationSection = document.getElementById('addonConfirmation');
+        if (confirmationSection && confirmationSection.style.display !== 'none') {
+            updateConfirmationSection();
+        }
+    }
+}
+
+function updateConfirmationSection() {
+    // Get current plan details
+    const planNames = {
+        basis: 'Basis',
+        smart: 'Smart',
+        komfort: 'Komfort'
+    };
+    
+    const planName = planNames[selectedPlan] || 'Komfort';
+    const planPrice = getCurrentPrice(selectedPlan);
+    
+    // Get selected addon option
+    const selectedAddon = document.querySelector('input[name="addonCoverage"]:checked');
+    let addonPrice = 23.38;
+    let addonText = 'Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss';
+    
+    if (selectedAddon) {
+        if (selectedAddon.value === '5000') {
+            addonPrice = 33.33;
+            addonText = 'Bis 5.000 € Heilbehandlungsschutz + 100 € Vorsorgezuschuss';
+        }
+    }
+    
+    // Calculate total
+    const totalPrice = parseFloat(planPrice) + addonPrice;
+    
+    // Update confirmation section elements
+    const tariffTitle = document.getElementById('selectedTariffTitle');
+    const tariffPrice = document.getElementById('selectedTariffPrice');
+    const addonOption = document.getElementById('addonSelectedOption');
+    const addonSelectedPrice = document.getElementById('addonSelectedPrice');
+    const totalPriceElement = document.getElementById('totalPrice');
+    
+    if (tariffTitle) tariffTitle.textContent = `Ihr Tarif: ${planName}`;
+    if (tariffPrice) tariffPrice.textContent = `${planPrice} €`;
+    if (addonOption) addonOption.textContent = addonText;
+    if (addonSelectedPrice) addonSelectedPrice.textContent = `${addonPrice.toFixed(2)} €`;
+    if (totalPriceElement) totalPriceElement.textContent = `${totalPrice.toFixed(2)} €`;
+    
+    console.log('Confirmation section updated', {
+        planName,
+        planPrice,
+        addonPrice,
+        totalPrice: totalPrice.toFixed(2)
+    });
+}
+
+// Calendar and application flow functions
+function openCalendarBooking() {
+    // You can replace this URL with your actual calendar booking system
+    const calendarURL = 'https://calendly.com/your-company/consultation'; // Replace with your actual calendar URL
+    
+    // For now, let's create a placeholder modal or redirect
+    const confirmBooking = confirm('Möchten Sie einen Beratungstermin vereinbaren? Sie werden zu unserem Buchungssystem weitergeleitet.');
+    
+    if (confirmBooking) {
+        // In a real implementation, you would open your calendar booking system
+        // window.open(calendarURL, '_blank');
+        
+        // For demo purposes, show an alert
+        alert('Kalenderbuchung würde hier geöffnet werden. Integrieren Sie Ihr bevorzugtes Buchungssystem (Calendly, Acuity, etc.)');
+    }
+}
+
+function continueToApplication() {
+    // Store the selected plan and addon data in localStorage for the application form
+    const selectionData = {
+        selectedPlan: selectedPlan,
+        planPrice: getCurrentPrice(selectedPlan),
+        addonSelected: true,
+        addonOption: document.querySelector('input[name="addonCoverage"]:checked')?.value || '2000',
+        timestamp: new Date().toISOString()
+    };
+    
+    localStorage.setItem('insuranceSelection', JSON.stringify(selectionData));
+    
+    // Navigate to application form
+    window.location.href = 'application.html';
 }
 
 function goBack() {
