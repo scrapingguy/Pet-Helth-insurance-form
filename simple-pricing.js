@@ -18,8 +18,6 @@ const deductibleMultipliers = {
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Simple pricing page loaded');
-    
     // Setup all event listeners
     setupEventListeners();
     
@@ -33,21 +31,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (addonSection) {
         addonSection.hidden = true;
     }
-    
-    console.log('Initialization complete');
 });
 
 function setupEventListeners() {
     // Plan selection buttons (both card buttons and table buttons)
     const selectButtons = document.querySelectorAll('.select-btn, .table-select-btn');
-    console.log('Found select buttons:', selectButtons.length);
     
     selectButtons.forEach((btn, index) => {
-        console.log(`Button ${index}: plan="${btn.getAttribute('data-plan')}"`);
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             const plan = this.getAttribute('data-plan');
-            console.log('Plan button clicked:', plan);
             selectPlan(plan);
         });
     });
@@ -68,7 +61,6 @@ function setupEventListeners() {
     if (addonSelectBtn) {
         addonSelectBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Addon select button clicked');
             selectAddon();
         });
     }
@@ -77,7 +69,6 @@ function setupEventListeners() {
     document.addEventListener('click', function(e) {
         if (e.target.closest('.remove-addon-btn')) {
             e.preventDefault();
-            console.log('Remove addon button clicked');
             removeAddon();
         }
     });
@@ -88,27 +79,11 @@ function setupEventListeners() {
         radio.addEventListener('change', updateAddonPricing);
     });
     
-    // Consultation and continue app buttons
-    document.addEventListener('click', function(e) {
-        if (e.target.id === 'consultationBtn') {
-            e.preventDefault();
-            console.log('Back button clicked from confirmation');
-            goBack();
-        }
-        
-        if (e.target.id === 'continueAppBtn') {
-            e.preventDefault();
-            console.log('Continue to application button clicked');
-            continueToApplication();
-        }
-    });
-    
     // Continue button
     const continueBtn = document.getElementById('continueBtn');
     if (continueBtn) {
         continueBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Continue button clicked, selectedPlan:', selectedPlan);
             
             if (selectedPlan) {
                 // Store selected plan data
@@ -120,10 +95,9 @@ function setupEventListeners() {
                 };
                 
                 localStorage.setItem('selectedPlanData', JSON.stringify(selectedPlanData));
-                console.log('Plan data stored:', selectedPlanData);
                 
-                // Open Calendly meeting scheduling
-                window.open('https://calendly.com/kaikossendey/rueckruf', '_blank');
+                // Navigate to application form
+                continueToApplication();
             } else {
                 alert('Bitte wählen Sie zuerst einen Tarif aus.');
             }
@@ -132,8 +106,6 @@ function setupEventListeners() {
 }
 
 function selectPlan(planName) {
-    console.log('Selecting plan:', planName);
-    
     // Clear previous selections
     document.querySelectorAll('.price-card').forEach(card => {
         card.classList.remove('selected');
@@ -159,8 +131,6 @@ function selectPlan(planName) {
     showSelectedPlan();
     showAddonSection();
     enableContinueButton();
-    
-    console.log('Plan selected successfully:', selectedPlan);
 }
 
 function highlightTableColumn(planName) {
@@ -240,7 +210,6 @@ function enableContinueButton() {
         btn.style.color = 'white';
         btn.style.cursor = 'pointer';
         btn.style.opacity = '1';
-        console.log('Continue button enabled');
     }
 }
 
@@ -252,7 +221,6 @@ function disableContinueButton() {
         btn.style.color = '#666';
         btn.style.cursor = 'not-allowed';
         btn.style.opacity = '0.6';
-        console.log('Continue button disabled');
     }
 }
 
@@ -333,8 +301,6 @@ function selectAddon() {
         
         // Scroll to confirmation section
         confirmationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        
-        console.log('Addon selected and confirmation shown');
     }
 }
 
@@ -350,8 +316,6 @@ function removeAddon() {
         addonSelectBtn.textContent = 'Auswählen';
         addonSelectBtn.style.backgroundColor = '';
         addonSelectBtn.disabled = false;
-        
-        console.log('Addon removed and confirmation hidden');
     }
 }
 
@@ -414,32 +378,9 @@ function updateConfirmationSection() {
     if (addonOption) addonOption.textContent = addonText;
     if (addonSelectedPrice) addonSelectedPrice.textContent = `${addonPrice.toFixed(2)} €`;
     if (totalPriceElement) totalPriceElement.textContent = `${totalPrice.toFixed(2)} €`;
-    
-    console.log('Confirmation section updated', {
-        planName,
-        planPrice,
-        addonPrice,
-        totalPrice: totalPrice.toFixed(2)
-    });
 }
 
 // Calendar and application flow functions
-function openCalendarBooking() {
-    // You can replace this URL with your actual calendar booking system
-    const calendarURL = 'https://calendly.com/your-company/consultation'; // Replace with your actual calendar URL
-    
-    // For now, let's create a placeholder modal or redirect
-    const confirmBooking = confirm('Möchten Sie einen Beratungstermin vereinbaren? Sie werden zu unserem Buchungssystem weitergeleitet.');
-    
-    if (confirmBooking) {
-        // In a real implementation, you would open your calendar booking system
-        // window.open(calendarURL, '_blank');
-        
-        // For demo purposes, show an alert
-        alert('Kalenderbuchung würde hier geöffnet werden. Integrieren Sie Ihr bevorzugtes Buchungssystem (Calendly, Acuity, etc.)');
-    }
-}
-
 function continueToApplication() {
     // Store the selected plan and addon data in localStorage for the application form
     const selectionData = {
