@@ -21,50 +21,77 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // German date display function
   function updateGermanDateDisplay() {
+    // Since we now use text input with placeholder, we don't need the overlay
+    // This function is kept for compatibility but doesn't show anything
     const dateInput = document.getElementById("geburtsdatum");
-    const dateDisplay = document.getElementById("dateDisplay");
-
+    
+    // Just validate the input format
     if (dateInput.value) {
-      const date = new Date(dateInput.value);
-      // Check if the date is valid
-      if (!isNaN(date.getTime())) {
-        const day = String(date.getDate()).padStart(2, "0");
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const year = date.getFullYear();
-        dateDisplay.textContent = `${day}.${month}.${year}`;
-        dateDisplay.style.display = "block";
-      } else {
-        // Invalid date, show placeholder
-        dateDisplay.textContent = "TT.MM.JJJJ";
-        dateDisplay.style.textTransform = "uppercase";
-        dateDisplay.style.display = "block";
+      const germanDateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+      const match = dateInput.value.match(germanDateRegex);
+      
+      if (match) {
+        const [, day, month, year] = match;
+        // Validate the date
+        const date = new Date(year, month - 1, day);
+        
+        if (date.getDate() == day && date.getMonth() == month - 1 && date.getFullYear() == year) {
+          // Valid date - input field shows the value, no overlay needed
+          return;
+        }
       }
-    } else {
-      dateDisplay.textContent = "TT.MM.JJJJ";
-      dateDisplay.style.textTransform = "uppercase";
-      dateDisplay.style.display = "block";
     }
+    // No need to show anything since placeholder handles empty state
   }
 
-  // Date input validation function
+  // Date input validation function for German format
   function validateDateInput(input) {
-    // Remove any characters that aren't numbers or hyphens
-    input.value = input.value.replace(/[^0-9-]/g, '');
+    let value = input.value;
     
-    // Ensure correct format YYYY-MM-DD
-    const value = input.value;
-    if (value.length > 10) {
-      input.value = value.substring(0, 10);
+    // Remove any characters that aren't numbers or dots
+    value = value.replace(/[^0-9.]/g, '');
+    
+    // Auto-format as user types
+    if (value.length === 2 && !value.includes('.')) {
+      value = value + '.';
+    } else if (value.length === 5 && value.split('.').length === 2) {
+      value = value + '.';
     }
     
-    // Validate the actual date
+    // Limit to DD.MM.YYYY format (10 characters max)
+    if (value.length > 10) {
+      value = value.substring(0, 10);
+    }
+    
+    input.value = value;
+    
+    // Check if field is required and empty
+    if (input.hasAttribute('required') && !value) {
+      input.setCustomValidity('Bitte geben Sie das Geburtsdatum ein.');
+      return;
+    }
+    
+    // Validate complete date
     if (value.length === 10) {
-      const date = new Date(value);
-      if (isNaN(date.getTime())) {
-        input.setCustomValidity('Bitte geben Sie ein gültiges Datum ein.');
+      const germanDateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+      const match = value.match(germanDateRegex);
+      
+      if (match) {
+        const [, day, month, year] = match;
+        const date = new Date(year, month - 1, day);
+        
+        if (date.getDate() == day && date.getMonth() == month - 1 && date.getFullYear() == year) {
+          // Valid date
+          input.setCustomValidity('');
+        } else {
+          input.setCustomValidity('Bitte geben Sie ein gültiges Datum ein (TT.MM.JJJJ).');
+        }
       } else {
-        input.setCustomValidity('');
+        input.setCustomValidity('Bitte verwenden Sie das Format TT.MM.JJJJ.');
       }
+    } else if (value.length > 0) {
+      // Partial input, don't show error yet
+      input.setCustomValidity('');
     }
   }
 
@@ -1975,15 +2002,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const rasseSelect = document.getElementById("rasse");
     const breedCode = rasseSelect.value;
 
-    // Birth date - convert from YYYY-MM-DD to DD.MM.YYYY format (German)
+    // Birth date - already in DD.MM.YYYY format (German) from text input
     const birthDateInput = document.getElementById("geburtsdatum").value;
     let birthDate = "";
     if (birthDateInput) {
-      // birthDateInput is in YYYY-MM-DD format from HTML date input
-      const dateParts = birthDateInput.split("-");
-      if (dateParts.length === 3) {
-        // Convert to DD.MM.YYYY format (German)
-        birthDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
+      // Validate the German format DD.MM.YYYY
+      const germanDateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+      const match = birthDateInput.match(germanDateRegex);
+      
+      if (match) {
+        const [, day, month, year] = match;
+        const date = new Date(year, month - 1, day);
+        
+        // Verify the date is valid
+        if (date.getDate() == day && date.getMonth() == month - 1 && date.getFullYear() == year) {
+          birthDate = birthDateInput; // Use as-is since it's already in DD.MM.YYYY format
+        }
       }
     }
 
@@ -3001,7 +3035,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Real-time birth date validation
   function validateBirthDateRealTime(dateField) {
-    const selectedDate = new Date(dateField.value);
+    // Parse German date format DD.MM.YYYY
+    const value = dateField.value;
+    if (!value) return; // If empty, let the required validation handle it
+    
+    const germanDateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+    const match = value.match(germanDateRegex);
+    
+    if (!match) {
+      // Invalid format
+      showError("geburtsdatumError", "geburtsdatum");
+      return;
+    }
+    
+    const [, day, month, year] = match;
+    const selectedDate = new Date(year, month - 1, day);
+    
+    // Check if the date is valid (e.g., not 32.01.2025)
+    if (selectedDate.getDate() != day || selectedDate.getMonth() != month - 1 || selectedDate.getFullYear() != year) {
+      showError("geburtsdatumError", "geburtsdatum");
+      return;
+    }
+    
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to beginning of today
 

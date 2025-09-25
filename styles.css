@@ -361,19 +361,17 @@
             margin-bottom: 8px;
         }
 
-        .date-input-wrapper {
+        /* .date-input-wrapper {
             position: relative;
             display: inline-block;
-        }
+        }  */
 
         .date-input {
             border: none;
             border-bottom: 2px solid #000000;
             padding: 8px 35px 8px 12px;
             font-size: 16px;
-            background: transparent;
             width: 200px;
-            color: transparent; /* Hide the native date display completely */
             position: relative;
         }
 
@@ -393,7 +391,7 @@
             color: #ff8c42;
             pointer-events: none;
             font-weight: normal;
-            display: block; /* Always visible, even when empty */
+            display: none; /* Hide the overlay since we use text input placeholder */
         }
 
         /* Style the calendar icon */
@@ -410,18 +408,18 @@
             opacity: 0.8;
         }
 
-        .date-input::-webkit-calendar-picker-indicator:hover {
+         .date-input::-webkit-calendar-picker-indicator:hover {
             opacity: 1;
-        }
+        } 
 
-        /* Hide the date picker popup/dropdown completely */
+/*        
         .date-input::-webkit-datetime-edit-fields-wrapper { color: transparent; }
         .date-input::-webkit-datetime-edit-text { color: transparent; padding: 0; }
         .date-input::-webkit-datetime-edit-month-field { color: transparent; }
         .date-input::-webkit-datetime-edit-day-field { color: transparent; }  
-        .date-input::-webkit-datetime-edit-year-field { color: transparent; }
+        .date-input::-webkit-datetime-edit-year-field { color: transparent; }  */
 
-        .date-format-hint {
+         .date-format-hint {
             position: absolute;
             right: 40px;
             top: 50%;
@@ -431,9 +429,8 @@
             pointer-events: none;
             font-style: italic;
             display: block;
-        }
+        } 
 
-        /* Hide the hint when date is selected */
         .date-display:not(:empty) + .date-format-hint {
             display: none;
         }
