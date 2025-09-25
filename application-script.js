@@ -16,6 +16,28 @@ document.addEventListener('DOMContentLoaded', function() {
         const petData = JSON.parse(localStorage.getItem('petInsuranceFormData') || '{}');
         const planData = JSON.parse(localStorage.getItem('selectedPlanData') || '{}');
         
+        // Create sample data if none exists (for testing)
+        if (!petData.tierKategorie && !planData.plan) {
+            const samplePetData = {
+                tierKategorie: 'katze',
+                geschlecht: 'weiblich',
+                rasse: 'Hauskatze',
+                geburtsdatum: '2020-05-15',
+                plz: '12345'
+            };
+            const samplePlanData = {
+                plan: 'smart',
+                deductible: '20',
+                price: '35,80 €',
+                paymentFrequency: 'monthly'
+            };
+            
+            localStorage.setItem('petInsuranceFormData', JSON.stringify(samplePetData));
+            localStorage.setItem('selectedPlanData', JSON.stringify(samplePlanData));
+            
+            console.log('Created sample data for testing');
+        }
+        
         // Auto-fill PLZ from pet data if available
         if (petData.plz) {
             const plzPersonField = document.getElementById('plz_person');
@@ -68,6 +90,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const planName = getPlanNameText(planData.plan || 'smart');
         const deductible = getDeductibleText(planData.deductible || '20');
         
+        let medicalTreatmentInfo = '';
+        if (planData.medicalTreatment && planData.medicalTreatment.selected) {
+            medicalTreatmentInfo = `
+                <div style="margin-top: 10px; padding: 10px; background: #e3f2fd; border-radius: 4px;">
+                    <p><strong>Medical Treatment:</strong> ${planData.medicalTreatment.description}</p>
+                    <p><strong>Additional Cost:</strong> ${planData.medicalTreatment.price} per month</p>
+                </div>
+            `;
+        }
+        
         planSummary.innerHTML = `
             <p><strong>Tarif:</strong> ${planName}</p>
             <p><strong>Selbstbeteiligung:</strong> ${deductible}</p>
@@ -75,6 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p><strong>Leistungen im Überblick:</strong></p>
                 ${getPlanFeatures(planData.plan || 'smart')}
             </div>
+            ${medicalTreatmentInfo}
         `;
     }
     
@@ -84,14 +117,28 @@ document.addEventListener('DOMContentLoaded', function() {
         const paymentFrequency = document.getElementById('payment-frequency');
         const totalPrice = document.getElementById('total-price');
         
+        console.log('Updating pricing summary with plan data:', planData);
+        
         if (monthlyPrice) {
-            const price = planData.price || '35,80 €';
-            monthlyPrice.textContent = price;
+            let basePrice = parseFloat((planData.price || '35,80 €').replace(',', '.').replace(' €', ''));
+            console.log('Base price:', basePrice);
+            
+            // Add medical treatment cost if selected
+            if (planData.medicalTreatment && planData.medicalTreatment.selected) {
+                const medicalPrice = parseFloat(planData.medicalTreatment.price.replace(',', '.').replace(' €', ''));
+                console.log('Medical price:', medicalPrice);
+                basePrice += medicalPrice;
+                console.log('Total price with medical:', basePrice);
+            }
+            
+            const formattedPrice = `${basePrice.toFixed(2).replace('.', ',')} €`;
+            console.log('Formatted price:', formattedPrice);
+            monthlyPrice.textContent = formattedPrice;
             
             if (totalPrice) {
                 // Calculate total based on payment frequency
                 const frequency = planData.paymentFrequency || 'monthly';
-                const calculatedTotal = calculateTotalPrice(price, frequency);
+                const calculatedTotal = calculateTotalPrice(formattedPrice, frequency);
                 totalPrice.textContent = calculatedTotal;
             }
         }
@@ -471,4 +518,135 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (vornameField) vornameField.addEventListener('blur', updateKontoinhaber);
     if (nachnameField) nachnameField.addEventListener('blur', updateKontoinhaber);
+    
+    // Medical Treatment Section functionality
+    setupMedicalTreatmentSection();
+    
+    function setupMedicalTreatmentSection() {
+        const chooseMedicalBtn = document.getElementById('chooseMedicalBtn');
+        const medicalSection = document.querySelector('.medical-treatment-section');
+        const medicalRadios = document.querySelectorAll('input[name="medical_coverage"]');
+        const priceAmount = document.querySelector('.medical-price .price-amount');
+        
+        // Medical coverage pricing
+        const medicalPricing = {
+            '2000': { price: '23.38 €', text: 'Up to €2,000 medical treatment cover + €50 preventive care allowance (€23.38)' },
+            '5000': { price: '33.33 €', text: 'Up to €5,000 medical treatment cover + €100 preventive care allowance (€33.33)' }
+        };
+        
+        // Initialize medical section state
+        let medicalSelected = false;
+        
+        // Choose button functionality
+        if (chooseMedicalBtn) {
+            chooseMedicalBtn.addEventListener('click', function() {
+                medicalSelected = !medicalSelected;
+                
+                if (medicalSelected) {
+                    if (medicalSection) medicalSection.classList.add('selected');
+                    chooseMedicalBtn.textContent = 'Remove';
+                    chooseMedicalBtn.style.background = '#dc3545';
+                } else {
+                    if (medicalSection) medicalSection.classList.remove('selected');
+                    chooseMedicalBtn.textContent = 'Choose';
+                    chooseMedicalBtn.style.background = '#ff8c42';
+                }
+                
+                // Update order summary
+                updateOrderSummaryWithMedical();
+            });
+        }
+        
+        // Radio button change handler
+        medicalRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const selectedOption = medicalPricing[this.value];
+                if (selectedOption && priceAmount) {
+                    priceAmount.textContent = selectedOption.price;
+                }
+                
+                // Update order summary if medical treatment is selected
+                if (medicalSelected) {
+                    updateOrderSummaryWithMedical();
+                }
+            });
+        });
+        
+        function updateOrderSummaryWithMedical() {
+            const planData = JSON.parse(localStorage.getItem('selectedPlanData') || '{}');
+            const selectedRadio = document.querySelector('input[name="medical_coverage"]:checked');
+            
+            console.log('Updating medical treatment:', medicalSelected, selectedRadio ? selectedRadio.value : 'none');
+            
+            if (medicalSelected && selectedRadio) {
+                // Add medical treatment to plan data
+                const medicalOption = medicalPricing[selectedRadio.value];
+                planData.medicalTreatment = {
+                    selected: true,
+                    coverage: selectedRadio.value,
+                    price: medicalOption.price,
+                    description: medicalOption.text
+                };
+                console.log('Adding medical treatment:', planData.medicalTreatment);
+            } else {
+                // Remove medical treatment from plan data
+                if (planData.medicalTreatment) {
+                    delete planData.medicalTreatment;
+                    console.log('Removing medical treatment');
+                }
+            }
+            
+            // Save updated plan data
+            localStorage.setItem('selectedPlanData', JSON.stringify(planData));
+            
+            // Update pricing summary
+            updatePricingSummary(planData);
+            updatePlanSummary(planData);
+        }
+    }
 });
+
+// Utility functions that can be called globally
+function getPetTypeText(tierKategorie) {
+    const types = {
+        'hund': 'Hund',
+        'katze': 'Katze'
+    };
+    return types[tierKategorie] || 'Katze';
+}
+
+function getGenderText(geschlecht) {
+    const genders = {
+        'männlich': 'Männlich',
+        'weiblich': 'Weiblich'
+    };
+    return genders[geschlecht] || 'Männlich';
+}
+
+function getPlanNameText(plan) {
+    const plans = {
+        'basis': 'Basis-Schutz',
+        'smart': 'Smart-Schutz',
+        'komfort': 'Komfort-Schutz'
+    };
+    return plans[plan] || 'Smart-Schutz';
+}
+
+function getDeductibleText(deductible) {
+    const deductibles = {
+        '0': 'Keine Selbstbeteiligung',
+        '20': '20% Selbstbeteiligung',
+        '150': '150€ Selbstbeteiligung pro Jahr'
+    };
+    return deductibles[deductible] || '20% Selbstbeteiligung';
+}
+
+function getPaymentFrequencyText(frequency) {
+    const frequencies = {
+        'monthly': 'Monatlich',
+        'quarterly': 'Vierteljährlich',
+        'semi-annually': 'Halbjährlich',
+        'yearly': 'Jährlich'
+    };
+    return frequencies[frequency] || 'Monatlich';
+}

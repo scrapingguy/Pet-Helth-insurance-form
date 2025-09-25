@@ -765,3 +765,186 @@
     cursor: not-allowed;
     opacity: 0.6;
 }
+
+/* Medical Treatment Section */
+.medical-treatment-section {
+    background: #f8f9ff;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 30px 0;
+}
+
+.medical-intro {
+    margin-bottom: 20px;
+}
+
+.medical-intro p {
+    color: #6c757d;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.medical-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.medical-header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-bottom: 1px solid #f0f0f0;
+    gap: 15px;
+}
+
+.medical-icon svg {
+    width: 32px;
+    height: 32px;
+}
+
+.medical-title {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.medical-title h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.info-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #6c757d;
+    color: white;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: help;
+}
+
+.medical-price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-right: 15px;
+}
+
+.price-amount {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ff8c42;
+}
+
+.price-period {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.choose-btn {
+    background: #ff8c42;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.choose-btn:hover {
+    background: #e67a37;
+}
+
+.medical-description {
+    padding: 20px;
+    background: #f8f9fa;
+}
+
+.medical-description p {
+    margin: 0;
+    color: #495057;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.medical-options {
+    padding: 20px;
+    background: white;
+}
+
+.radio-option {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    gap: 12px;
+}
+
+.radio-option:last-child {
+    margin-bottom: 0;
+}
+
+.radio-option input[type="radio"] {
+    display: none;
+}
+
+.radio-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.3s ease;
+}
+
+.radio-option input[type="radio"]:checked + label .radio-custom {
+    border-color: #007bff;
+    background: #007bff;
+}
+
+.radio-option input[type="radio"]:checked + label .radio-custom::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+}
+
+.option-text {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.4;
+    margin-top: 1px;
+}
+
+.radio-option label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* Medical section selected state */
+.medical-treatment-section.selected .medical-card {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
