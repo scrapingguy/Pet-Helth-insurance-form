@@ -1,12 +1,20 @@
-function getDocHeight() {
-  const body = document.body;
-  const html = document.documentElement;
 
-  return Math.max(
-    body.scrollHeight, body.offsetHeight,
-    html.clientHeight, html.scrollHeight, html.offsetHeight
-  );
+function getDocHeight() {
+  const lastElement = document.querySelector("main"); // or your form wrapper
+  if (!lastElement) return document.body.scrollHeight;
+
+  const rect = lastElement.getBoundingClientRect();
+  return rect.bottom + window.scrollY; // distance from top to bottom of element
 }
+// function getDocHeight() {
+//   const body = document.body;
+//   const html = document.documentElement;
+
+//   return Math.max(
+//     body.scrollHeight, body.offsetHeight,
+//     html.clientHeight, html.scrollHeight, html.offsetHeight
+//   );
+// }
 
 function postIframeHeight() {
   const height = getDocHeight();
