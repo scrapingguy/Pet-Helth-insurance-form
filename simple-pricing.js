@@ -96,7 +96,7 @@ function setupEventListeners() {
                 
                 localStorage.setItem('selectedPlanData', JSON.stringify(selectedPlanData));
                 
-                // Navigate to application form
+                // Navigate to final confirmation
                 continueToApplication();
             } else {
                 alert('Bitte wählen Sie zuerst einen Tarif aus.');
@@ -382,19 +382,19 @@ function updateConfirmationSection() {
 
 // Calendar and application flow functions
 function continueToApplication() {
-    // Store the selected plan and addon data in localStorage for the application form
+    // Store the selected plan and addon data in localStorage
     const selectionData = {
         selectedPlan: selectedPlan,
         planPrice: getCurrentPrice(selectedPlan),
-        addonSelected: true,
+        addonSelected: document.getElementById('addonConfirmation')?.style.display !== 'none',
         addonOption: document.querySelector('input[name="addonCoverage"]:checked')?.value || '2000',
         timestamp: new Date().toISOString()
     };
     
     localStorage.setItem('insuranceSelection', JSON.stringify(selectionData));
     
-    // Open Calendly booking page
-    window.open('https://calendly.com/kaikossendey/rueckruf', '_blank');
+    // Redirect directly to success page
+    window.location.href = 'success.html';
 }
 
 function goBack() {

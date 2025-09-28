@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antrag erfolgreich übermittelt | Allianz Tierkrankenversicherung</title>
+    <title>Auswahl bestätigt | Allianz Tierkrankenversicherung</title>
     <link rel="stylesheet" href="styles.css?v=1727013600">
     <link rel="stylesheet" href="application-styles.css?v=1727013600">
 </head>
@@ -21,11 +21,6 @@
                     <div class="step-number">2</div>
                     <div class="step-label">Tarifauswahl</div>
                 </div>
-                <div class="progress-line completed"></div>
-                <div class="progress-step completed">
-                    <div class="step-number">3</div>
-                    <div class="step-label">Antrag</div>
-                </div>
             </div>
         </section>
 
@@ -33,17 +28,17 @@
         <section class="success-section full-width-section">
             <div class="success-card">
                 <div class="success-icon">✓</div>
-                <h1>Vielen Dank für Ihren Antrag!</h1>
+                <h1>Vielen Dank für Ihre Auswahl!</h1>
                 <p class="success-message">
-                    Ihr Antrag wurde erfolgreich übermittelt und wird nun bearbeitet. 
-                    Sie erhalten in Kürze eine Bestätigung per E-Mail.
+                    Ihre Tarifauswahl wurde erfasst. Für den Abschluss Ihrer Tierkrankenversicherung 
+                    werden wir Sie in Kürze kontaktieren.
                 </p>
                 
                 <div class="application-details">
-                    <h3>Ihre Antragsdaten:</h3>
+                    <h3>Ihre Auswahl:</h3>
                     <div class="details-grid">
                         <div class="detail-item">
-                            <span class="label">Antragsnummer:</span>
+                            <span class="label">Auswahl-ID:</span>
                             <span class="value" id="application-number">--</span>
                         </div>
                         <div class="detail-item">
@@ -74,22 +69,22 @@
                         <div class="step-item">
                             <div class="step-number">1</div>
                             <div class="step-text">
-                                <strong>Bestätigung per E-Mail</strong><br>
-                                Sie erhalten innerhalb von 24 Stunden eine Bestätigung.
+                                <strong>Persönliche Beratung</strong><br>
+                                Einer unserer Experten wird Sie kontaktieren.
                             </div>
                         </div>
                         <div class="step-item">
                             <div class="step-number">2</div>
                             <div class="step-text">
-                                <strong>Prüfung Ihres Antrags</strong><br>
-                                Wir prüfen Ihre Angaben und bearbeiten Ihren Antrag.
+                                <strong>Individuelle Beratung</strong><br>
+                                Wir besprechen Ihre Auswahl und beantworten Ihre Fragen.
                             </div>
                         </div>
                         <div class="step-item">
                             <div class="step-number">3</div>
                             <div class="step-text">
-                                <strong>Versicherungsunterlagen</strong><br>
-                                Die Versicherungspolice wird Ihnen zugesendet.
+                                <strong>Vertragsabschluss</strong><br>
+                                Bei Zufriedenheit schließen wir den Vertrag gemeinsam ab.
                             </div>
                         </div>
                     </div>
@@ -97,7 +92,7 @@
 
                 <div class="contact-info">
                     <h3>Haben Sie Fragen?</h3>
-                    <p>Bei Fragen zu Ihrem Antrag können Sie uns gerne kontaktieren:</p>
+                    <p>Bei Fragen zu Ihrer Auswahl können Sie uns gerne kontaktieren:</p>
                     <div class="contact-details">
                         <div class="contact-item">
                             <strong>Telefon:</strong> 0800 4 110 110 (kostenfrei)
@@ -112,7 +107,7 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn-back" onclick="printPage()">Bestätigung drucken</button>
+                    <button class="btn-back" onclick="printPage()">Auswahl drucken</button>
                     <button class="btn-continue" onclick="goToHomepage()">Zur Startseite</button>
                 </div>
             </div>
@@ -295,33 +290,32 @@
         });
 
         function loadApplicationData() {
-            const applicationData = JSON.parse(localStorage.getItem('applicationData') || '{}');
+            const selectionData = JSON.parse(localStorage.getItem('insuranceSelection') || '{}');
             const petData = JSON.parse(localStorage.getItem('petInsuranceFormData') || '{}');
-            const planData = JSON.parse(localStorage.getItem('selectedPlanData') || '{}');
 
-            // Display application number
+            // Display selection ID
             const appNumber = document.getElementById('application-number');
             if (appNumber) {
-                appNumber.textContent = applicationData.applicationNumber || 'TKV-2025-0001';
+                appNumber.textContent = 'SEL-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 9999)).padStart(4, '0');
             }
 
-            // Display submission date
+            // Display selection date
             const submissionDate = document.getElementById('submission-date');
             if (submissionDate) {
-                const date = new Date(applicationData.submissionTime || new Date());
+                const date = new Date(selectionData.timestamp || new Date());
                 submissionDate.textContent = date.toLocaleDateString('de-DE');
             }
 
             // Display selected plan
             const selectedPlan = document.getElementById('selected-plan');
             if (selectedPlan) {
-                selectedPlan.textContent = getPlanName(planData.plan || 'smart');
+                selectedPlan.textContent = getPlanName(selectionData.selectedPlan || 'smart');
             }
 
             // Display monthly premium
             const monthlyPremium = document.getElementById('monthly-premium');
             if (monthlyPremium) {
-                monthlyPremium.textContent = planData.price || '35,80 €';
+                monthlyPremium.textContent = (selectionData.planPrice || '35,80') + ' €';
             }
 
             // Display pet information
@@ -379,11 +373,10 @@
         }
 
         function goToHomepage() {
-            // Clear application data
-            localStorage.removeItem('applicationData');
+            // Clear selection data
+            localStorage.removeItem('insuranceSelection');
             localStorage.removeItem('petInsuranceFormData');
             localStorage.removeItem('selectedPlanData');
-            localStorage.removeItem('apiResponseData');
             
             // Redirect to homepage
             window.location.href = 'index.html';
