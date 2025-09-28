@@ -1,3 +1,42 @@
+//<div class="custom-iframe-wrapper" id="myIframe">
+//  <iframe src="https://vierbeinerabsicherung.moazzammalek.com/" id="moazzammalek" loading="lazy"></iframe>
+//</div>
+window.iframeResizer = {
+  license: "GPLv3",
+  onReady: () => console.log("iframe-resizer is ready"),
+}
+function getDocHeight() {
+  const lastElement = document.querySelector("main"); // or your form wrapper
+  if (!lastElement) return document.body.scrollHeight;
+
+  const rect = lastElement.getBoundingClientRect();
+  return rect.bottom + window.scrollY; // distance from top to bottom of element
+}
+// function getDocHeight() {
+//   const body = document.body;
+//   const html = document.documentElement;
+
+//   return Math.max(
+//     body.scrollHeight, body.offsetHeight,
+//     html.clientHeight, html.scrollHeight, html.offsetHeight
+//   );
+// }
+
+function postIframeHeight() {
+  const height = getDocHeight();
+  console.log("Posting iframe height:", height);
+  window.parent.postMessage({ iframeHeight: height }, "*");
+}
+
+// Run when page loads
+window.addEventListener("load", postIframeHeight);
+
+// Run again when resized or content changes
+window.addEventListener("resize", postIframeHeight);
+
+const scheduleIframeHeightUpdate = () => {
+  window.requestAnimationFrame(postIframeHeight);
+};
 // Simple Pricing JavaScript - Clean Working Version
 
 let selectedPlan = null;
