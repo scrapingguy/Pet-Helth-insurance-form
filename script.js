@@ -17,9 +17,33 @@ document.addEventListener("DOMContentLoaded", function () {
   const progressFill = document.getElementById("progressFill");
   const progressText = document.getElementById("progressText");
   const progressEmoji = document.getElementById("progressEmoji");
-  const emojis = ['🐾', '📋', '🎂', '🏥', '🏠', '💊'];
-  let currentStep = 0;
-  const totalSteps = 6;
+  const geschlechtSelect = document.getElementById("geschlecht");
+  const birthDateInput = document.getElementById("geburtsdatum");
+  const neuteringRadios = document.querySelectorAll('input[name="kastriert"]');
+  const housingRadios = document.querySelectorAll('input[name="haltung"]');
+  const steps = Array.from(document.querySelectorAll(".tf-step"));
+  const nextButtons = document.querySelectorAll(".tf-next");
+  const prevButtons = document.querySelectorAll(".tf-prev");
+  const totalSteps = steps.length;
+  const progressEmojis = ["🐾", "🐶", "🚻", "🧬", "🎂", "🏥", "🏡", "🩺", "🚀"];
+  let currentStepIndex = steps.findIndex((step) => step.classList.contains("active"));
+
+  if (totalSteps > 0) {
+    currentStepIndex = currentStepIndex === -1 ? 0 : Math.min(currentStepIndex, totalSteps - 1);
+  } else {
+    currentStepIndex = 0;
+  }
+
+  if (geschlechtSelect) {
+    geschlechtSelect.addEventListener("change", function () {
+      if (this.value) {
+        this.style.borderBottomColor = "#28a745";
+        this.style.background = "linear-gradient(180deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%)";
+      }
+      checkFormCompletion();
+      attemptAutoAdvanceFromStep(2);
+    });
+  }
 
   // Treatment checkboxes
   const keinBesuchCheckbox = document.getElementById("neue_kein_besuch");
@@ -104,75 +128,254 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Progress update function
-  function updateProgress(completedSteps) {
-    currentStep = Math.max(0, Math.min(completedSteps, totalSteps));
-    const percentage = (currentStep / totalSteps) * 100;
-
-    if (progressFill) {
-      progressFill.style.width = percentage + '%';
+  function updateProgress(stepIndex) {
+    if (!totalSteps) {
+      return;
     }
 
-    const displayStep = Math.min(currentStep + 1, totalSteps);
+    const clampedIndex = Math.max(0, Math.min(stepIndex, totalSteps - 1));
+    const percentage = ((clampedIndex + 1) / totalSteps) * 100;
+
+    if (progressFill) {
+      progressFill.style.width = percentage + "%";
+    }
 
     if (progressText) {
-      progressText.textContent = `Schritt ${displayStep} von ${totalSteps}`;
+      progressText.textContent = `Frage ${clampedIndex + 1} von ${totalSteps}`;
     }
 
     if (progressEmoji) {
-      const emojiIndex = Math.min(displayStep - 1, emojis.length - 1);
-      progressEmoji.textContent = emojis[emojiIndex] || emojis[emojis.length - 1];
-      if (currentStep === totalSteps) {
-        progressEmoji.style.animation = 'celebration 1s ease-in-out';
-        setTimeout(() => {
-          if (progressEmoji && currentStep === totalSteps) {
-            progressEmoji.textContent = '🎉';
-          }
-        }, 800);
+      if (clampedIndex === totalSteps - 1) {
+        progressEmoji.textContent = "🎉";
+        progressEmoji.style.animation = "celebration 1s ease-in-out";
       } else {
-        progressEmoji.style.animation = 'bounce 2s infinite';
+        const emojiIndex = Math.min(clampedIndex, progressEmojis.length - 1);
+        progressEmoji.textContent = progressEmojis[emojiIndex];
+        progressEmoji.style.animation = "bounce 2s infinite";
       }
     }
   }
 
   // Function to check form completion and update progress
   function checkFormCompletion() {
-    let completedSteps = 0;
+    updateProgress(currentStepIndex);
+    updateSubmitButton();
+  }
 
-    const hasPLZAndAnimal =
-      plzInput && plzInput.value.length === 5 && tierKategorieSelect && tierKategorieSelect.value;
-    if (hasPLZAndAnimal) {
-      completedSteps += 1;
+  function goToStep(targetIndex) {
+    if (!totalSteps) {
+      return;
     }
 
-    if (rasseSelect && rasseSelect.value) {
-      completedSteps += 1;
+    const clampedIndex = Math.max(0, Math.min(targetIndex, totalSteps - 1));
+
+    steps.forEach((step, index) => {
+      step.classList.toggle("active", index === clampedIndex);
+      if (index < clampedIndex) {
+        step.classList.add("completed");
+      } else {
+        step.classList.remove("completed");
+      }
+    });
+
+    currentStepIndex = clampedIndex;
+    updateNavigationStates();
+    updateProgress(currentStepIndex);
+    focusFirstInteractiveField(clampedIndex);
+  }
+
+  function updateNavigationStates() {
+    if (!totalSteps) {
+      return;
     }
 
-    const birthDateInput = document.getElementById("geburtsdatum");
-    if (birthDateInput && birthDateInput.value.length === 10) {
-      completedSteps += 1;
+    const activeStep = steps[currentStepIndex];
+    if (!activeStep) {
+      return;
     }
 
-    const neuteringRadios = document.querySelectorAll('input[name="kastriert"]');
-    const neuteringSelected = Array.from(neuteringRadios).some((radio) => radio.checked);
-    if (neuteringSelected) {
-      completedSteps += 1;
-    }
-
-    const housingRadios = document.querySelectorAll('input[name="haltung"]');
-    const housingSelected = Array.from(housingRadios).some((radio) => radio.checked);
-    if (housingSelected) {
-      completedSteps += 1;
-    }
-
-    if (gesundheitsproblemeRadios && gesundheitsproblemeRadios.length > 0) {
-      const healthSelected = Array.from(gesundheitsproblemeRadios).some((radio) => radio.checked);
-      if (healthSelected) {
-        completedSteps += 1;
+    const prevButton = activeStep.querySelector(".tf-prev");
+    if (prevButton) {
+      if (currentStepIndex === 0) {
+        prevButton.setAttribute("disabled", "disabled");
+      } else {
+        prevButton.removeAttribute("disabled");
       }
     }
+  }
 
-    updateProgress(completedSteps);
+  function focusFirstInteractiveField(stepIndex) {
+    const step = steps[stepIndex];
+    if (!step) {
+      return;
+    }
+
+    const focusable = step.querySelector(
+      'input:not([type="hidden"]):not([disabled]), select:not([disabled])'
+    );
+
+    if (focusable) {
+      setTimeout(() => {
+        focusable.focus();
+      }, 150);
+    }
+  }
+
+  function handleNextStep() {
+    if (validateStepFields(currentStepIndex)) {
+      goToStep(currentStepIndex + 1);
+    } else if (steps[currentStepIndex]) {
+      steps[currentStepIndex].scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+
+  function attemptAutoAdvanceFromStep(stepIndex) {
+    if (!totalSteps || currentStepIndex !== stepIndex) {
+      return;
+    }
+
+    if (validateStepFields(stepIndex, { silent: true })) {
+      goToStep(stepIndex + 1);
+    }
+  }
+
+  function getStepValidationErrors(stepIndex) {
+    const errors = [];
+
+    switch (stepIndex) {
+      case 0: {
+        const plzValue = plzInput ? plzInput.value.trim() : "";
+        if (!plzValue || !isValidPLZ(plzValue) || !plzCityMap[plzValue]) {
+          errors.push({ errorId: "plzError", fieldName: "plz" });
+        }
+        break;
+      }
+      case 1: {
+        const value = tierKategorieSelect ? tierKategorieSelect.value : "";
+        if (!value) {
+          errors.push({ errorId: "tierKategorieError", fieldName: "tierKategorie" });
+        }
+        break;
+      }
+      case 2: {
+        const value = geschlechtSelect ? geschlechtSelect.value : "";
+        if (!value) {
+          errors.push({ errorId: "geschlechtError", fieldName: "geschlecht" });
+        }
+        break;
+      }
+      case 3: {
+        const value = rasseSelect ? rasseSelect.value : "";
+        if (!value) {
+          errors.push({ errorId: "rasseError", fieldName: "rasse" });
+        }
+        break;
+      }
+      case 4: {
+        const value = birthDateInput ? birthDateInput.value.trim() : "";
+        if (!value) {
+          errors.push({ errorId: "geburtsdatumError", fieldName: "geburtsdatum" });
+        } else {
+          const germanDateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+          const match = value.match(germanDateRegex);
+
+          if (!match) {
+            errors.push({ errorId: "geburtsdatumError", fieldName: "geburtsdatum" });
+          } else {
+            const [, day, month, year] = match;
+            const parsedDate = new Date(year, month - 1, day);
+            const isValidDate =
+              parsedDate.getFullYear() === parseInt(year, 10) &&
+              parsedDate.getMonth() === parseInt(month, 10) - 1 &&
+              parsedDate.getDate() === parseInt(day, 10);
+
+            if (!isValidDate) {
+              errors.push({ errorId: "geburtsdatumError", fieldName: "geburtsdatum" });
+            } else {
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+
+              if (parsedDate > today) {
+                errors.push({ errorId: "geburtsdatumFutureError", fieldName: "geburtsdatum" });
+              }
+            }
+          }
+        }
+        break;
+      }
+      case 5: {
+        const selected = Array.from(neuteringRadios).some((radio) => radio.checked);
+        if (!selected) {
+          errors.push({ errorId: "kastriertError", fieldName: "kastriert" });
+        }
+        break;
+      }
+      case 6: {
+        const selected = Array.from(housingRadios).some((radio) => radio.checked);
+        if (!selected) {
+          errors.push({ errorId: "haltungError", fieldName: "haltung" });
+        }
+        break;
+      }
+      case 7: {
+        const selected = Array.from(gesundheitsproblemeRadios).some((radio) => radio.checked);
+        if (!selected) {
+          errors.push({ errorId: "gesundheitsproblemeError", fieldName: "gesundheitsprobleme" });
+        }
+        break;
+      }
+      default:
+        break;
+    }
+
+    return errors;
+  }
+
+  function validateStepFields(stepIndex, options = {}) {
+    const { silent = false } = options;
+    const errors = getStepValidationErrors(stepIndex);
+
+    if (!silent) {
+      clearAllErrors();
+      errors.forEach(({ errorId, fieldName }) => showError(errorId, fieldName));
+    }
+
+    return errors.length === 0;
+  }
+
+  nextButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      handleNextStep();
+    });
+  });
+
+  prevButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      goToStep(currentStepIndex - 1);
+    });
+  });
+
+  steps.forEach((step, index) => {
+    const autoAdvanceType = step.dataset.autoAdvance;
+    if (autoAdvanceType === "select") {
+      const selects = step.querySelectorAll("select");
+      selects.forEach((select) => {
+        select.addEventListener("change", () => {
+          attemptAutoAdvanceFromStep(index);
+        });
+      });
+    } else if (autoAdvanceType === "radio") {
+      const radios = step.querySelectorAll('input[type="radio"]');
+      radios.forEach((radio) => {
+        radio.addEventListener("change", () => {
+          attemptAutoAdvanceFromStep(index);
+        });
+      });
+    }
+  });
+
+  if (steps.length) {
+    goToStep(currentStepIndex);
   }
 
   // German postal code to city mapping (expanded dataset)
@@ -1857,6 +2060,15 @@ document.addEventListener("DOMContentLoaded", function () {
       
       checkFormCompletion();
     });
+
+    plzInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (currentStepIndex === 0) {
+          handleNextStep();
+        }
+      }
+    });
   }
 
   // Brand selection handling
@@ -1886,23 +2098,13 @@ document.addEventListener("DOMContentLoaded", function () {
       this.style.background = "linear-gradient(180deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%)";
       
       checkFormCompletion();
+      attemptAutoAdvanceFromStep(1);
     });
 
     // Initialize with current selection
     updateBreedOptions(tierKategorieSelect.value);
+    updateHousingText(tierKategorieSelect.value);
   }
-
-  // PLZ input validation and city display
-  if (plzInput) {
-    plzInput.addEventListener("input", function () {
-      const plz = this.value;
-      if (plz.length === 5 && plzCityMap[plz]) {
-        // Could display city name here if needed
-        // PLZ validation successful
-      }
-    });
-  }
-
   // Function to update breed dropdown based on selected animal category
   function updateBreedOptions(animalType) {
     if (!rasseSelect) return;
@@ -1950,25 +2152,11 @@ document.addEventListener("DOMContentLoaded", function () {
           this.style.background = "linear-gradient(180deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%)";
         }
         checkFormCompletion();
+        attemptAutoAdvanceFromStep(3);
       });
       rasseSelect.dataset.listenerAdded = "true";
     }
   }
-
-  // Animal category change handler
-  if (tierKategorieSelect) {
-    tierKategorieSelect.addEventListener("change", function () {
-      const selectedAnimal = this.value;
-      updateBreedOptions(selectedAnimal);
-
-      // Update housing question text based on animal type
-      updateHousingText(selectedAnimal);
-    });
-
-    // Initialize breed options on page load
-    updateBreedOptions(tierKategorieSelect.value);
-  }
-
   // Function to update housing question text based on animal type
   function updateHousingText(animalType) {
     const haltungTitle = document.getElementById("haltungTitle");
@@ -1995,16 +2183,23 @@ document.addEventListener("DOMContentLoaded", function () {
   // Add event listeners for all form interactions
   
   // Birth date input
-  const birthDateInput = document.getElementById("geburtsdatum");
   if (birthDateInput) {
     birthDateInput.addEventListener("input", function () {
       validateDateInput(this);
       checkFormCompletion();
     });
+
+    birthDateInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (currentStepIndex === 4) {
+          handleNextStep();
+        }
+      }
+    });
   }
 
   // Neutering radio buttons
-  const neuteringRadios = document.querySelectorAll('input[name="kastriert"]');
   neuteringRadios.forEach((radio) => {
     radio.addEventListener("change", function () {
       // Add visual feedback to the selected option
@@ -2014,11 +2209,11 @@ document.addEventListener("DOMContentLoaded", function () {
         parentOption.style.background = "linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%)";
       }
       checkFormCompletion();
+      attemptAutoAdvanceFromStep(5);
     });
   });
 
   // Housing radio buttons
-  const housingRadios = document.querySelectorAll('input[name="haltung"]');
   housingRadios.forEach((radio) => {
     radio.addEventListener("change", function () {
       // Add visual feedback to the selected option
@@ -2028,6 +2223,7 @@ document.addEventListener("DOMContentLoaded", function () {
         parentOption.style.background = "linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%)";
       }
       checkFormCompletion();
+      attemptAutoAdvanceFromStep(6);
     });
   });
 

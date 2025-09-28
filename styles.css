@@ -172,7 +172,7 @@
             height: 100%;
             background: linear-gradient(90deg, #ff8c42 0%, #ff6b35 50%, #28a745 100%);
             border-radius: 10px;
-            width: 16.67%; /* Start at 1/6 */
+            width: 0%;
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
@@ -1521,5 +1521,338 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
+            }
+        }
+
+        /* Typeform-inspired layout */
+        .typeform-wrapper {
+            min-height: calc(100vh - 120px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(32px, 6vw, 72px) clamp(16px, 4vw, 56px);
+            background: linear-gradient(135deg, rgba(255, 140, 66, 0.08) 0%, rgba(40, 167, 69, 0.08) 100%);
+        }
+
+        .typeform-host.form-card {
+            background: transparent;
+            padding: 0;
+            border: none;
+            box-shadow: none;
+        }
+
+        .typeform-card {
+            width: min(780px, 100%);
+            background: var(--background-primary);
+            border-radius: 28px;
+            padding: clamp(32px, 5vw, 52px);
+            box-shadow: 0 32px 80px rgba(15, 23, 42, 0.15);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(24px, 4vw, 40px);
+        }
+
+        .typeform-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(255, 140, 66, 0.12), transparent 45%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .tf-header {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .tf-badge {
+            align-self: flex-start;
+            padding: 6px 18px;
+            border-radius: 999px;
+            background: rgba(255, 140, 66, 0.12);
+            color: var(--primary-blue);
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.02em;
+        }
+
+        .tf-title {
+            font-size: clamp(32px, 5vw, 44px);
+            line-height: 1.05;
+            color: var(--text-primary);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .tf-subtitle {
+            font-size: clamp(16px, 2.4vw, 20px);
+            color: var(--text-secondary);
+            max-width: 560px;
+        }
+
+        .tf-progress {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .typeform-form {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(32px, 5vw, 48px);
+            min-height: 420px;
+        }
+
+        .tf-step {
+            display: none;
+            flex-direction: column;
+            gap: clamp(24px, 4vw, 32px);
+            animation: tfFadeSlide 0.45s ease forwards;
+        }
+
+        .tf-step.active {
+            display: flex;
+        }
+
+        .tf-step.completed {
+            opacity: 0.85;
+        }
+
+        @keyframes tfFadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .tf-question-label {
+            font-size: clamp(28px, 3.6vw, 36px);
+            font-weight: 700;
+            line-height: 1.15;
+            color: var(--text-primary);
+        }
+
+        .tf-hint {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 540px;
+        }
+
+        .tf-input-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 520px;
+        }
+
+        .tf-input,
+        .tf-select {
+            width: min(460px, 100%);
+            background: rgba(255, 140, 66, 0.08);
+            border-radius: 18px;
+            padding: 18px 22px;
+            border: 2px solid transparent;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 20px rgba(255, 140, 66, 0.12);
+        }
+
+        .tf-input:focus,
+        .tf-select:focus {
+            outline: none;
+            border-color: rgba(255, 140, 66, 0.45);
+            background: rgba(255, 140, 66, 0.12);
+            box-shadow: 0 14px 32px rgba(255, 140, 66, 0.22);
+        }
+
+        .tf-radio-stack .radio-group {
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .tf-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .tf-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tf-prev,
+        .tf-next {
+            border: none;
+            border-radius: 999px;
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .tf-prev {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .tf-prev:hover {
+            color: var(--text-primary);
+        }
+
+        .tf-prev[disabled] {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .tf-next {
+            background: var(--primary-blue);
+            color: #fff;
+            box-shadow: 0 20px 44px rgba(255, 140, 66, 0.36);
+        }
+
+        .tf-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 24px 48px rgba(255, 140, 66, 0.42);
+        }
+
+        .tf-next[disabled] {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .tf-summary {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 0;
+            display: grid;
+            gap: 10px;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .tf-summary li::before {
+            content: '•';
+            margin-right: 8px;
+            color: var(--primary-blue);
+            font-size: 20px;
+            line-height: 0;
+        }
+
+        .tf-step[data-final="true"] .tf-controls {
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tf-controls .cta-button {
+            margin: 0;
+            min-width: 0;
+            padding: 18px 32px;
+        }
+
+        .tf-extra {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .tf-extra .form-question {
+            animation: none;
+            margin: 0;
+        }
+
+        .tf-extra .checkbox-group {
+            margin: 4px 0 0;
+        }
+
+        .tf-extra .number-input-container {
+            margin-top: 12px;
+        }
+
+        @media (max-width: 820px) {
+            .typeform-wrapper {
+                min-height: auto;
+                padding: 32px 20px 64px;
+            }
+
+            .typeform-card {
+                border-radius: 24px;
+                padding: 32px 24px;
+            }
+
+            .typeform-form {
+                gap: 32px;
+                min-height: 0;
+            }
+
+            .tf-controls {
+                flex-direction: column-reverse;
+                align-items: stretch;
+            }
+
+            .tf-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .tf-prev,
+            .tf-next {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .tf-input,
+            .tf-select {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .typeform-card {
+                border-radius: 20px;
+                padding: 28px 20px;
+                gap: 28px;
+            }
+
+            .tf-title {
+                font-size: 28px;
+            }
+
+            .tf-question-label {
+                font-size: 24px;
+            }
+
+            .tf-subtitle,
+            .tf-hint {
+                font-size: 16px;
+            }
+
+            .tf-badge {
+                font-size: 12px;
+            }
+
+            .tf-controls .cta-button {
+                width: 100%;
             }
         }
