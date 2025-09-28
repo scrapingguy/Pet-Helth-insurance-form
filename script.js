@@ -1,7 +1,13 @@
-window.addEventListener("load", () => {
+const postIframeHeight = () => {
   const height = document.body.scrollHeight;
   window.parent.postMessage({ iframeHeight: height }, "*");
-});
+};
+
+const scheduleIframeHeightUpdate = () => {
+  window.requestAnimationFrame(postIframeHeight);
+};
+
+window.addEventListener("load", scheduleIframeHeightUpdate);
 // Pet Health Insurance Form JavaScript
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -95,6 +101,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const percent = (effectiveIndex / denominator) * 100;
       progressFill.style.width = `${Math.max(percent, 8)}%`;
     }
+
+    scheduleIframeHeightUpdate();
   }
 
   function updateStepThreeAvailability() {
@@ -188,13 +196,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function goToNextStep() {
     if (!validateStep(currentStepIndex)) {
-      return;
+      return false;
     }
 
     if (currentStepIndex === 0) {
       currentStepIndex = 1;
       updateStepsUI();
-      return;
+      return true;
     }
 
     if (currentStepIndex === 1) {
@@ -208,21 +216,39 @@ document.addEventListener("DOMContentLoaded", function () {
           form.submit();
         }
       }
+      return true;
     }
+
+    return false;
   }
 
   function goToPreviousStep() {
-    if (currentStepIndex === 0) return;
+    if (currentStepIndex === 0) return false;
     currentStepIndex -= 1;
     updateStepsUI();
+    return true;
   }
 
   if (nextStepBtn) {
-    nextStepBtn.addEventListener("click", goToNextStep);
+    nextStepBtn.addEventListener("click", (event) => {
+      const handled = goToNextStep(event);
+      if (handled === false) {
+        scheduleIframeHeightUpdate();
+      }
+    });
   }
 
   if (prevStepBtn) {
-    prevStepBtn.addEventListener("click", goToPreviousStep);
+    prevStepBtn.addEventListener("click", (event) => {
+      const handled = goToPreviousStep(event);
+      if (handled === false) {
+        scheduleIframeHeightUpdate();
+      }
+    });
+  }
+
+  if (submitButton) {
+    submitButton.addEventListener("click", scheduleIframeHeightUpdate);
   }
 
   // Treatment checkboxes
@@ -2920,6 +2946,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Form submission
   if (form) {
     form.addEventListener("submit", function (e) {
+      scheduleIframeHeightUpdate();
       e.preventDefault();
 
       // Validate form and show errors
@@ -2941,7 +2968,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Try API call first, but fallback to plans page if it fails
         // Try API call first, but fallback to plans page if it fails
-        fetch(
+  fetch(
           "https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz",
           {
             method: "POST",
