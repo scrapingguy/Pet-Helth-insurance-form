@@ -4,27 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tierkrankenversicherungs-Tarif berechnen | Allianz</title>
-  <link rel="stylesheet" href="styles.css?v=1727080000" />
+    <link rel="stylesheet" href="styles.css?v=1727080000" />
   </head>
   <body class="embedded-full">
     <main class="full-screen-scroll">
-      <!-- Form Section -->
       <section class="form-section full-screen-block">
         <div class="form-card full-screen-card">
-          <!-- Progress Bar -->
-          <div class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <div class="progress-text">
-              <span id="progressText">Schritt 1 von 6</span>
-              <span class="progress-emoji" id="progressEmoji">🐾</span>
-            </div>
-          </div>
-
           <!-- Welcome Header -->
           <div class="form-header">
-            <h1 class="form-title">🛡️ Tierkrankenversicherung</h1>
+            <h1 class="form-title">Tierkrankenversicherung</h1>
             <p class="form-subtitle">
               Schützen Sie Ihr geliebtes Haustier mit der besten Versicherung.
               Nur wenige Schritte zu Ihrem persönlichen Angebot!
@@ -42,21 +30,6 @@
                   class="form-input plz-input"
                   placeholder="z.B. 10115"
                   maxlength="5" />
-                <span id="cityName" class="form-text city-display"></span>
-              </div>
-              <!-- Success message for PLZ -->
-              <div class="success-box" id="plzSuccess" style="display: none">
-                <div class="success-icon">✅</div>
-                <div class="success-message">
-                  Perfekt! Wir haben Ihre Stadt gefunden.
-                </div>
-              </div>
-              <!-- Error message for PLZ -->
-              <div class="error-box" id="plzError">
-                <div class="error-icon"></div>
-                <div class="error-message">
-                  Bitte geben Sie eine gültige Postleitzahl ein.
-                </div>
               </div>
 
               <div class="form-line">
@@ -83,19 +56,18 @@
 
             <!-- Birth Date Question -->
             <div class="form-question">
-              <div class="question-header">
-                <span class="question-icon">🎂</span>
-                <span class="question-title">Wann wurde Ihr Tier geboren?</span>
-                <span
-                  class="info-icon"
-                  title="Das Alter Ihres Tieres beeinflusst den Versicherungsbeitrag"
-                  >ⓘ</span
-                >
-              </div>
+              <div class="question-header"></div>
               <div class="date-input-container">
                 <label class="date-label"
-                  >📅 Geburtsdatum <span class="required">*</span></label
-                >
+                  ><span class="question-icon">🎂</span>
+                  <span class="question-title"
+                    >Wann wurde Ihr Tier geboren?</span
+                  ><span class="required">*</span>
+                  <!-- <span
+                    class="info-icon"
+                    title="Falls Sie das genaue Geburtsdatum nicht kennen, geben Sie bitte den letzten Tag des Geburtsmonats und das entsprechende Jahr an (z. B. für Januar 2019: 31.01.2019)."
+                    >ⓘ</span> -->
+                </label>
                 <div class="date-input-wrapper">
                   <input
                     type="text"
@@ -407,7 +379,6 @@
         </div>
       </section>
     </main>
-
     <!-- JavaScript Connection -->
     <script src="script.js?v=1727013600"></script>
   </body>

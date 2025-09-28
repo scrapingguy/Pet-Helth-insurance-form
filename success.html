@@ -1,252 +1,274 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Auswahl bestätigt | Allianz Tierkrankenversicherung</title>
-    <link rel="stylesheet" href="styles.css?v=1727013600">
-    <link rel="stylesheet" href="application-styles.css?v=1727013600">
-</head>
-<body class="embedded-full">
+  <link rel="stylesheet" href="styles.css?v=1727080000" />
+    <link rel="stylesheet" href="application-styles.css?v=1727013600" />
+  </head>
+  <body class="embedded-full">
     <main class="full-screen-scroll">
-        <!-- Header Section -->
-        <section class="application-header full-width-section">
-            <div class="progress-bar">
-                <div class="progress-step completed">
-                    <div class="step-number">1</div>
-                    <div class="step-label">Tierdaten</div>
-                </div>
-                <div class="progress-line completed"></div>
-                <div class="progress-step completed">
-                    <div class="step-number">2</div>
-                    <div class="step-label">Tarifauswahl</div>
-                </div>
+      <!-- Header Section -->
+      <section class="application-header full-width-section">
+        <div class="progress-bar">
+          <div class="progress-step completed">
+            <div class="step-number">1</div>
+            <div class="step-label">Tierdaten</div>
+          </div>
+          <div class="progress-line completed"></div>
+          <div class="progress-step completed">
+            <div class="step-number">2</div>
+            <div class="step-label">Tarifauswahl</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Success Section -->
+      <section class="success-section full-width-section">
+        <div class="success-card">
+          <div class="success-icon">✓</div>
+          <h1>Vielen Dank für Ihre Auswahl!</h1>
+          <p class="success-message">
+            Ihre Tarifauswahl wurde erfasst. Wählen Sie jetzt einen passenden
+            Termin für Ihre persönliche Beratung.
+          </p>
+
+          <!-- Selection Summary -->
+          <div class="selection-summary">
+            <h3>Ihre Auswahl:</h3>
+            <div class="summary-details">
+              <div class="detail-item">
+                <span class="label">Tarif:</span>
+                <span class="value" id="selected-plan">--</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Monatlicher Beitrag:</span>
+                <span class="value" id="monthly-premium">--</span>
+              </div>
             </div>
-        </section>
+          </div>
 
-        <!-- Success Section -->
-        <section class="success-section full-width-section">
-            <div class="success-card">
-                <div class="success-icon">✓</div>
-                <h1>Vielen Dank für Ihre Auswahl!</h1>
-                <p class="success-message">
-                    Ihre Tarifauswahl wurde erfasst. Wählen Sie jetzt einen passenden Termin für Ihre persönliche Beratung.
-                </p>
-                
-                <!-- Selection Summary -->
-                <div class="selection-summary">
-                    <h3>Ihre Auswahl:</h3>
-                    <div class="summary-details">
-                        <div class="detail-item">
-                            <span class="label">Tarif:</span>
-                            <span class="value" id="selected-plan">--</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">Monatlicher Beitrag:</span>
-                            <span class="value" id="monthly-premium">--</span>
-                        </div>
-                    </div>
-                </div>
+          <!-- Calendly Embed -->
+          <div class="calendly-container">
+            <div
+              class="calendly-inline-widget"
+              id="calendly-embed"
+              style="min-width: 320px; height: 630px"></div>
+          </div>
 
-                <!-- Calendly Embed -->
-                <div class="calendly-container">
-                    <div class="calendly-inline-widget" id="calendly-embed" style="min-width:320px;height:630px;"></div>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn-back" onclick="goBack()">← Zurück zur Auswahl</button>
-                </div>
-            </div>
-        </section>
+          <div class="action-buttons">
+            <button class="btn-back" onclick="goBack()">
+              ← Zurück zur Auswahl
+            </button>
+          </div>
+        </div>
+      </section>
     </main>
 
     <style>
-        .success-section {
-            background: #f8f9fa;
-        }
+      .success-section {
+        background: #f8f9fa;
+      }
 
+      .success-card {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        max-width: 900px;
+        margin: 0 auto;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .success-icon {
+        width: 80px;
+        height: 80px;
+        background: #28a745;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        font-weight: bold;
+        margin: 0 auto 30px;
+      }
+
+      .success-card h1 {
+        font-size: 32px;
+        color: #ff8c42;
+        margin-bottom: 20px;
+      }
+
+      .success-message {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 40px;
+        line-height: 1.6;
+      }
+
+      .selection-summary {
+        margin-bottom: 40px;
+        text-align: left;
+      }
+
+      .selection-summary h3 {
+        color: #ff8c42;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .summary-details {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-around;
+      }
+
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .detail-item .label {
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+      }
+
+      .detail-item .value {
+        color: #666;
+        font-size: 16px;
+      }
+
+      .calendly-container {
+        margin: 30px 0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 30px;
+      }
+
+      @media (max-width: 768px) {
         .success-card {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            max-width: 900px;
-            margin: 0 auto;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
+          margin: 20px;
+          padding: 30px 20px;
         }
 
-        .success-icon {
-            width: 80px;
-            height: 80px;
-            background: #28a745;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            font-weight: bold;
-            margin: 0 auto 30px;
-        }
-
-        .success-card h1 {
-            font-size: 32px;
-            color: #ff8c42;
-            margin-bottom: 20px;
-        }
-
-        .success-message {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 40px;
-            line-height: 1.6;
-        }
-
-        .selection-summary {
-            margin-bottom: 40px;
-            text-align: left;
-        }
-
-        .selection-summary h3 {
-            color: #ff8c42;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .summary-details {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .detail-item .label {
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .detail-item .value {
-            color: #666;
-            font-size: 16px;
-        }
-
-        .calendly-container {
-            margin: 30px 0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        .details-grid {
+          grid-template-columns: 1fr;
         }
 
         .action-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 30px;
+          flex-direction: column;
+          gap: 10px;
         }
 
-        @media (max-width: 768px) {
-            .success-card {
-                margin: 20px;
-                padding: 30px 20px;
-            }
-
-            .details-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .success-card h1 {
-                font-size: 24px;
-            }
-
-            .success-message {
-                font-size: 16px;
-            }
+        .success-card h1 {
+          font-size: 24px;
         }
+
+        .success-message {
+          font-size: 16px;
+        }
+      }
     </style>
 
     <!-- Calendly Embed Script -->
-    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
-    
+    <script
+      type="text/javascript"
+      src="https://assets.calendly.com/assets/external/widget.js"></script>
+
     <script>
-        // Load selection data and display it
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSelectionData();
-            initializeCalendly();
+      // Load selection data and display it
+      document.addEventListener("DOMContentLoaded", function () {
+        loadSelectionData();
+        initializeCalendly();
+      });
+
+      function loadSelectionData() {
+        const selectionData = JSON.parse(
+          localStorage.getItem("insuranceSelection") || "{}"
+        );
+
+        // Display selected plan
+        const selectedPlan = document.getElementById("selected-plan");
+        if (selectedPlan) {
+          selectedPlan.textContent = getPlanName(
+            selectionData.selectedPlan || "smart"
+          );
+        }
+
+        // Display monthly premium
+        const monthlyPremium = document.getElementById("monthly-premium");
+        if (monthlyPremium) {
+          let totalPrice = parseFloat(selectionData.planPrice || "35.80");
+          if (selectionData.addonSelected) {
+            const addonPrice =
+              selectionData.addonOption === "5000" ? 33.33 : 23.38;
+            totalPrice += addonPrice;
+          }
+          monthlyPremium.textContent = totalPrice.toFixed(2) + " €";
+        }
+      }
+
+      function initializeCalendly() {
+        const customerData = JSON.parse(
+          localStorage.getItem("customerContactData") || "{}"
+        );
+
+        // Prepare prefill data
+        const prefillData = {
+          name: customerData.name || "",
+          email: customerData.email || "",
+          customAnswers: {
+            a1: customerData.phone || "", // Phone number
+            a2: getPlanName(
+              JSON.parse(localStorage.getItem("insuranceSelection") || "{}")
+                .selectedPlan || "smart"
+            ), // Selected plan
+          },
+        };
+
+        // Initialize Calendly widget
+        Calendly.initInlineWidget({
+          url: "https://calendly.com/kaikossendey/rueckruf",
+          parentElement: document.getElementById("calendly-embed"),
+          prefill: prefillData,
+          utm: {
+            utmCampaign: "Pet Insurance",
+            utmSource: "Website",
+            utmMedium: "Form",
+          },
         });
+      }
 
-        function loadSelectionData() {
-            const selectionData = JSON.parse(localStorage.getItem('insuranceSelection') || '{}');
-
-            // Display selected plan
-            const selectedPlan = document.getElementById('selected-plan');
-            if (selectedPlan) {
-                selectedPlan.textContent = getPlanName(selectionData.selectedPlan || 'smart');
-            }
-
-            // Display monthly premium
-            const monthlyPremium = document.getElementById('monthly-premium');
-            if (monthlyPremium) {
-                let totalPrice = parseFloat(selectionData.planPrice || '35.80');
-                if (selectionData.addonSelected) {
-                    const addonPrice = selectionData.addonOption === '5000' ? 33.33 : 23.38;
-                    totalPrice += addonPrice;
-                }
-                monthlyPremium.textContent = totalPrice.toFixed(2) + ' €';
-            }
+      function getPlanName(plan) {
+        switch (plan) {
+          case "basis":
+            return "Basis Tarif";
+          case "smart":
+            return "Smart Tarif";
+          case "komfort":
+            return "Komfort Tarif";
+          default:
+            return "Smart Tarif";
         }
-        
-        function initializeCalendly() {
-            const customerData = JSON.parse(localStorage.getItem('customerContactData') || '{}');
-            
-            // Prepare prefill data
-            const prefillData = {
-                name: customerData.name || '',
-                email: customerData.email || '',
-                customAnswers: {
-                    a1: customerData.phone || '', // Phone number
-                    a2: getPlanName(JSON.parse(localStorage.getItem('insuranceSelection') || '{}').selectedPlan || 'smart'), // Selected plan
-                }
-            };
-            
-            // Initialize Calendly widget
-            Calendly.initInlineWidget({
-                url: 'https://calendly.com/kaikossendey/rueckruf',
-                parentElement: document.getElementById('calendly-embed'),
-                prefill: prefillData,
-                utm: {
-                    utmCampaign: 'Pet Insurance',
-                    utmSource: 'Website',
-                    utmMedium: 'Form'
-                }
-            });
-        }
+      }
 
-        function getPlanName(plan) {
-            switch(plan) {
-                case 'basis': return 'Basis Tarif';
-                case 'smart': return 'Smart Tarif';
-                case 'komfort': return 'Komfort Tarif';
-                default: return 'Smart Tarif';
-            }
-        }
-
-        function goBack() {
-            window.location.href = 'simple-pricing.html';
-        }
+      function goBack() {
+        window.location.href = "simple-pricing.html";
+      }
     </script>
-</body>
+  </body>
 </html>

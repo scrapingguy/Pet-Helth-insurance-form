@@ -13,14 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const krankheitenListe = document.getElementById("krankheitenListe");
   const submitButton = document.getElementById("berechnenButton");
 
-  // Progress tracking
-  const progressFill = document.getElementById("progressFill");
-  const progressText = document.getElementById("progressText");
-  const progressEmoji = document.getElementById("progressEmoji");
-  const emojis = ['🐾', '📋', '🎂', '🏥', '🏠', '💊'];
-  let currentStep = 0;
-  const totalSteps = 6;
-
   // Treatment checkboxes
   const keinBesuchCheckbox = document.getElementById("neue_kein_besuch");
   const heilbehandlungCheckbox = document.getElementById("neue_heilbehandlung");
@@ -32,18 +24,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // Since we now use text input with placeholder, we don't need the overlay
     // This function is kept for compatibility but doesn't show anything
     const dateInput = document.getElementById("geburtsdatum");
-    
+
     // Just validate the input format
     if (dateInput.value) {
       const germanDateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
       const match = dateInput.value.match(germanDateRegex);
-      
+
       if (match) {
         const [, day, month, year] = match;
         // Validate the date
         const date = new Date(year, month - 1, day);
-        
-        if (date.getDate() == day && date.getMonth() == month - 1 && date.getFullYear() == year) {
+
+        if (
+          date.getDate() == day &&
+          date.getMonth() == month - 1 &&
+          date.getFullYear() == year
+        ) {
           // Valid date - input field shows the value, no overlay needed
           return;
         }
@@ -55,91 +51,70 @@ document.addEventListener("DOMContentLoaded", function () {
   // Date input validation function for German format
   function validateDateInput(input) {
     let value = input.value;
-    
+
     // Remove any characters that aren't numbers or dots
-    value = value.replace(/[^0-9.]/g, '');
-    
+    value = value.replace(/[^0-9.]/g, "");
+
     // Auto-format as user types
-    if (value.length === 2 && !value.includes('.')) {
-      value = value + '.';
-    } else if (value.length === 5 && value.split('.').length === 2) {
-      value = value + '.';
+    if (value.length === 2 && !value.includes(".")) {
+      value = value + ".";
+    } else if (value.length === 5 && value.split(".").length === 2) {
+      value = value + ".";
     }
-    
+
     // Limit to DD.MM.YYYY format (10 characters max)
     if (value.length > 10) {
       value = value.substring(0, 10);
     }
-    
+
     input.value = value;
-    
+
     // Check if field is required and empty
-    if (input.hasAttribute('required') && !value) {
-      input.setCustomValidity('Bitte geben Sie das Geburtsdatum ein.');
+    if (input.hasAttribute("required") && !value) {
+      input.setCustomValidity("Bitte geben Sie das Geburtsdatum ein.");
       return;
     }
-    
+
     // Validate complete date
     if (value.length === 10) {
       const germanDateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
       const match = value.match(germanDateRegex);
-      
+
       if (match) {
         const [, day, month, year] = match;
         const date = new Date(year, month - 1, day);
-        
-        if (date.getDate() == day && date.getMonth() == month - 1 && date.getFullYear() == year) {
+
+        if (
+          date.getDate() == day &&
+          date.getMonth() == month - 1 &&
+          date.getFullYear() == year
+        ) {
           // Valid date
-          input.setCustomValidity('');
+          input.setCustomValidity("");
         } else {
-          input.setCustomValidity('Bitte geben Sie ein gültiges Datum ein (TT.MM.JJJJ).');
+          input.setCustomValidity(
+            "Bitte geben Sie ein gültiges Datum ein (TT.MM.JJJJ)."
+          );
         }
       } else {
-        input.setCustomValidity('Bitte verwenden Sie das Format TT.MM.JJJJ.');
+        input.setCustomValidity("Bitte verwenden Sie das Format TT.MM.JJJJ.");
       }
     } else if (value.length > 0) {
       // Partial input, don't show error yet
-      input.setCustomValidity('');
+      input.setCustomValidity("");
     }
   }
 
-  // Progress update function
-  function updateProgress(completedSteps) {
-    currentStep = Math.max(0, Math.min(completedSteps, totalSteps));
-    const percentage = (currentStep / totalSteps) * 100;
-
-    if (progressFill) {
-      progressFill.style.width = percentage + '%';
-    }
-
-    const displayStep = Math.min(currentStep + 1, totalSteps);
-
-    if (progressText) {
-      progressText.textContent = `Schritt ${displayStep} von ${totalSteps}`;
-    }
-
-    if (progressEmoji) {
-      const emojiIndex = Math.min(displayStep - 1, emojis.length - 1);
-      progressEmoji.textContent = emojis[emojiIndex] || emojis[emojis.length - 1];
-      if (currentStep === totalSteps) {
-        progressEmoji.style.animation = 'celebration 1s ease-in-out';
-        setTimeout(() => {
-          if (progressEmoji && currentStep === totalSteps) {
-            progressEmoji.textContent = '🎉';
-          }
-        }, 800);
-      } else {
-        progressEmoji.style.animation = 'bounce 2s infinite';
-      }
-    }
-  }
 
   // Function to check form completion and update progress
   function checkFormCompletion() {
     let completedSteps = 0;
 
     const hasPLZAndAnimal =
-      plzInput && plzInput.value.length === 5 && tierKategorieSelect && tierKategorieSelect.value;
+      plzInput &&
+      plzInput.value.length === 5 &&
+      tierKategorieSelect &&
+      tierKategorieSelect.value;
     if (hasPLZAndAnimal) {
       completedSteps += 1;
     }
@@ -153,26 +128,33 @@ document.addEventListener("DOMContentLoaded", function () {
       completedSteps += 1;
     }
 
-    const neuteringRadios = document.querySelectorAll('input[name="kastriert"]');
-    const neuteringSelected = Array.from(neuteringRadios).some((radio) => radio.checked);
+    const neuteringRadios = document.querySelectorAll(
+      'input[name="kastriert"]'
+    );
+    const neuteringSelected = Array.from(neuteringRadios).some(
+      (radio) => radio.checked
+    );
     if (neuteringSelected) {
       completedSteps += 1;
     }
 
     const housingRadios = document.querySelectorAll('input[name="haltung"]');
-    const housingSelected = Array.from(housingRadios).some((radio) => radio.checked);
+    const housingSelected = Array.from(housingRadios).some(
+      (radio) => radio.checked
+    );
     if (housingSelected) {
       completedSteps += 1;
     }
 
     if (gesundheitsproblemeRadios && gesundheitsproblemeRadios.length > 0) {
-      const healthSelected = Array.from(gesundheitsproblemeRadios).some((radio) => radio.checked);
+      const healthSelected = Array.from(gesundheitsproblemeRadios).some(
+        (radio) => radio.checked
+      );
       if (healthSelected) {
         completedSteps += 1;
       }
     }
 
-    updateProgress(completedSteps);
   }
 
   // German postal code to city mapping (expanded dataset)
@@ -1807,57 +1789,58 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   // PLZ input validation and city display
-  if (plzInput) {
-    const cityNameElement = document.getElementById("cityName");
-    const successBox = document.getElementById("plzSuccess");
-    const errorBox = document.getElementById("plzError");
+  // if (plzInput) {
+  //   const cityNameElement = document.getElementById("cityName");
+  //   const successBox = document.getElementById("plzSuccess");
+  //   const errorBox = document.getElementById("plzError");
 
-    plzInput.addEventListener("input", function () {
-      const plz = this.value;
-      if (plz.length === 5 && plzCityMap[plz]) {
-        // Display city name with animation
-        if (cityNameElement) {
-          cityNameElement.textContent = plzCityMap[plz];
-          cityNameElement.classList.add("show");
-        }
-        // Show success message
-        if (successBox) {
-          successBox.classList.add("show");
-          successBox.style.display = "flex";
-        }
-        if (errorBox) {
-          errorBox.classList.remove("show");
-          errorBox.style.display = "none";
-        }
-        // Add success feedback
-        this.style.borderBottomColor = "#28a745";
-        this.style.background = "linear-gradient(180deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%)";
-      } else {
-        // Hide success message
-        if (successBox) {
-          successBox.classList.remove("show");
-          successBox.style.display = "none";
-        }
-        // Hide city name if PLZ is invalid or incomplete
-        if (cityNameElement) {
-          cityNameElement.classList.remove("show");
-          // Clear text after transition
-          setTimeout(() => {
-            if (!cityNameElement.classList.contains("show")) {
-              cityNameElement.textContent = "";
-            }
-          }, 300);
-        }
-        // Reset styling
-        if (plz.length > 0) {
-          this.style.borderBottomColor = "#ff8c42";
-          this.style.background = "transparent";
-        }
-      }
-      
-      checkFormCompletion();
-    });
-  }
+  //   plzInput.addEventListener("input", function () {
+  //     const plz = this.value;
+  //     if (plz.length === 5 && plzCityMap[plz]) {
+  //       // Display city name with animation
+  //       if (cityNameElement) {
+  //         cityNameElement.textContent = plzCityMap[plz];
+  //         cityNameElement.classList.add("show");
+  //       }
+  //       // Show success message
+  //       if (successBox) {
+  //         successBox.classList.add("show");
+  //         successBox.style.display = "flex";
+  //       }
+  //       if (errorBox) {
+  //         errorBox.classList.remove("show");
+  //         errorBox.style.display = "none";
+  //       }
+  //       // Add success feedback
+  //       this.style.borderBottomColor = "#28a745";
+  //       this.style.background =
+  //         "linear-gradient(180deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%)";
+  //     } else {
+  //       // Hide success message
+  //       if (successBox) {
+  //         successBox.classList.remove("show");
+  //         successBox.style.display = "none";
+  //       }
+  //       // Hide city name if PLZ is invalid or incomplete
+  //       if (cityNameElement) {
+  //         cityNameElement.classList.remove("show");
+  //         // Clear text after transition
+  //         setTimeout(() => {
+  //           if (!cityNameElement.classList.contains("show")) {
+  //             cityNameElement.textContent = "";
+  //           }
+  //         }, 300);
+  //       }
+  //       // Reset styling
+  //       if (plz.length > 0) {
+  //         this.style.borderBottomColor = "#ff8c42";
+  //         this.style.background = "transparent";
+  //       }
+  //     }
+
+  //     checkFormCompletion();
+  //   });
+  // }
 
   // Brand selection handling
   const animalSelect = document.getElementById("animal");
@@ -1880,11 +1863,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Update housing question text based on animal type
       updateHousingText(selectedAnimal);
-      
+
       // Add visual feedback
       this.style.borderBottomColor = "#28a745";
-      this.style.background = "linear-gradient(180deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%)";
-      
+      this.style.background =
+        "linear-gradient(180deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%)";
+
       checkFormCompletion();
     });
 
@@ -1940,14 +1924,15 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       rasseSelect.appendChild(option);
     });
-    
+
     // Add change listener for breed selection
     if (!rasseSelect.dataset.listenerAdded) {
       rasseSelect.addEventListener("change", function () {
         if (this.value) {
           // Add visual feedback
           this.style.borderBottomColor = "#28a745";
-          this.style.background = "linear-gradient(180deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%)";
+          this.style.background =
+            "linear-gradient(180deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%)";
         }
         checkFormCompletion();
       });
@@ -1993,7 +1978,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Add event listeners for all form interactions
-  
+
   // Birth date input
   const birthDateInput = document.getElementById("geburtsdatum");
   if (birthDateInput) {
@@ -2008,10 +1993,11 @@ document.addEventListener("DOMContentLoaded", function () {
   neuteringRadios.forEach((radio) => {
     radio.addEventListener("change", function () {
       // Add visual feedback to the selected option
-      const parentOption = this.closest('.radio-option');
+      const parentOption = this.closest(".radio-option");
       if (parentOption) {
         parentOption.style.borderColor = "#28a745";
-        parentOption.style.background = "linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%)";
+        parentOption.style.background =
+          "linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%)";
       }
       checkFormCompletion();
     });
@@ -2022,10 +2008,11 @@ document.addEventListener("DOMContentLoaded", function () {
   housingRadios.forEach((radio) => {
     radio.addEventListener("change", function () {
       // Add visual feedback to the selected option
-      const parentOption = this.closest('.radio-option');
+      const parentOption = this.closest(".radio-option");
       if (parentOption) {
         parentOption.style.borderColor = "#28a745";
-        parentOption.style.background = "linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%)";
+        parentOption.style.background =
+          "linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%)";
       }
       checkFormCompletion();
     });
@@ -2035,12 +2022,13 @@ document.addEventListener("DOMContentLoaded", function () {
   gesundheitsproblemeRadios.forEach((radio) => {
     radio.addEventListener("change", function () {
       // Add visual feedback
-      const parentOption = this.closest('.radio-option');
+      const parentOption = this.closest(".radio-option");
       if (parentOption) {
         parentOption.style.borderColor = "#28a745";
-        parentOption.style.background = "linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%)";
+        parentOption.style.background =
+          "linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%)";
       }
-      
+
       if (this.value === "ja" && behandlungsFrage) {
         behandlungsFrage.style.display = "block";
         // Also show the disease list
@@ -2181,13 +2169,17 @@ document.addEventListener("DOMContentLoaded", function () {
       // Validate the German format DD.MM.YYYY
       const germanDateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
       const match = birthDateInput.match(germanDateRegex);
-      
+
       if (match) {
         const [, day, month, year] = match;
         const date = new Date(year, month - 1, day);
-        
+
         // Verify the date is valid
-        if (date.getDate() == day && date.getMonth() == month - 1 && date.getFullYear() == year) {
+        if (
+          date.getDate() == day &&
+          date.getMonth() == month - 1 &&
+          date.getFullYear() == year
+        ) {
           birthDate = birthDateInput; // Use as-is since it's already in DD.MM.YYYY format
         }
       }
@@ -2675,9 +2667,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Store selection data
     localStorage.setItem("selectedPlan", JSON.stringify(selectionData));
 
-    // Close modal
-    document.getElementById("resultsModal").style.display = "none";
-
     // Show confirmation
     alert(
       `Sie haben den Tarif "${productTitle}" für ${finalPrice}/Monat ausgewählt.`
@@ -2732,7 +2721,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Validate form data before sending
         const validationResult = validateFormData();
         if (!validationResult.isValid) {
-          showUserAlert(validationResult.message, 'error');
+          showUserAlert(validationResult.message, "error");
           return;
         }
 
@@ -2756,31 +2745,33 @@ document.addEventListener("DOMContentLoaded", function () {
           .then((response) => {
             if (!response.ok) {
               // If API fails, still redirect to pricing page with static data
-              window.location.href = 'simple-pricing.html?from=form&source=static';
+              window.location.href =
+                "simple-pricing.html?from=form&source=static";
               return;
             }
             return response.text();
           })
           .then((result) => {
             if (!result) return; // Already redirected
-            
+
             try {
               const jsonResult = JSON.parse(result);
               if (jsonResult.errors && jsonResult.errors.length > 0) {
                 throw new Error(`API Error: ${jsonResult.errors[0].message}`);
               }
-              
+
               // Store API response for plans page
               localStorage.setItem("apiResponseData", result);
-              window.location.href = 'simple-pricing.html?from=form&source=api';
-              
+              window.location.href = "simple-pricing.html?from=form&source=api";
             } catch (parseError) {
-              window.location.href = 'simple-pricing.html?from=form&source=static';
+              window.location.href =
+                "simple-pricing.html?from=form&source=static";
             }
           })
           .catch((error) => {
             // Always redirect to pricing page even if API fails
-            window.location.href = 'simple-pricing.html?from=form&source=static';
+            window.location.href =
+              "simple-pricing.html?from=form&source=static";
           });
       }
     });
@@ -2798,21 +2789,24 @@ document.addEventListener("DOMContentLoaded", function () {
       if (tierKategorie === "hund" && !rasse.startsWith("H")) {
         return {
           isValid: false,
-          message: "❌ Falscher Rassencode!\n\nSie haben 'Hund' ausgewählt, aber eine Katzen- oder Pferderasse gewählt.\n\n✅ Bitte wählen Sie eine Hunderasse aus der Liste."
+          message:
+            "❌ Falscher Rassencode!\n\nSie haben 'Hund' ausgewählt, aber eine Katzen- oder Pferderasse gewählt.\n\n✅ Bitte wählen Sie eine Hunderasse aus der Liste.",
         };
       }
-      
+
       if (tierKategorie === "katze" && !rasse.startsWith("K")) {
         return {
           isValid: false,
-          message: "❌ Falscher Rassencode!\n\nSie haben 'Katze' ausgewählt, aber eine Hunde- oder Pferderasse gewählt.\n\n✅ Bitte wählen Sie eine Katzenrasse aus der Liste."
+          message:
+            "❌ Falscher Rassencode!\n\nSie haben 'Katze' ausgewählt, aber eine Hunde- oder Pferderasse gewählt.\n\n✅ Bitte wählen Sie eine Katzenrasse aus der Liste.",
         };
       }
-      
+
       if (tierKategorie === "pferd" && !rasse.startsWith("P")) {
         return {
           isValid: false,
-          message: "❌ Falscher Rassencode!\n\nSie haben 'Pferd' ausgewählt, aber eine Hunde- oder Katzenrasse gewählt.\n\n✅ Bitte wählen Sie eine Pferderasse aus der Liste."
+          message:
+            "❌ Falscher Rassencode!\n\nSie haben 'Pferd' ausgewählt, aber eine Hunde- oder Katzenrasse gewählt.\n\n✅ Bitte wählen Sie eine Pferderasse aus der Liste.",
         };
       }
     }
@@ -2827,29 +2821,32 @@ document.addEventListener("DOMContentLoaded", function () {
       if (selectedDate > today) {
         return {
           isValid: false,
-          message: "❌ Ungültiges Geburtsdatum!\n\nDas Geburtsdatum liegt in der Zukunft.\n\n✅ Bitte wählen Sie ein Datum aus der Vergangenheit."
+          message:
+            "❌ Ungültiges Geburtsdatum!\n\nDas Geburtsdatum liegt in der Zukunft.\n\n✅ Bitte wählen Sie ein Datum aus der Vergangenheit.",
         };
       }
 
       // Check for too old dates (more than 30 years)
       const thirtyYearsAgo = new Date();
       thirtyYearsAgo.setFullYear(thirtyYearsAgo.getFullYear() - 30);
-      
+
       if (selectedDate < thirtyYearsAgo) {
         return {
           isValid: false,
-          message: "❌ Ungewöhnliches Geburtsdatum!\n\nDas Tier wäre über 30 Jahre alt.\n\n✅ Bitte überprüfen Sie das Geburtsdatum."
+          message:
+            "❌ Ungewöhnliches Geburtsdatum!\n\nDas Tier wäre über 30 Jahre alt.\n\n✅ Bitte überprüfen Sie das Geburtsdatum.",
         };
       }
 
       // Check for very young animals (less than 8 weeks old)
       const eightWeeksAgo = new Date();
       eightWeeksAgo.setDate(eightWeeksAgo.getDate() - 56); // 8 weeks = 56 days
-      
+
       if (selectedDate > eightWeeksAgo) {
         return {
           isValid: false,
-          message: "⚠️ Sehr junges Tier!\n\nDas Tier ist weniger als 8 Wochen alt.\n\n✅ Für sehr junge Tiere gelten besondere Bedingungen. Bitte kontaktieren Sie unseren Kundenservice."
+          message:
+            "⚠️ Sehr junges Tier!\n\nDas Tier ist weniger als 8 Wochen alt.\n\n✅ Für sehr junge Tiere gelten besondere Bedingungen. Bitte kontaktieren Sie unseren Kundenservice.",
         };
       }
     }
@@ -2858,7 +2855,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (plz && !isValidPLZ(plz)) {
       return {
         isValid: false,
-        message: "❌ Ungültige Postleitzahl!\n\nBitte geben Sie eine gültige 5-stellige deutsche Postleitzahl ein.\n\n✅ Beispiel: 10115, 20095, 80331"
+        message:
+          "❌ Ungültige Postleitzahl!\n\nBitte geben Sie eine gültige 5-stellige deutsche Postleitzahl ein.\n\n✅ Beispiel: 10115, 20095, 80331",
       };
     }
 
@@ -2866,7 +2864,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (plz && !plzCityMap[plz]) {
       return {
         isValid: false,
-        message: "❌ Postleitzahl nicht gefunden!\n\nDiese Postleitzahl ist nicht in unserer Datenbank.\n\n✅ Bitte überprüfen Sie die PLZ oder verwenden Sie eine andere."
+        message:
+          "❌ Postleitzahl nicht gefunden!\n\nDiese Postleitzahl ist nicht in unserer Datenbank.\n\n✅ Bitte überprüfen Sie die PLZ oder verwenden Sie eine andere.",
       };
     }
 
@@ -2874,12 +2873,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // User-friendly alert system
-  function showUserAlert(message, type = 'info') {
+  function showUserAlert(message, type = "info") {
     // Create modal if it doesn't exist
-    let modal = document.getElementById('userAlertModal');
+    let modal = document.getElementById("userAlertModal");
     if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'userAlertModal';
+      modal = document.createElement("div");
+      modal.id = "userAlertModal";
       modal.innerHTML = `
         <div class="alert-modal-overlay">
           <div class="alert-modal-content">
@@ -2892,9 +2891,9 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
       `;
       document.body.appendChild(modal);
-      
+
       // Add styles
-      const style = document.createElement('style');
+      const style = document.createElement("style");
       style.textContent = `
         #userAlertModal {
           display: none;
@@ -2976,34 +2975,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Set icon based on type
     const iconMap = {
-      'error': '❌',
-      'warning': '⚠️',
-      'success': '✅',
-      'info': 'ℹ️'
+      error: "❌",
+      warning: "⚠️",
+      success: "✅",
+      info: "ℹ️",
     };
 
-    document.getElementById('alertIcon').textContent = iconMap[type] || 'ℹ️';
-    document.getElementById('alertMessage').textContent = message;
+    document.getElementById("alertIcon").textContent = iconMap[type] || "ℹ️";
+    document.getElementById("alertMessage").textContent = message;
     modal.className = `alert-${type}`;
-    modal.style.display = 'block';
+    modal.style.display = "block";
 
     // Focus on button for keyboard accessibility
     setTimeout(() => {
-      modal.querySelector('.alert-btn').focus();
+      modal.querySelector(".alert-btn").focus();
     }, 100);
   }
 
   // Close alert modal
-  window.closeUserAlert = function() {
-    const modal = document.getElementById('userAlertModal');
+  window.closeUserAlert = function () {
+    const modal = document.getElementById("userAlertModal");
     if (modal) {
-      modal.style.display = 'none';
+      modal.style.display = "none";
     }
-  }
+  };
 
   // Close modal on Escape key
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
       closeUserAlert();
     }
   });
@@ -3018,33 +3017,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Check all required fields
     const requiredFields = [
-      { id: 'plz', name: 'Postleitzahl' },
-      { id: 'tierKategorie', name: 'Tierart' },
-      { id: 'geschlecht', name: 'Geschlecht' },
-      { id: 'rasse', name: 'Rasse' },
-      { id: 'geburtsdatum', name: 'Geburtsdatum' }
+      { id: "plz", name: "Postleitzahl" },
+      { id: "tierKategorie", name: "Tierart" },
+      { id: "geschlecht", name: "Geschlecht" },
+      { id: "rasse", name: "Rasse" },
+      { id: "geburtsdatum", name: "Geburtsdatum" },
     ];
 
     // Check regular input fields
-    requiredFields.forEach(field => {
+    requiredFields.forEach((field) => {
       const element = document.getElementById(field.id);
       if (!element || !element.value) {
         missingFields.push(field.name);
         isValid = false;
-        if (field.id === 'plz') showError("plzError", "plz");
-        if (field.id === 'geburtsdatum') showError("geburtsdatumError", "geburtsdatum");
+        if (field.id === "plz") showError("plzError", "plz");
+        if (field.id === "geburtsdatum")
+          showError("geburtsdatumError", "geburtsdatum");
       }
     });
 
     // Check radio button fields
     const radioFields = [
-      { name: 'kastriert', label: 'Kastration/Sterilisation' },
-      { name: 'haltung', label: 'Haltungsart' },
-      { name: 'gesundheitsprobleme', label: 'Gesundheitsprobleme' }
+      { name: "kastriert", label: "Kastration/Sterilisation" },
+      { name: "haltung", label: "Haltungsart" },
+      { name: "gesundheitsprobleme", label: "Gesundheitsprobleme" },
     ];
 
-    radioFields.forEach(field => {
-      const checked = document.querySelector(`input[name="${field.name}"]:checked`);
+    radioFields.forEach((field) => {
+      const checked = document.querySelector(
+        `input[name="${field.name}"]:checked`
+      );
       if (!checked) {
         missingFields.push(field.label);
         isValid = false;
@@ -3055,8 +3057,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // Show comprehensive error message if fields are missing
     if (!isValid) {
       showUserAlert(
-        `❌ Pflichtfelder fehlen!\n\nBitte füllen Sie folgende Felder aus:\n\n• ${missingFields.join('\n• ')}\n\n✅ Alle Felder sind für die Berechnung erforderlich.`,
-        'error'
+        `❌ Pflichtfelder fehlen!\n\nBitte füllen Sie folgende Felder aus:\n\n• ${missingFields.join(
+          "\n• "
+        )}\n\n✅ Alle Felder sind für die Berechnung erforderlich.`,
+        "error"
       );
       return false;
     }
@@ -3064,7 +3068,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Additional validation checks
     const validationResult = validateFormData();
     if (!validationResult.isValid) {
-      showUserAlert(validationResult.message, 'error');
+      showUserAlert(validationResult.message, "error");
       return false;
     }
 
@@ -3210,25 +3214,29 @@ document.addEventListener("DOMContentLoaded", function () {
     // Parse German date format DD.MM.YYYY
     const value = dateField.value;
     if (!value) return; // If empty, let the required validation handle it
-    
+
     const germanDateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
     const match = value.match(germanDateRegex);
-    
+
     if (!match) {
       // Invalid format
       showError("geburtsdatumError", "geburtsdatum");
       return;
     }
-    
+
     const [, day, month, year] = match;
     const selectedDate = new Date(year, month - 1, day);
-    
+
     // Check if the date is valid (e.g., not 32.01.2025)
-    if (selectedDate.getDate() != day || selectedDate.getMonth() != month - 1 || selectedDate.getFullYear() != year) {
+    if (
+      selectedDate.getDate() != day ||
+      selectedDate.getMonth() != month - 1 ||
+      selectedDate.getFullYear() != year
+    ) {
       showError("geburtsdatumError", "geburtsdatum");
       return;
     }
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to beginning of today
 
@@ -3334,25 +3342,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Initial button state
   updateSubmitButton();
-
-  // Modal functionality
-  const resultsModal = document.getElementById("resultsModal");
-  const closeModalButton = document.getElementById("closeModalButton");
-
-  if (closeModalButton) {
-    closeModalButton.addEventListener("click", function () {
-      resultsModal.style.display = "none";
-    });
-  }
-
-  // Close modal when clicking outside of it
-  if (resultsModal) {
-    resultsModal.addEventListener("click", function (e) {
-      if (e.target === resultsModal) {
-        resultsModal.style.display = "none";
-      }
-    });
-  }
 
   // Initialize progress and date display on page load
   checkFormCompletion();
