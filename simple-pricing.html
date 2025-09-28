@@ -301,6 +301,42 @@
                             <span>pro Monat</span>
                         </div>
                     </div>
+                    
+                    <!-- Customer Contact Form -->
+                    <div class="customer-contact-section">
+                        <h3>Kontaktdaten für Beratungstermin</h3>
+                        <p>Damit wir Sie für einen Beratungstermin kontaktieren können, benötigen wir noch Ihre Kontaktdaten:</p>
+                        
+                        <form id="customerContactForm" class="contact-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="customerName">Vor- und Nachname *</label>
+                                    <input type="text" id="customerName" name="customerName" class="form-control" required placeholder="Max Mustermann">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="customerEmail">E-Mail-Adresse *</label>
+                                    <input type="email" id="customerEmail" name="customerEmail" class="form-control" required placeholder="max@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="customerPhone">Telefonnummer *</label>
+                                    <input type="tel" id="customerPhone" name="customerPhone" class="form-control" required placeholder="+49 123 456789">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group checkbox-group">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" id="privacyConsent" name="privacyConsent" required>
+                                        <span class="checkbox-custom"></span>
+                                        <span>Ich stimme der Verarbeitung meiner Daten für die Kontaktaufnahme zu. *</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                    <div class="action-buttons">
                 <button class="btn-back" onclick="goBack()">← Zurück</button>

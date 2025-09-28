@@ -86,18 +86,16 @@ function setupEventListeners() {
             e.preventDefault();
             
             if (selectedPlan) {
-                // Store selected plan data
-                const selectedPlanData = {
-                    plan: selectedPlan,
-                    deductible: deductibleSelect ? deductibleSelect.value : '20',
-                    paymentFrequency: paymentSelect ? paymentSelect.value : 'monthly',
-                    price: getCurrentPrice(selectedPlan)
-                };
-                
-                localStorage.setItem('selectedPlanData', JSON.stringify(selectedPlanData));
-                
-                // Navigate to final confirmation
-                continueToApplication();
+                // Check if customer contact form is visible and validate it
+                const contactForm = document.getElementById('customerContactForm');
+                if (contactForm && contactForm.offsetParent !== null) {
+                    if (validateCustomerForm()) {
+                        storeCustomerData();
+                        continueToApplication();
+                    }
+                } else {
+                    continueToApplication();
+                }
             } else {
                 alert('Bitte wählen Sie zuerst einen Tarif aus.');
             }
@@ -380,7 +378,68 @@ function updateConfirmationSection() {
     if (totalPriceElement) totalPriceElement.textContent = `${totalPrice.toFixed(2)} €`;
 }
 
-// Calendar and application flow functions
+// Customer form validation and data functions
+function validateCustomerForm() {
+    const name = document.getElementById('customerName');
+    const email = document.getElementById('customerEmail');
+    const phone = document.getElementById('customerPhone');
+    const privacy = document.getElementById('privacyConsent');
+    
+    let isValid = true;
+    
+    // Clear previous error styles
+    [name, email, phone].forEach(field => {
+        if (field) {
+            field.classList.remove('error');
+        }
+    });
+    
+    // Validate name
+    if (!name || !name.value.trim()) {
+        if (name) name.classList.add('error');
+        isValid = false;
+    }
+    
+    // Validate email
+    if (!email || !email.value.trim() || !isValidEmail(email.value)) {
+        if (email) email.classList.add('error');
+        isValid = false;
+    }
+    
+    // Validate phone
+    if (!phone || !phone.value.trim()) {
+        if (phone) phone.classList.add('error');
+        isValid = false;
+    }
+    
+    // Validate privacy consent
+    if (!privacy || !privacy.checked) {
+        if (privacy) privacy.classList.add('error');
+        isValid = false;
+    }
+    
+    if (!isValid) {
+        alert('Bitte füllen Sie alle Pflichtfelder aus und stimmen Sie der Datenverarbeitung zu.');
+    }
+    
+    return isValid;
+}
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function storeCustomerData() {
+    const customerData = {
+        name: document.getElementById('customerName')?.value || '',
+        email: document.getElementById('customerEmail')?.value || '',
+        phone: document.getElementById('customerPhone')?.value || '',
+        timestamp: new Date().toISOString()
+    };
+    
+    localStorage.setItem('customerContactData', JSON.stringify(customerData));
+}
 function continueToApplication() {
     // Store the selected plan and addon data in localStorage
     const selectionData = {
@@ -391,7 +450,16 @@ function continueToApplication() {
         timestamp: new Date().toISOString()
     };
     
+    // Also store selected plan data for backward compatibility
+    const selectedPlanData = {
+        plan: selectedPlan,
+        deductible: document.getElementById('deductible')?.value || '20',
+        paymentFrequency: document.getElementById('paymentFrequency')?.value || 'monthly',
+        price: getCurrentPrice(selectedPlan)
+    };
+    
     localStorage.setItem('insuranceSelection', JSON.stringify(selectionData));
+    localStorage.setItem('selectedPlanData', JSON.stringify(selectedPlanData));
     
     // Redirect directly to success page
     window.location.href = 'success.html';

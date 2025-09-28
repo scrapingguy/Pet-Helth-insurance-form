@@ -30,21 +30,13 @@
                 <div class="success-icon">✓</div>
                 <h1>Vielen Dank für Ihre Auswahl!</h1>
                 <p class="success-message">
-                    Ihre Tarifauswahl wurde erfasst. Für den Abschluss Ihrer Tierkrankenversicherung 
-                    werden wir Sie in Kürze kontaktieren.
+                    Ihre Tarifauswahl wurde erfasst. Wählen Sie jetzt einen passenden Termin für Ihre persönliche Beratung.
                 </p>
                 
-                <div class="application-details">
+                <!-- Selection Summary -->
+                <div class="selection-summary">
                     <h3>Ihre Auswahl:</h3>
-                    <div class="details-grid">
-                        <div class="detail-item">
-                            <span class="label">Auswahl-ID:</span>
-                            <span class="value" id="application-number">--</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">Datum:</span>
-                            <span class="value" id="submission-date">--</span>
-                        </div>
+                    <div class="summary-details">
                         <div class="detail-item">
                             <span class="label">Tarif:</span>
                             <span class="value" id="selected-plan">--</span>
@@ -56,59 +48,13 @@
                     </div>
                 </div>
 
-                <div class="pet-summary">
-                    <h3>Ihr versichertes Tier:</h3>
-                    <div id="pet-info" class="pet-details">
-                        <!-- Will be populated by JavaScript -->
-                    </div>
-                </div>
-
-                <div class="next-steps">
-                    <h3>Was passiert als nächstes?</h3>
-                    <div class="steps-list">
-                        <div class="step-item">
-                            <div class="step-number">1</div>
-                            <div class="step-text">
-                                <strong>Persönliche Beratung</strong><br>
-                                Einer unserer Experten wird Sie kontaktieren.
-                            </div>
-                        </div>
-                        <div class="step-item">
-                            <div class="step-number">2</div>
-                            <div class="step-text">
-                                <strong>Individuelle Beratung</strong><br>
-                                Wir besprechen Ihre Auswahl und beantworten Ihre Fragen.
-                            </div>
-                        </div>
-                        <div class="step-item">
-                            <div class="step-number">3</div>
-                            <div class="step-text">
-                                <strong>Vertragsabschluss</strong><br>
-                                Bei Zufriedenheit schließen wir den Vertrag gemeinsam ab.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="contact-info">
-                    <h3>Haben Sie Fragen?</h3>
-                    <p>Bei Fragen zu Ihrer Auswahl können Sie uns gerne kontaktieren:</p>
-                    <div class="contact-details">
-                        <div class="contact-item">
-                            <strong>Telefon:</strong> 0800 4 110 110 (kostenfrei)
-                        </div>
-                        <div class="contact-item">
-                            <strong>E-Mail:</strong> tierkrankenversicherung@allianz.de
-                        </div>
-                        <div class="contact-item">
-                            <strong>Montag bis Freitag:</strong> 8:00 - 18:00 Uhr
-                        </div>
-                    </div>
+                <!-- Calendly Embed -->
+                <div class="calendly-container">
+                    <div class="calendly-inline-widget" id="calendly-embed" style="min-width:320px;height:630px;"></div>
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn-back" onclick="printPage()">Auswahl drucken</button>
-                    <button class="btn-continue" onclick="goToHomepage()">Zur Startseite</button>
+                    <button class="btn-back" onclick="goBack()">← Zurück zur Auswahl</button>
                 </div>
             </div>
         </section>
@@ -123,7 +69,7 @@
             background: white;
             border-radius: 12px;
             padding: 40px;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             text-align: center;
@@ -156,106 +102,55 @@
             line-height: 1.6;
         }
 
-        .application-details,
-        .pet-summary,
-        .next-steps,
-        .contact-info {
+        .selection-summary {
             margin-bottom: 40px;
             text-align: left;
         }
 
-        .application-details h3,
-        .pet-summary h3,
-        .next-steps h3,
-        .contact-info h3 {
+        .selection-summary h3 {
             color: #ff8c42;
             margin-bottom: 20px;
             text-align: center;
         }
 
-        .details-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+        .summary-details {
             background: #f8f9fa;
             padding: 20px;
             border-radius: 8px;
+            display: flex;
+            justify-content: space-around;
         }
 
         .detail-item {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            gap: 5px;
         }
 
         .detail-item .label {
             font-weight: 600;
             color: #333;
+            font-size: 14px;
         }
 
         .detail-item .value {
             color: #666;
+            font-size: 16px;
         }
 
-        .pet-details {
-            background: #f8f9fa;
-            padding: 20px;
+        .calendly-container {
+            margin: 30px 0;
             border-radius: 8px;
-        }
-
-        .steps-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .step-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .step-item .step-number {
-            width: 30px;
-            height: 30px;
-            background: #ff8c42;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .step-text {
-            flex: 1;
-        }
-
-        .contact-details {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .contact-item {
-            margin-bottom: 10px;
-            color: #666;
-        }
-
-        .contact-item:last-child {
-            margin-bottom: 0;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .action-buttons {
             display: flex;
             gap: 20px;
             justify-content: center;
-            margin-top: 40px;
+            margin-top: 30px;
         }
 
         @media (max-width: 768px) {
@@ -283,28 +178,18 @@
         }
     </style>
 
+    <!-- Calendly Embed Script -->
+    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
+    
     <script>
-        // Load application data and display it
+        // Load selection data and display it
         document.addEventListener('DOMContentLoaded', function() {
-            loadApplicationData();
+            loadSelectionData();
+            initializeCalendly();
         });
 
-        function loadApplicationData() {
+        function loadSelectionData() {
             const selectionData = JSON.parse(localStorage.getItem('insuranceSelection') || '{}');
-            const petData = JSON.parse(localStorage.getItem('petInsuranceFormData') || '{}');
-
-            // Display selection ID
-            const appNumber = document.getElementById('application-number');
-            if (appNumber) {
-                appNumber.textContent = 'SEL-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 9999)).padStart(4, '0');
-            }
-
-            // Display selection date
-            const submissionDate = document.getElementById('submission-date');
-            if (submissionDate) {
-                const date = new Date(selectionData.timestamp || new Date());
-                submissionDate.textContent = date.toLocaleDateString('de-DE');
-            }
 
             // Display selected plan
             const selectedPlan = document.getElementById('selected-plan');
@@ -315,31 +200,39 @@
             // Display monthly premium
             const monthlyPremium = document.getElementById('monthly-premium');
             if (monthlyPremium) {
-                monthlyPremium.textContent = (selectionData.planPrice || '35,80') + ' €';
+                let totalPrice = parseFloat(selectionData.planPrice || '35.80');
+                if (selectionData.addonSelected) {
+                    const addonPrice = selectionData.addonOption === '5000' ? 33.33 : 23.38;
+                    totalPrice += addonPrice;
+                }
+                monthlyPremium.textContent = totalPrice.toFixed(2) + ' €';
             }
-
-            // Display pet information
-            const petInfo = document.getElementById('pet-info');
-            if (petInfo) {
-                petInfo.innerHTML = `
-                    <div class="detail-item">
-                        <span class="label">Tierart:</span>
-                        <span class="value">${getPetTypeText(petData.tierKategorie)}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Geschlecht:</span>
-                        <span class="value">${getGenderText(petData.geschlecht)}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Rasse:</span>
-                        <span class="value">${petData.rasse || 'Nicht angegeben'}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Geburtsdatum:</span>
-                        <span class="value">${petData.geburtsdatum || 'Nicht angegeben'}</span>
-                    </div>
-                `;
-            }
+        }
+        
+        function initializeCalendly() {
+            const customerData = JSON.parse(localStorage.getItem('customerContactData') || '{}');
+            
+            // Prepare prefill data
+            const prefillData = {
+                name: customerData.name || '',
+                email: customerData.email || '',
+                customAnswers: {
+                    a1: customerData.phone || '', // Phone number
+                    a2: getPlanName(JSON.parse(localStorage.getItem('insuranceSelection') || '{}').selectedPlan || 'smart'), // Selected plan
+                }
+            };
+            
+            // Initialize Calendly widget
+            Calendly.initInlineWidget({
+                url: 'https://calendly.com/kaikossendey/rueckruf',
+                parentElement: document.getElementById('calendly-embed'),
+                prefill: prefillData,
+                utm: {
+                    utmCampaign: 'Pet Insurance',
+                    utmSource: 'Website',
+                    utmMedium: 'Form'
+                }
+            });
         }
 
         function getPlanName(plan) {
@@ -351,35 +244,8 @@
             }
         }
 
-        function getPetTypeText(type) {
-            switch(type) {
-                case 'katze': return 'Katze';
-                case 'hund': return 'Hund';
-                case 'pferd': return 'Pferd';
-                default: return type || 'Nicht angegeben';
-            }
-        }
-
-        function getGenderText(gender) {
-            switch(gender) {
-                case 'maennlich': return 'Männlich';
-                case 'weiblich': return 'Weiblich';
-                default: return gender || 'Nicht angegeben';
-            }
-        }
-
-        function printPage() {
-            window.print();
-        }
-
-        function goToHomepage() {
-            // Clear selection data
-            localStorage.removeItem('insuranceSelection');
-            localStorage.removeItem('petInsuranceFormData');
-            localStorage.removeItem('selectedPlanData');
-            
-            // Redirect to homepage
-            window.location.href = 'index.html';
+        function goBack() {
+            window.location.href = 'simple-pricing.html';
         }
     </script>
 </body>
