@@ -1,7 +1,23 @@
-const postIframeHeight = () => {
-  const height = document.body.scrollHeight;
+function getDocHeight() {
+  const body = document.body;
+  const html = document.documentElement;
+
+  return Math.max(
+    body.scrollHeight, body.offsetHeight,
+    html.clientHeight, html.scrollHeight, html.offsetHeight
+  );
+}
+
+function postIframeHeight() {
+  const height = getDocHeight();
   window.parent.postMessage({ iframeHeight: height }, "*");
-};
+}
+
+// Run when page loads
+window.addEventListener("load", postIframeHeight);
+
+// Run again when resized or content changes
+window.addEventListener("resize", postIframeHeight);
 
 const scheduleIframeHeightUpdate = () => {
   window.requestAnimationFrame(postIframeHeight);
