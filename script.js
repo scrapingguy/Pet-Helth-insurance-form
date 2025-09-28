@@ -10,6 +10,7 @@ function getDocHeight() {
 
 function postIframeHeight() {
   const height = getDocHeight();
+  console.log("Posting iframe height:", height);
   window.parent.postMessage({ iframeHeight: height }, "*");
 }
 
@@ -23,7 +24,6 @@ const scheduleIframeHeightUpdate = () => {
   window.requestAnimationFrame(postIframeHeight);
 };
 
-window.addEventListener("load", scheduleIframeHeightUpdate);
 // Pet Health Insurance Form JavaScript
 
 document.addEventListener("DOMContentLoaded", function () {
