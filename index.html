@@ -5,11 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tierkrankenversicherungs-Tarif berechnen | Allianz</title>
     <link rel="stylesheet" href="styles.css?v=1727080000" />
+    <style>
+      .app-screen[hidden] {
+        display: none !important;
+      }
+
+      .app-screen {
+        width: 100%;
+      }
+
+      .success-section {
+        background: #f8f9fa;
+      }
+
+      .success-card {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        max-width: 900px;
+        margin: 0 auto;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .success-icon {
+        width: 80px;
+        height: 80px;
+        background: #28a745;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        font-weight: bold;
+        margin: 0 auto 30px;
+      }
+
+      .success-card h1 {
+        font-size: 32px;
+        color: #ff8c42;
+        margin-bottom: 20px;
+      }
+
+      .success-message {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 40px;
+        line-height: 1.6;
+      }
+
+      .selection-summary {
+        margin-bottom: 40px;
+        text-align: left;
+      }
+
+      .selection-summary h3 {
+        color: #ff8c42;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .summary-details {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-around;
+      }
+
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .detail-item .label {
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+      }
+
+      .detail-item .value {
+        color: #666;
+        font-size: 16px;
+      }
+
+      .calendly-container {
+        margin: 30px 0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 30px;
+      }
+
+      @media (max-width: 768px) {
+        .success-card {
+          margin: 20px;
+          padding: 30px 20px;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .success-card h1 {
+          font-size: 24px;
+        }
+
+        .success-message {
+          font-size: 16px;
+        }
+      }
+    </style>
   </head>
   <body class="embedded-full">
     <main class="full-screen-scroll">
-      <section class="">
-        <div class="form-card full-screen-card">
+      <section id="formScreen" class="app-screen active-screen">
+        <div class="">
           <form id="insuranceForm">
             <div class="progress-container step-progress-container">
               <div class="step-progress" id="stepProgress">
@@ -418,10 +539,335 @@
           </form>
         </div>
       </section>
+      <section id="pricingScreen" class="app-screen" hidden>
+        <section class="selection-section full-width-section">
+          <div class="selection-row">
+            <span class="selection-text">Ich möchte</span>
+            <select id="deductible" class="selection-dropdown">
+              <option value="no">keine</option>
+              <option value="10">10%</option>
+              <option value="20" selected>20%</option>
+            </select>
+            <span class="selection-text">Selbstbeteiligung</span>
+            <span class="info-icon">ⓘ</span>
+            <span class="selection-text">und zahle</span>
+            <select id="paymentFrequency" class="selection-dropdown">
+              <option value="monthly" selected>monatlich</option>
+              <option value="quarterly">vierteljährlich</option>
+              <option value="semi-annually">halbjährlich</option>
+              <option value="yearly">jährlich</option>
+            </select>
+            <span class="selection-text">.</span>
+          </div>
+        </section>
+
+        <section class="plans-title-section full-width-section">
+          <div class="progress-indicator">Finale Auswahl</div>
+          <h1 class="plans-title">Auswahl der OP Versicherung</h1>
+        </section>
+
+        <section class="pricing-section full-width-section">
+          <div class="pricing-cards">
+            <div class="price-card" data-plan="basis">
+              <div class="card-header">
+                <h3>Basis</h3>
+                <p>Grundschutz für Operationen</p>
+              </div>
+              <div class="price">
+                <span class="currency">€</span>
+                <span class="amount">7.33</span>
+                <span class="period">pro Monat</span>
+              </div>
+              <div class="features">
+                <div class="feature">✓ OP-Schutz bis 5.000€</div>
+                <div class="feature">✓ Notfallgebühr</div>
+                <div class="feature">✓ Freie Tierarztwahl</div>
+                <div class="feature">✓ Direkte Abrechnung</div>
+              </div>
+              <button class="select-btn" data-plan="basis">
+                Basis auswählen
+              </button>
+            </div>
+
+            <div class="price-card" data-plan="smart">
+              <div class="card-header">
+                <h3>Smart</h3>
+                <p>Erweiterte Absicherung mit Vorsorge</p>
+              </div>
+              <div class="price">
+                <span class="currency">€</span>
+                <span class="amount">11.05</span>
+                <span class="period">pro Monat</span>
+              </div>
+              <div class="features">
+                <div class="feature">✓ Alles aus Basis</div>
+                <div class="feature">✓ OP-Schutz bis 10.000€</div>
+                <div class="feature">✓ Orthesen & Hilfsmittel</div>
+                <div class="feature">✓ 3 Monate Wartezeit</div>
+              </div>
+              <button class="select-btn" data-plan="smart">
+                Smart auswählen
+              </button>
+            </div>
+
+            <div class="price-card popular" data-plan="komfort">
+              <div class="popular-badge">Unser Bestseller</div>
+              <div class="card-header">
+                <h3>Komfort</h3>
+                <p>Vollschutz mit allen Leistungen</p>
+              </div>
+              <div class="price">
+                <span class="currency">€</span>
+                <span class="amount">18.36</span>
+                <span class="period">pro Monat</span>
+              </div>
+              <div class="features">
+                <div class="feature">✓ Alles aus Smart</div>
+                <div class="feature">✓ Unbegrenzter OP-Schutz</div>
+                <div class="feature">✓ Alternative Therapien</div>
+                <div class="feature">✓ Keine Wartezeit bei Unfall</div>
+              </div>
+              <button class="select-btn featured" data-plan="komfort">
+                Komfort auswählen
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section id="addonSection" class="addon-section full-width-section" hidden>
+          <div class="addon-intro">
+            <p>
+              Wenn Sie Ihr Tier nicht nur gegen Operationen absichern möchten,
+              sondern auch darüber hinaus für alle ambulanten und stationären
+              Behandlungen ohne Operation bei Unfall oder Krankheit, empfehlen wir
+              Ihnen den folgenden Zusatzbaustein.
+            </p>
+          </div>
+          <div class="addon-card">
+            <div class="addon-card-header">
+              <div class="addon-icon" aria-hidden="true">
+                <span>🩺</span>
+              </div>
+              <div class="addon-card-title">
+                <h3>
+                  Heilbehandlungs- und Vorsorgeschutz
+                  <span class="info" aria-label="Weitere Informationen">ⓘ</span>
+                </h3>
+                <p>
+                  Versichert sind mit dem Heilbehandlungsschutz ambulante und
+                  stationäre Behandlungen ohne Operation (Heilbehandlungen) bei
+                  Unfall oder Krankheit. Wir übernehmen die Kosten für
+                  Behandlungen z. B. aufgrund einer Allergie, Magenerkrankung,
+                  Bissverletzung oder Verstauchung. Zusätzlich enthalten ist ein
+                  Zuschuss für folgende Routine- und Prophylaxeleistungen:
+                  Impfungen, Entwurmungen, Zeckenbekämpfung oder Zahnentfernung.
+                </p>
+              </div>
+              <div class="addon-price">
+                <div class="addon-price-amount">23,38 €</div>
+                <div class="addon-price-period">pro Monat</div>
+                <button type="button" class="addon-select-btn">Auswählen</button>
+              </div>
+            </div>
+            <fieldset class="addon-options">
+              <legend class="visually-hidden">
+                Heilbehandlungs- und Vorsorgeschutz Optionen
+              </legend>
+              <label class="addon-option">
+                <input type="radio" name="addonCoverage" value="2000" checked />
+                <span
+                  >Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss
+                  (23,38 €)</span
+                >
+              </label>
+              <label class="addon-option">
+                <input type="radio" name="addonCoverage" value="5000" />
+                <span
+                  >Bis 5.000 € Heilbehandlungsschutz + 100 € Vorsorgezuschuss
+                  (33,33 €)</span
+                >
+              </label>
+            </fieldset>
+          </div>
+
+          <div id="addonConfirmation" class="addon-confirmation" style="display: none">
+            <div class="confirmation-content">
+              <h2>Glückwunsch, Sie haben Ihr passendes Produkt gefunden</h2>
+
+              <div class="confirmation-item">
+                <div class="confirmation-details">
+                  <h3 id="selectedTariffTitle">Ihr Tarif: Komfort</h3>
+                  <p>Selbstbeteiligung: 20 %</p>
+                </div>
+                <div class="confirmation-price">
+                  <span id="selectedTariffPrice">20,40 €</span>
+                  <span>pro Monat</span>
+                </div>
+              </div>
+
+              <div class="confirmation-item">
+                <div class="confirmation-details">
+                  <h3>Heilbehandlungs- und Vorsorgeschutz</h3>
+                  <p id="addonSelectedOption">
+                    Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss
+                  </p>
+                  <button type="button" class="remove-addon-btn" aria-label="Remove addon">
+                    <span>entfernen</span>
+                    <span class="remove-icon">🗑</span>
+                  </button>
+                </div>
+                <div class="confirmation-price">
+                  <span id="addonSelectedPrice">28,62 €</span>
+                  <span>pro Monat</span>
+                </div>
+              </div>
+
+              <div class="confirmation-total">
+                <div class="confirmation-details">
+                  <h3>Ihr Gesamtbeitrag</h3>
+                </div>
+                <div class="confirmation-price">
+                  <span id="totalPrice">49,02 €</span>
+                  <span>pro Monat</span>
+                </div>
+              </div>
+
+              <div class="customer-contact-section">
+                <h3>Kontaktdaten für Beratungstermin</h3>
+                <p>
+                  Damit wir Sie für einen Beratungstermin kontaktieren können,
+                  benötigen wir noch Ihre Kontaktdaten:
+                </p>
+
+                <form id="customerContactForm" class="contact-form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="customerName">Vor- und Nachname *</label>
+                      <input
+                        type="text"
+                        id="customerName"
+                        name="customerName"
+                        class="form-control"
+                        required
+                        placeholder="Max Mustermann" />
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="customerEmail">E-Mail-Adresse *</label>
+                      <input
+                        type="email"
+                        id="customerEmail"
+                        name="customerEmail"
+                        class="form-control"
+                        required
+                        placeholder="max@example.com" />
+                    </div>
+                    <div class="form-group">
+                      <label for="customerPhone">Telefonnummer *</label>
+                      <input
+                        type="tel"
+                        id="customerPhone"
+                        name="customerPhone"
+                        class="form-control"
+                        required
+                        placeholder="+49 123 456789" />
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group checkbox-group">
+                      <label class="checkbox-option">
+                        <input
+                          type="checkbox"
+                          id="privacyConsent"
+                          name="privacyConsent"
+                          required />
+                        <span class="checkbox-custom"></span>
+                        <span
+                          >Ich stimme der Verarbeitung meiner Daten für die
+                          Kontaktaufnahme zu. *</span
+                        >
+                      </label>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <button class="btn-back" type="button" onclick="goBackToForm()">
+                ← Zurück
+              </button>
+              <button class="btn-continue" id="continueBtn" disabled>
+                Auswahl bestätigen →
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </section>
+
+      <section id="successScreen" class="app-screen" hidden>
+        <section class="application-header full-width-section">
+          <div class="progress-bar">
+            <div class="progress-step completed">
+              <div class="step-number">1</div>
+              <div class="step-label">Tierdaten</div>
+            </div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step completed">
+              <div class="step-number">2</div>
+              <div class="step-label">Tarifauswahl</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="success-section full-width-section">
+          <div class="success-card">
+            <div class="success-icon">✓</div>
+            <h1>Vielen Dank für Ihre Auswahl!</h1>
+            <p class="success-message">
+              Ihre Tarifauswahl wurde erfasst. Wählen Sie jetzt einen passenden
+              Termin für Ihre persönliche Beratung.
+            </p>
+
+            <div class="selection-summary">
+              <h3>Ihre Auswahl:</h3>
+              <div class="summary-details">
+                <div class="detail-item">
+                  <span class="label">Tarif:</span>
+                  <span class="value" id="selected-plan">--</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Monatlicher Beitrag:</span>
+                  <span class="value" id="monthly-premium">--</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="calendly-container">
+              <div
+                class="calendly-inline-widget"
+                id="calendly-embed"
+                style="min-width: 320px; height: 630px"></div>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn-back" type="button" onclick="goBackToPricing()">
+                ← Zurück zur Auswahl
+              </button>
+            </div>
+          </div>
+        </section>
+      </section>
     </main>
     <script
       async
       src="https://cdn.jsdelivr.net/npm/@iframe-resizer/child@5.5.7"></script>
+    <script
+      type="text/javascript"
+      src="https://assets.calendly.com/assets/external/widget.js"></script>
     <!-- JavaScript Connection -->
     <script src="script.js?v=1727013600"></script>
   </body>

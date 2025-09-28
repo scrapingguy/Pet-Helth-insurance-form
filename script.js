@@ -46,6 +46,50 @@ const scheduleIframeHeightUpdate = () => {
   window.requestAnimationFrame(postIframeHeight);
 };
 
+const APP_SCREEN_IDS = ["formScreen", "pricingScreen", "successScreen"];
+let currentScreenId = "formScreen";
+
+function showScreen(targetId) {
+  currentScreenId = targetId;
+  APP_SCREEN_IDS.forEach((id) => {
+    const section = document.getElementById(id);
+    if (!section) {
+      return;
+    }
+
+    if (id === targetId) {
+      section.removeAttribute("hidden");
+      section.classList.add("active-screen");
+    } else {
+      section.setAttribute("hidden", "");
+      section.classList.remove("active-screen");
+    }
+  });
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  if (typeof scheduleIframeHeightUpdate === "function") {
+    scheduleIframeHeightUpdate();
+  }
+
+  if (targetId === "successScreen") {
+    loadSelectionData();
+    initializeCalendly();
+  }
+}
+
+function goBackToForm() {
+  showScreen("formScreen");
+}
+
+function goBackToPricing() {
+  showScreen("pricingScreen");
+}
+
+window.showScreen = showScreen;
+window.goBackToForm = goBackToForm;
+window.goBackToPricing = goBackToPricing;
+
 // Pet Health Insurance Form JavaScript
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -53,6 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("insuranceForm");
   const plzInput = document.getElementById("plz");
   const tierKategorieSelect = document.getElementById("tierKategorie");
+  const geschlechtSelect = document.getElementById("geschlecht");
   const rasseSelect = document.getElementById("rasse");
   const gesundheitsproblemeRadios = document.querySelectorAll(
     'input[name="gesundheitsprobleme"]'
@@ -267,6 +312,49 @@ document.addEventListener("DOMContentLoaded", function () {
     return true;
   }
 
+  function saveFormState() {
+    const selectedBreedOption = rasseSelect?.selectedOptions?.[0];
+    const formState = {
+      plz: plzInput?.value || "",
+      tierKategorie: tierKategorieSelect?.value || "",
+      geschlecht: geschlechtSelect?.value || "",
+      rasse: rasseSelect?.value || "",
+      rasseLabel: selectedBreedOption?.textContent?.trim() || "",
+      geburtsdatum: document.getElementById("geburtsdatum")?.value || "",
+      kastriert: document.querySelector('input[name="kastriert"]:checked')?.value || "",
+      haltung: document.querySelector('input[name="haltung"]:checked')?.value || "",
+      gesundheitsprobleme:
+        document.querySelector('input[name="gesundheitsprobleme"]:checked')?.value || "",
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      localStorage.setItem("petInsuranceFormData", JSON.stringify(formState));
+    } catch (error) {
+      console.warn("Konnte Formulardaten nicht speichern", error);
+    }
+  }
+
+  function handleFormSubmit(event) {
+    event.preventDefault();
+
+    const targetStepIndex = stepThreeEnabled ? 2 : 1;
+    if (!validateStep(targetStepIndex)) {
+      updateStepsUI();
+      scheduleIframeHeightUpdate();
+      return;
+    }
+
+    saveFormState();
+
+    if (typeof resetPricingView === "function") {
+      resetPricingView();
+    }
+
+    showScreen("pricingScreen");
+    scheduleIframeHeightUpdate();
+  }
+
   if (nextStepBtn) {
     nextStepBtn.addEventListener("click", (event) => {
       const handled = goToNextStep(event);
@@ -287,6 +375,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (submitButton) {
     submitButton.addEventListener("click", scheduleIframeHeightUpdate);
+  }
+
+  if (form) {
+    form.addEventListener("submit", handleFormSubmit);
   }
 
   // Treatment checkboxes
@@ -3628,3 +3720,669 @@ document.addEventListener("DOMContentLoaded", function () {
   updateGermanDateDisplay();
   updateStepThreeAvailability();
 });
+
+let selectedPlan = null;
+let addonSection = null;
+let calendlyInitialized = false;
+
+const planPrices = {
+  basis: { monthly: 8.14, quarterly: 7.74, yearly: 7.33 },
+  smart: { monthly: 12.28, quarterly: 11.67, yearly: 11.05 },
+  komfort: { monthly: 20.4, quarterly: 19.38, yearly: 18.36 },
+};
+
+const deductibleMultipliers = {
+  no: 1.2,
+  10: 1.1,
+  20: 1.0,
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+  initializePricingModule();
+  initializeSuccessModule();
+});
+
+function initializePricingModule() {
+  const pricingScreen = document.getElementById("pricingScreen");
+  if (!pricingScreen) {
+    return;
+  }
+
+  setupPricingEventListeners();
+  updatePrices();
+  disableContinueButton();
+
+  addonSection = document.getElementById("addonSection");
+  if (addonSection) {
+    addonSection.hidden = true;
+  }
+
+  const interactiveFields = document.querySelectorAll(
+    "main input, main select, main textarea, main button"
+  );
+  interactiveFields.forEach((element) => {
+    element.addEventListener("input", scheduleIframeHeightUpdate);
+    element.addEventListener("change", scheduleIframeHeightUpdate);
+    element.addEventListener("click", scheduleIframeHeightUpdate);
+  });
+}
+
+function initializeSuccessModule() {
+  loadSelectionData();
+}
+
+function setupPricingEventListeners() {
+  const selectButtons = document.querySelectorAll(
+    ".select-btn, .table-select-btn"
+  );
+
+  selectButtons.forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      const plan = this.getAttribute("data-plan");
+      selectPlan(plan);
+    });
+  });
+
+  const deductibleSelect = document.getElementById("deductible");
+  const paymentSelect = document.getElementById("paymentFrequency");
+
+  if (deductibleSelect) {
+    deductibleSelect.addEventListener("change", updatePrices);
+  }
+
+  if (paymentSelect) {
+    paymentSelect.addEventListener("change", updatePrices);
+  }
+
+  const addonSelectBtn = document.querySelector(".addon-select-btn");
+  if (addonSelectBtn) {
+    addonSelectBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      selectAddon();
+    });
+  }
+
+  document.addEventListener("click", function (e) {
+    if (e.target.closest(".remove-addon-btn")) {
+      e.preventDefault();
+      removeAddon();
+    }
+  });
+
+  const addonRadios = document.querySelectorAll('input[name="addonCoverage"]');
+  addonRadios.forEach((radio) => {
+    radio.addEventListener("change", updateAddonPricing);
+  });
+
+  const continueBtn = document.getElementById("continueBtn");
+  if (continueBtn) {
+    continueBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      if (!selectedPlan) {
+        alert("Bitte wählen Sie zuerst einen Tarif aus.");
+        return;
+      }
+
+      const contactForm = document.getElementById("customerContactForm");
+      if (contactForm && contactForm.offsetParent !== null) {
+        if (validateCustomerForm()) {
+          storeCustomerData();
+          continueToApplication();
+        }
+      } else {
+        continueToApplication();
+      }
+    });
+  }
+}
+
+function selectPlan(planName) {
+  document.querySelectorAll(".price-card").forEach((card) => {
+    card.classList.remove("selected");
+  });
+
+  document.querySelectorAll(".select-btn, .table-select-btn").forEach((btn) => {
+    btn.classList.remove("selected");
+  });
+
+  const planCard = document.querySelector(
+    `[data-plan="${planName}"].price-card`
+  );
+  if (planCard) {
+    planCard.classList.add("selected");
+  }
+
+  const planButton = document.querySelector(
+    `[data-plan="${planName}"].select-btn, [data-plan="${planName}"].table-select-btn`
+  );
+  if (planButton) {
+    planButton.classList.add("selected");
+  }
+
+  selectedPlan = planName;
+  highlightTableColumn(planName);
+  showSelectedPlan();
+  showAddonSection();
+  enableContinueButton();
+  scheduleIframeHeightUpdate();
+}
+
+function highlightTableColumn(planName) {
+  clearTableColumnHighlight();
+
+  const columnMap = {
+    basis: 2,
+    smart: 3,
+    komfort: 4,
+  };
+
+  const columnIndex = columnMap[planName];
+  if (!columnIndex) return;
+
+  const columnCells = document.querySelectorAll(`
+        .comparison-table th:nth-child(${columnIndex}),
+        .comparison-table td:nth-child(${columnIndex})
+    `);
+
+  columnCells.forEach((cell) => {
+    cell.classList.add("selected-column");
+  });
+}
+
+function clearTableColumnHighlight() {
+  const highlightedCells = document.querySelectorAll(".selected-column");
+  highlightedCells.forEach((cell) => {
+    cell.classList.remove("selected-column");
+  });
+}
+
+function showSelectedPlan() {
+  if (!selectedPlan) return;
+
+  const planNames = {
+    basis: "Basis",
+    smart: "Smart",
+    komfort: "Komfort",
+  };
+
+  const planName = planNames[selectedPlan] || selectedPlan;
+  const price = getCurrentPrice(selectedPlan);
+  const period = getBillingPeriod();
+
+  const selectedPlanElement = document.getElementById("selectedPlan");
+  const selectedPlanName = document.getElementById("selectedPlanName");
+  const selectedPlanPrice = document.getElementById("selectedPlanPrice");
+
+  if (selectedPlanName) selectedPlanName.textContent = planName;
+  if (selectedPlanPrice) selectedPlanPrice.textContent = `€${price}${period}`;
+  if (selectedPlanElement) selectedPlanElement.style.display = "block";
+  scheduleIframeHeightUpdate();
+}
+
+function showAddonSection() {
+  if (!addonSection) return;
+  if (addonSection.hidden) {
+    addonSection.hidden = false;
+  }
+  addonSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  scheduleIframeHeightUpdate();
+}
+
+function hideSelectedPlan() {
+  const selectedPlanElement = document.getElementById("selectedPlan");
+  if (selectedPlanElement) {
+    selectedPlanElement.style.display = "none";
+  }
+  scheduleIframeHeightUpdate();
+}
+
+function enableContinueButton() {
+  const btn = document.getElementById("continueBtn");
+  if (btn) {
+    btn.disabled = false;
+    btn.style.backgroundColor = "#ff8c42";
+    btn.style.color = "white";
+    btn.style.cursor = "pointer";
+    btn.style.opacity = "1";
+  }
+}
+
+function disableContinueButton() {
+  const btn = document.getElementById("continueBtn");
+  if (btn) {
+    btn.disabled = true;
+    btn.style.backgroundColor = "#ccc";
+    btn.style.color = "#666";
+    btn.style.cursor = "not-allowed";
+    btn.style.opacity = "0.6";
+  }
+  scheduleIframeHeightUpdate();
+}
+
+function resetPricingView() {
+  selectedPlan = null;
+
+  document.querySelectorAll(".price-card").forEach((card) => {
+    card.classList.remove("selected");
+  });
+
+  document.querySelectorAll(".select-btn, .table-select-btn").forEach((btn) => {
+    btn.classList.remove("selected");
+  });
+
+  clearTableColumnHighlight();
+  hideSelectedPlan();
+  disableContinueButton();
+
+  const addonSelectBtn = document.querySelector(".addon-select-btn");
+  const addonConfirmation = document.getElementById("addonConfirmation");
+
+  if (addonSelectBtn) {
+    addonSelectBtn.textContent = "Auswählen";
+    addonSelectBtn.style.backgroundColor = "";
+    addonSelectBtn.disabled = false;
+  }
+
+  if (addonConfirmation) {
+    addonConfirmation.style.display = "none";
+  }
+
+  if (addonSection) {
+    addonSection.hidden = true;
+  }
+
+  const addonCoverageDefault = document.querySelector(
+    'input[name="addonCoverage"][value="2000"]'
+  );
+  if (addonCoverageDefault) {
+    addonCoverageDefault.checked = true;
+  }
+
+  scheduleIframeHeightUpdate();
+}
+
+function updatePrices() {
+  const deductibleSelect = document.getElementById("deductible");
+  const paymentSelect = document.getElementById("paymentFrequency");
+
+  const deductible = deductibleSelect ? deductibleSelect.value : "20";
+  const billing = paymentSelect ? paymentSelect.value : "monthly";
+  const multiplier = deductibleMultipliers[deductible] || 1.0;
+
+  Object.keys(planPrices).forEach((plan) => {
+    const basePrice = planPrices[plan][billing] || planPrices[plan].monthly;
+    const finalPrice = (basePrice * multiplier).toFixed(2);
+
+    const amountElement = document.querySelector(
+      `[data-plan="${plan}"] .amount`
+    );
+    if (amountElement) {
+      amountElement.textContent = finalPrice;
+    }
+  });
+
+  const periodText = getBillingPeriodText(billing);
+  document.querySelectorAll(".period").forEach((element) => {
+    element.textContent = `pro ${periodText}`;
+  });
+
+  if (selectedPlan) {
+    showSelectedPlan();
+  }
+
+  scheduleIframeHeightUpdate();
+}
+
+function getCurrentPrice(plan) {
+  const deductibleSelect = document.getElementById("deductible");
+  const paymentSelect = document.getElementById("paymentFrequency");
+
+  const deductible = deductibleSelect ? deductibleSelect.value : "20";
+  const billing = paymentSelect ? paymentSelect.value : "monthly";
+  const multiplier = deductibleMultipliers[deductible] || 1.0;
+  const basePrice = planPrices[plan]?.[billing] || planPrices[plan]?.monthly || 0;
+
+  return (basePrice * multiplier).toFixed(2);
+}
+
+function getBillingPeriod() {
+  const paymentSelect = document.getElementById("paymentFrequency");
+  const billing = paymentSelect ? paymentSelect.value : "monthly";
+
+  return billing === "monthly"
+    ? "/Monat"
+    : billing === "quarterly"
+    ? "/Quartal"
+    : billing === "yearly"
+    ? "/Jahr"
+    : "/Monat";
+}
+
+function getBillingPeriodText(billing) {
+  return billing === "monthly"
+    ? "Monat"
+    : billing === "quarterly"
+    ? "Quartal"
+    : billing === "yearly"
+    ? "Jahr"
+    : "Monat";
+}
+
+function selectAddon() {
+  const confirmationSection = document.getElementById("addonConfirmation");
+  const addonSelectBtn = document.querySelector(".addon-select-btn");
+
+  if (confirmationSection && addonSelectBtn) {
+    confirmationSection.style.display = "block";
+    addonSelectBtn.textContent = "Ausgewählt ✓";
+    addonSelectBtn.style.backgroundColor = "#28a745";
+    addonSelectBtn.disabled = true;
+    updateConfirmationSection();
+    confirmationSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  scheduleIframeHeightUpdate();
+}
+
+function removeAddon() {
+  const confirmationSection = document.getElementById("addonConfirmation");
+  const addonSelectBtn = document.querySelector(".addon-select-btn");
+
+  if (confirmationSection && addonSelectBtn) {
+    confirmationSection.style.display = "none";
+    addonSelectBtn.textContent = "Auswählen";
+    addonSelectBtn.style.backgroundColor = "";
+    addonSelectBtn.disabled = false;
+  }
+  scheduleIframeHeightUpdate();
+}
+
+function updateAddonPricing() {
+  const selectedOption = document.querySelector(
+    'input[name="addonCoverage"]:checked'
+  );
+  if (selectedOption) {
+    const addonPriceElement = document.querySelector(".addon-price-amount");
+    const value = selectedOption.value;
+
+    if (value === "2000") {
+      if (addonPriceElement) addonPriceElement.textContent = "23,38 €";
+    } else if (value === "5000") {
+      if (addonPriceElement) addonPriceElement.textContent = "33,33 €";
+    }
+
+    const confirmationSection = document.getElementById("addonConfirmation");
+    if (confirmationSection && confirmationSection.style.display !== "none") {
+      updateConfirmationSection();
+    }
+  }
+  scheduleIframeHeightUpdate();
+}
+
+function updateConfirmationSection() {
+  const planNames = {
+    basis: "Basis",
+    smart: "Smart",
+    komfort: "Komfort",
+  };
+
+  const planName = planNames[selectedPlan] || "Komfort";
+  const planPrice = getCurrentPrice(selectedPlan || "komfort");
+
+  const selectedAddon = document.querySelector(
+    'input[name="addonCoverage"]:checked'
+  );
+  let addonPrice = 23.38;
+  let addonText = "Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss";
+
+  if (selectedAddon && selectedAddon.value === "5000") {
+    addonPrice = 33.33;
+    addonText = "Bis 5.000 € Heilbehandlungsschutz + 100 € Vorsorgezuschuss";
+  }
+
+  const totalPrice = parseFloat(planPrice) + addonPrice;
+
+  const tariffTitle = document.getElementById("selectedTariffTitle");
+  const tariffPrice = document.getElementById("selectedTariffPrice");
+  const addonOption = document.getElementById("addonSelectedOption");
+  const addonSelectedPrice = document.getElementById("addonSelectedPrice");
+  const totalPriceElement = document.getElementById("totalPrice");
+
+  if (tariffTitle) tariffTitle.textContent = `Ihr Tarif: ${planName}`;
+  if (tariffPrice) tariffPrice.textContent = `${planPrice} €`;
+  if (addonOption) addonOption.textContent = addonText;
+  if (addonSelectedPrice)
+    addonSelectedPrice.textContent = `${addonPrice.toFixed(2)} €`;
+  if (totalPriceElement)
+    totalPriceElement.textContent = `${totalPrice.toFixed(2)} €`;
+  scheduleIframeHeightUpdate();
+}
+
+function validateCustomerForm() {
+  const name = document.getElementById("customerName");
+  const email = document.getElementById("customerEmail");
+  const phone = document.getElementById("customerPhone");
+  const privacy = document.getElementById("privacyConsent");
+
+  let isValid = true;
+
+  [name, email, phone].forEach((field) => {
+    if (field) {
+      field.classList.remove("error");
+    }
+  });
+
+  if (!name || !name.value.trim()) {
+    if (name) name.classList.add("error");
+    isValid = false;
+  }
+
+  if (!email || !email.value.trim() || !isValidEmail(email.value)) {
+    if (email) email.classList.add("error");
+    isValid = false;
+  }
+
+  if (!phone || !phone.value.trim()) {
+    if (phone) phone.classList.add("error");
+    isValid = false;
+  }
+
+  if (!privacy || !privacy.checked) {
+    if (privacy) privacy.classList.add("error");
+    isValid = false;
+  }
+
+  if (!isValid) {
+    alert(
+      "Bitte füllen Sie alle Pflichtfelder aus und stimmen Sie der Datenverarbeitung zu."
+    );
+  }
+
+  return isValid;
+}
+
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+function storeCustomerData() {
+  const customerData = {
+    name: document.getElementById("customerName")?.value || "",
+    email: document.getElementById("customerEmail")?.value || "",
+    phone: document.getElementById("customerPhone")?.value || "",
+    timestamp: new Date().toISOString(),
+  };
+
+  try {
+    localStorage.setItem("customerContactData", JSON.stringify(customerData));
+  } catch (error) {
+    console.warn("Konnte Kundendaten nicht speichern", error);
+  }
+}
+
+function continueToApplication() {
+  const selectionData = {
+    selectedPlan: selectedPlan,
+    planPrice: getCurrentPrice(selectedPlan || "komfort"),
+    addonSelected:
+      document.getElementById("addonConfirmation")?.style.display !== "none",
+    addonOption:
+      document.querySelector('input[name="addonCoverage"]:checked')?.value ||
+      "2000",
+    timestamp: new Date().toISOString(),
+  };
+
+  const selectedPlanData = {
+    plan: selectedPlan,
+    deductible: document.getElementById("deductible")?.value || "20",
+    paymentFrequency:
+      document.getElementById("paymentFrequency")?.value || "monthly",
+    price: getCurrentPrice(selectedPlan || "komfort"),
+  };
+
+  try {
+    localStorage.setItem("insuranceSelection", JSON.stringify(selectionData));
+    localStorage.setItem("selectedPlanData", JSON.stringify(selectedPlanData));
+  } catch (error) {
+    console.warn("Konnte Auswahl nicht speichern", error);
+  }
+
+  showScreen("successScreen");
+}
+
+function loadSelectionData() {
+  let selectionData = {};
+
+  try {
+    selectionData = JSON.parse(
+      localStorage.getItem("insuranceSelection") || "{}"
+    );
+  } catch (error) {
+    console.warn("Konnte Auswahl nicht laden", error);
+  }
+
+  const selectedPlanElement = document.getElementById("selected-plan");
+  if (selectedPlanElement) {
+    selectedPlanElement.textContent = getPlanName(
+      selectionData.selectedPlan || selectedPlan || "smart"
+    );
+  }
+
+  const monthlyPremium = document.getElementById("monthly-premium");
+  if (monthlyPremium) {
+    let totalPrice = parseFloat(selectionData.planPrice || "0");
+    if (selectionData.addonSelected) {
+      const addonPrice = selectionData.addonOption === "5000" ? 33.33 : 23.38;
+      totalPrice += addonPrice;
+    }
+    if (!Number.isFinite(totalPrice) || totalPrice <= 0) {
+      totalPrice = parseFloat(getCurrentPrice(selectedPlan || "smart"));
+    }
+    monthlyPremium.textContent = totalPrice
+      ? `${totalPrice.toFixed(2)} €`
+      : "--";
+  }
+}
+
+function initializeCalendly() {
+  const calendlyContainer = document.getElementById("calendly-embed");
+  if (!calendlyContainer) {
+    return;
+  }
+
+  if (typeof Calendly === "undefined" || !Calendly.initInlineWidget) {
+    setTimeout(initializeCalendly, 300);
+    return;
+  }
+
+  const customerData = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("customerContactData") || "{}");
+    } catch (error) {
+      console.warn("Konnte Kundendaten nicht laden", error);
+      return {};
+    }
+  })();
+
+  const insuranceSelection = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("insuranceSelection") || "{}");
+    } catch (error) {
+      console.warn("Konnte Auswahl für Calendly nicht laden", error);
+      return {};
+    }
+  })();
+
+  calendlyContainer.innerHTML = "";
+
+  Calendly.initInlineWidget({
+    url: "https://calendly.com/kaikossendey/rueckruf",
+    parentElement: calendlyContainer,
+    prefill: {
+      name: customerData.name || "",
+      email: customerData.email || "",
+      customAnswers: {
+        a1: customerData.phone || "",
+        a2: getPlanName(insuranceSelection.selectedPlan || selectedPlan || "smart"),
+      },
+    },
+    utm: {
+      utmCampaign: "Pet Insurance",
+      utmSource: "Website",
+      utmMedium: "Form",
+    },
+  });
+
+  calendlyInitialized = true;
+  scheduleIframeHeightUpdate();
+}
+
+function getPlanName(plan) {
+  switch (plan) {
+    case "basis":
+      return "Basis Tarif";
+    case "smart":
+      return "Smart Tarif";
+    case "komfort":
+      return "Komfort Tarif";
+    default:
+      return "Smart Tarif";
+  }
+}
+
+function goBack() {
+  goBackToForm();
+}
+
+const style = document.createElement("style");
+style.textContent = `
+    .price-card.selected {
+        border: 2px solid #ff8c42 !important;
+        box-shadow: 0 4px 20px rgba(200, 10, 80, 0.15) !important;
+        transform: translateY(-2px) !important;
+    }
+    
+    .select-btn.selected,
+    .table-select-btn.selected {
+        background: #ff8c42 !important;
+        color: white !important;
+        border-color: #ff8c42 !important;
+    }
+    
+    .selected-column {
+        background: rgba(200, 10, 80, 0.05) !important;
+        border-left: 2px solid #ff8c42 !important;
+        border-right: 2px solid #ff8c42 !important;
+    }
+    
+    .comparison-table .selected-column:first-of-type {
+        border-left: 2px solid #ff8c42 !important;
+    }
+    
+    .comparison-table .selected-column:last-of-type {
+        border-right: 2px solid #ff8c42 !important;
+    }
+`;
+document.head.appendChild(style);
