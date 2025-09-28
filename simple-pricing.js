@@ -3,7 +3,12 @@
 //</div>
 window.iframeResizer = {
   license: "GPLv3",
-  onReady: () => console.log("iframe-resizer is ready"),
+  onReady: () =>  {
+    console.log("iframe-resizer is ready");
+    if ("parentIframe" in window) {
+      parentIframe.autoResize(true);
+    }
+  },
 }
 function getDocHeight() {
   const lastElement = document.querySelector("main"); // or your form wrapper
@@ -26,6 +31,9 @@ function postIframeHeight() {
   const height = getDocHeight();
   console.log("Posting iframe height:", height);
   window.parent.postMessage({ iframeHeight: height }, "*");
+  if ("parentIframe" in window) {
+    parentIframe.resize();
+  }
 }
 
 // Run when page loads
@@ -70,6 +78,15 @@ document.addEventListener("DOMContentLoaded", function () {
   if (addonSection) {
     addonSection.hidden = true;
   }
+
+  const interactiveFields = document.querySelectorAll(
+    "main input, main select, main textarea, main button"
+  );
+  interactiveFields.forEach((element) => {
+    element.addEventListener("input", scheduleIframeHeightUpdate);
+    element.addEventListener("change", scheduleIframeHeightUpdate);
+    element.addEventListener("click", scheduleIframeHeightUpdate);
+  });
 });
 
 function setupEventListeners() {
@@ -174,6 +191,7 @@ function selectPlan(planName) {
   showSelectedPlan();
   showAddonSection();
   enableContinueButton();
+  scheduleIframeHeightUpdate();
 }
 
 function highlightTableColumn(planName) {
@@ -228,6 +246,7 @@ function showSelectedPlan() {
   if (selectedPlanName) selectedPlanName.textContent = planName;
   if (selectedPlanPrice) selectedPlanPrice.textContent = `€${price}${period}`;
   if (selectedPlanElement) selectedPlanElement.style.display = "block";
+  scheduleIframeHeightUpdate();
 }
 
 function showAddonSection() {
@@ -236,6 +255,7 @@ function showAddonSection() {
     addonSection.hidden = false;
   }
   addonSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  scheduleIframeHeightUpdate();
 }
 
 function hideSelectedPlan() {
@@ -243,6 +263,7 @@ function hideSelectedPlan() {
   if (selectedPlanElement) {
     selectedPlanElement.style.display = "none";
   }
+  scheduleIframeHeightUpdate();
 }
 
 function enableContinueButton() {
@@ -265,6 +286,7 @@ function disableContinueButton() {
     btn.style.cursor = "not-allowed";
     btn.style.opacity = "0.6";
   }
+  scheduleIframeHeightUpdate();
 }
 
 function updatePrices() {
@@ -298,6 +320,8 @@ function updatePrices() {
   if (selectedPlan) {
     showSelectedPlan();
   }
+
+  scheduleIframeHeightUpdate();
 }
 
 function getCurrentPrice(plan) {
@@ -355,6 +379,7 @@ function selectAddon() {
     // Scroll to confirmation section
     confirmationSection.scrollIntoView({ behavior: "smooth", block: "start" });
   }
+  scheduleIframeHeightUpdate();
 }
 
 function removeAddon() {
@@ -370,6 +395,7 @@ function removeAddon() {
     addonSelectBtn.style.backgroundColor = "";
     addonSelectBtn.disabled = false;
   }
+  scheduleIframeHeightUpdate();
 }
 
 function updateAddonPricing() {
@@ -393,6 +419,7 @@ function updateAddonPricing() {
       updateConfirmationSection();
     }
   }
+  scheduleIframeHeightUpdate();
 }
 
 function updateConfirmationSection() {
@@ -437,6 +464,7 @@ function updateConfirmationSection() {
     addonSelectedPrice.textContent = `${addonPrice.toFixed(2)} €`;
   if (totalPriceElement)
     totalPriceElement.textContent = `${totalPrice.toFixed(2)} €`;
+  scheduleIframeHeightUpdate();
 }
 
 // Customer form validation and data functions

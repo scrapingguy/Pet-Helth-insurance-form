@@ -3,8 +3,13 @@
 //</div>
 window.iframeResizer = {
   license: "GPLv3",
-  onReady: () => console.log("iframe-resizer is ready"),
-}
+  onReady: () => {
+    console.log("iframe-resizer is ready");
+    if ("parentIframe" in window) {
+      parentIframe.autoResize(true);
+    }
+  },
+};
 function getDocHeight() {
   const lastElement = document.querySelector("main"); // or your form wrapper
   if (!lastElement) return document.body.scrollHeight;
@@ -26,6 +31,9 @@ function postIframeHeight() {
   const height = getDocHeight();
   console.log("Posting iframe height:", height);
   window.parent.postMessage({ iframeHeight: height }, "*");
+  if ("parentIframe" in window) {
+    parentIframe.resize();
+  }
 }
 
 // Run when page loads
@@ -2998,7 +3006,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Try API call first, but fallback to plans page if it fails
         // Try API call first, but fallback to plans page if it fails
-  fetch(
+        fetch(
           "https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz",
           {
             method: "POST",
