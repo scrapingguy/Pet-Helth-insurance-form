@@ -1,4 +1,10 @@
-
+//<div class="custom-iframe-wrapper" id="myIframe">
+//  <iframe src="https://vierbeinerabsicherung.moazzammalek.com/" id="moazzammalek" loading="lazy"></iframe>
+//</div>
+window.iframeResizer = {
+  license: "GPLv3",
+  onReady: () => console.log("iframe-resizer is ready"),
+}
 function getDocHeight() {
   const lastElement = document.querySelector("main"); // or your form wrapper
   if (!lastElement) return document.body.scrollHeight;
