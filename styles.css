@@ -154,9 +154,158 @@
 
         /* Progress Bar Styles */
         .progress-container {
-            margin-bottom: 30px;
-            text-align: center;
-        }
+                    margin-bottom: 30px;
+                    text-align: center;
+                }
+
+                .step-progress-container {
+                    margin-bottom: var(--spacing-xl);
+                }
+
+                .step-progress {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 12px;
+                }
+
+                .step-progress-item {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 6px;
+                    color: var(--text-secondary);
+                    font-size: 14px;
+                    opacity: 0.45;
+                    transition: all 0.3s ease;
+                    min-width: 88px;
+                }
+
+                .step-progress-item.hidden {
+                    display: none;
+                }
+
+                .step-progress-item .step-number {
+                    width: 36px;
+                    height: 36px;
+                    border-radius: 50%;
+                    border: 2px solid var(--border-medium);
+                    display: grid;
+                    place-items: center;
+                    font-weight: 600;
+                    background: var(--background-primary);
+                }
+
+                .step-progress-item.active {
+                    opacity: 1;
+                    color: var(--primary-blue);
+                }
+
+                .step-progress-item.active .step-number {
+                    border-color: var(--primary-blue);
+                    background: var(--primary-blue-light);
+                }
+
+                .step-progress-item.completed {
+                    opacity: 1;
+                    color: var(--accent-green);
+                }
+
+                .step-progress-item.completed .step-number {
+                    border-color: var(--accent-green);
+                    background: rgba(40, 167, 69, 0.12);
+                }
+
+                .step-progress-line {
+                    flex: 0 0 60px;
+                    height: 2px;
+                    background: var(--border-medium);
+                    transition: background-color 0.3s ease;
+                }
+
+                .step-progress-line.hidden {
+                    display: none;
+                }
+
+                .step-progress-line.completed {
+                    background: linear-gradient(90deg, var(--primary-blue) 0%, var(--accent-green) 100%);
+                }
+
+                .form-step {
+                    display: none;
+                    animation: fadeInStep 0.4s ease;
+                }
+
+                .form-step.active {
+                    display: block;
+                }
+
+                @keyframes fadeInStep {
+                    from {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                .form-navigation {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: var(--spacing-md);
+                    margin-top: var(--spacing-xl);
+                }
+
+                .nav-button {
+                    flex: 1 1 0;
+                    padding: 14px 24px;
+                    border-radius: var(--radius-pill);
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    border: none;
+                    transition: all 0.3s ease;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+                }
+
+                .nav-button.primary {
+                    background: linear-gradient(135deg, #ff8c42 0%, #ff7a28 100%);
+                    color: #fff;
+                }
+
+                .nav-button.primary:hover {
+                    filter: brightness(0.95);
+                    transform: translateY(-1px);
+                }
+
+                .nav-button.secondary {
+                    background: #f1f3f4;
+                    color: var(--text-primary);
+                }
+
+                .nav-button.secondary:hover {
+                    background: #e9ecef;
+                }
+
+                .nav-button:disabled,
+                .nav-button.hidden {
+                    display: none;
+                }
+
+                .final-submit {
+                    display: none;
+                }
+
+                .final-submit.visible {
+                    display: block;
+                }
 
         .progress-bar {
             width: 100%;
@@ -1218,6 +1367,14 @@
             .radio-group {
                 flex-direction: column;
                 gap: 12px;
+            }
+
+            .form-navigation {
+                flex-direction: column;
+            }
+
+            .nav-button {
+                width: 100%;
             }
 
             .radio-option.enhanced {

@@ -12,6 +12,214 @@ document.addEventListener("DOMContentLoaded", function () {
   const behandlungsFrage = document.getElementById("behandlungsFrage");
   const krankheitenListe = document.getElementById("krankheitenListe");
   const submitButton = document.getElementById("berechnenButton");
+  const formSteps = document.querySelectorAll(".form-step");
+  const prevStepBtn = document.getElementById("prevStepBtn");
+  const nextStepBtn = document.getElementById("nextStepBtn");
+  const finalSubmitContainer = document.querySelector(".finalSubmitContainer");
+  const stepIndicators = document.querySelectorAll("[data-step-indicator]");
+  const stepLines = document.querySelectorAll("[data-step-line]");
+
+  let currentStepIndex = 0;
+  let stepThreeEnabled = false;
+
+  function isStepThreeRequired() {
+    const selected = document.querySelector(
+      'input[name="gesundheitsprobleme"]:checked'
+    );
+    return selected && selected.value === "ja";
+  }
+
+  function updateStepsUI() {
+    if (currentStepIndex === 2 && !stepThreeEnabled) {
+      currentStepIndex = 1;
+    }
+
+    formSteps.forEach((step, index) => {
+      const isActive =
+        index === currentStepIndex && (index !== 2 || stepThreeEnabled);
+      step.classList.toggle("active", isActive);
+      step.setAttribute("aria-hidden", !isActive);
+    });
+
+    stepIndicators.forEach((indicator, index) => {
+      const stepNumber = index + 1;
+      indicator.classList.remove("completed", "active");
+      if (indicator.classList.contains("hidden")) {
+        return;
+      }
+      if (stepNumber - 1 < currentStepIndex) {
+        indicator.classList.add("completed");
+      } else if (stepNumber - 1 === currentStepIndex) {
+        indicator.classList.add("active");
+      }
+    });
+
+    stepLines.forEach((line) => {
+      const lineStep = parseInt(line.dataset.stepLine, 10);
+      if (Number.isNaN(lineStep)) return;
+      line.classList.toggle("completed", currentStepIndex + 1 >= lineStep);
+    });
+
+    if (prevStepBtn) {
+      prevStepBtn.classList.toggle("hidden", currentStepIndex === 0);
+    }
+
+    if (nextStepBtn) {
+      if (
+        (currentStepIndex === 2 && stepThreeEnabled) ||
+        (currentStepIndex === 1 && !stepThreeEnabled)
+      ) {
+        nextStepBtn.classList.add("hidden");
+      } else {
+        nextStepBtn.classList.remove("hidden");
+        nextStepBtn.textContent = "Weiter";
+      }
+    }
+
+    if (finalSubmitContainer) {
+      const shouldShowSubmit =
+        (currentStepIndex === 2 && stepThreeEnabled) ||
+        (currentStepIndex === 1 && !stepThreeEnabled);
+      finalSubmitContainer.classList.toggle("visible", shouldShowSubmit);
+    }
+
+    const progressFill = document.querySelector(".progress-fill");
+    if (progressFill) {
+      const totalSteps = stepThreeEnabled ? 3 : 2;
+      const denominator = Math.max(totalSteps - 1, 1);
+      const effectiveIndex = Math.min(currentStepIndex, totalSteps - 1);
+      const percent = (effectiveIndex / denominator) * 100;
+      progressFill.style.width = `${Math.max(percent, 8)}%`;
+    }
+  }
+
+  function updateStepThreeAvailability() {
+    stepThreeEnabled = isStepThreeRequired();
+    const stepThreeIndicator = document.querySelector(
+      '[data-step-indicator="3"]'
+    );
+    const stepThreeLine = document.querySelector('[data-step-line="3"]');
+    if (stepThreeIndicator) {
+      stepThreeIndicator.classList.toggle("hidden", !stepThreeEnabled);
+    }
+    if (stepThreeLine) {
+      stepThreeLine.classList.toggle("hidden", !stepThreeEnabled);
+    }
+    if (!stepThreeEnabled && currentStepIndex === 2) {
+      currentStepIndex = 1;
+    }
+    updateStepsUI();
+  }
+
+  function validateStep(stepIndex) {
+    clearAllErrors();
+    let valid = true;
+
+    if (stepIndex === 0) {
+      const plzField = document.getElementById("plz");
+      const breedField = document.getElementById("rasse");
+      const birthDateField = document.getElementById("geburtsdatum");
+
+      if (!plzField || !plzField.value) {
+        showError("plzError", "plz");
+        valid = false;
+      }
+
+      if (!breedField || !breedField.value) {
+        showError("rasseError", "rasse");
+        valid = false;
+      }
+
+      if (!birthDateField || !birthDateField.value) {
+        showError("geburtsdatumError", "geburtsdatum");
+        valid = false;
+      } else {
+        validateBirthDateRealTime(birthDateField);
+        const hasFutureError = document
+          .getElementById("geburtsdatumFutureError")
+          ?.classList.contains("show");
+        const hasDateError = document
+          .getElementById("geburtsdatumError")
+          ?.classList.contains("show");
+        if (hasFutureError || hasDateError) {
+          valid = false;
+        }
+      }
+
+      const plzInvalid =
+        plzField && plzField.value && !isValidPLZ(plzField.value);
+      if (plzInvalid) {
+        showError("plzError", "plz");
+        valid = false;
+      }
+    } else if (stepIndex === 1) {
+      const kastriertSelected = document.querySelector(
+        'input[name="kastriert"]:checked'
+      );
+      const haltungSelected = document.querySelector(
+        'input[name="haltung"]:checked'
+      );
+      const gesundheitSelected = document.querySelector(
+        'input[name="gesundheitsprobleme"]:checked'
+      );
+
+      if (!kastriertSelected) {
+        showError("kastriertError", "kastriert");
+        valid = false;
+      }
+
+      if (!haltungSelected) {
+        showError("haltungError", "haltung");
+        valid = false;
+      }
+
+      if (!gesundheitSelected) {
+        showError("gesundheitsproblemeError", "gesundheitsprobleme");
+        valid = false;
+      }
+    }
+
+    return valid;
+  }
+
+  function goToNextStep() {
+    if (!validateStep(currentStepIndex)) {
+      return;
+    }
+
+    if (currentStepIndex === 0) {
+      currentStepIndex = 1;
+      updateStepsUI();
+      return;
+    }
+
+    if (currentStepIndex === 1) {
+      if (stepThreeEnabled) {
+        currentStepIndex = 2;
+        updateStepsUI();
+      } else {
+        if (typeof form.requestSubmit === "function") {
+          form.requestSubmit();
+        } else {
+          form.submit();
+        }
+      }
+    }
+  }
+
+  function goToPreviousStep() {
+    if (currentStepIndex === 0) return;
+    currentStepIndex -= 1;
+    updateStepsUI();
+  }
+
+  if (nextStepBtn) {
+    nextStepBtn.addEventListener("click", goToNextStep);
+  }
+
+  if (prevStepBtn) {
+    prevStepBtn.addEventListener("click", goToPreviousStep);
+  }
 
   // Treatment checkboxes
   const keinBesuchCheckbox = document.getElementById("neue_kein_besuch");
@@ -105,7 +313,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-
   // Function to check form completion and update progress
   function checkFormCompletion() {
     let completedSteps = 0;
@@ -154,7 +361,6 @@ document.addEventListener("DOMContentLoaded", function () {
         completedSteps += 1;
       }
     }
-
   }
 
   // German postal code to city mapping (expanded dataset)
@@ -2064,6 +2270,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
       checkFormCompletion();
+      updateStepThreeAvailability();
     });
   });
 
@@ -3033,6 +3240,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (field.id === "plz") showError("plzError", "plz");
         if (field.id === "geburtsdatum")
           showError("geburtsdatumError", "geburtsdatum");
+        if (field.id === "rasse") showError("rasseError", "rasse");
       }
     });
 
@@ -3292,6 +3500,9 @@ document.addEventListener("DOMContentLoaded", function () {
       case "gesundheitsprobleme":
         errorId = "gesundheitsproblemeError";
         break;
+      case "rasse":
+        errorId = "rasseError";
+        break;
     }
 
     // Hide the specific error
@@ -3346,4 +3557,5 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize progress and date display on page load
   checkFormCompletion();
   updateGermanDateDisplay();
+  updateStepThreeAvailability();
 });
