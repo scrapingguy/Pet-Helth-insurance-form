@@ -5,6 +5,7 @@
             --primary-blue: #ff8c42;
             --primary-blue-hover: #0052a3;
             --primary-blue-light: rgba(0, 102, 204, 0.1);
+            --embed-max-height: 100vh;
             
             /* Secondary Colors */
             --accent-orange: #ff6b35;
@@ -77,29 +78,37 @@
         }
 
         body.embedded-full {
+            --embed-max-height: 800px;
             margin: 0;
-            min-height: 100vh;
+            height: 100%;
+            min-height: 100%;
+            max-height: var(--embed-max-height, 100vh);
             display: flex;
             flex-direction: column;
             background: var(--background-primary);
+            overflow: hidden;
         }
 
         .full-screen-scroll {
             flex: 1 1 auto;
-            min-height: 100vh;
+            min-height: 0;
+            height: 100%;
+            max-height: 100%;
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
 
         .full-screen-block {
             flex: 1 0 auto;
             width: 100%;
-            min-height: 100vh;
+            min-height: auto;
             display: flex;
             align-items: flex-start;
             justify-content: center;
             background: var(--background-primary);
+            padding: var(--spacing-lg) var(--spacing-md);
         }
 
         .full-width-section {
@@ -846,8 +855,7 @@
         /* Results Modal */
         .results-modal {
             position: fixed;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
@@ -855,6 +863,8 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            padding: var(--spacing-lg);
+            overflow-y: auto;
         }
 
         .results-modal.show {
@@ -867,7 +877,7 @@
             border-radius: 8px;
             max-width: 900px;
             width: 90%;
-            max-height: 80vh;
+            max-height: calc(var(--embed-max-height, 100vh) - (2 * var(--spacing-lg)));
             overflow-y: auto;
         }
 
