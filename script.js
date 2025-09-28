@@ -1,3 +1,7 @@
+window.addEventListener("load", () => {
+  const height = document.body.scrollHeight;
+  window.parent.postMessage({ iframeHeight: height }, "*");
+});
 // Pet Health Insurance Form JavaScript
 
 document.addEventListener("DOMContentLoaded", function () {
