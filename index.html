@@ -11,13 +11,35 @@
     <!-- Form Section -->
     <section class="form-section full-screen-block">
         <div class="form-card full-screen-card">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="progressText">Schritt 1 von 6</span>
+                    <span class="progress-emoji" id="progressEmoji">🐾</span>
+                </div>
+            </div>
+            
+            <!-- Welcome Header -->
+            <div class="form-header">
+                <h1 class="form-title">🛡️ Tierkrankenversicherung</h1>
+                <p class="form-subtitle">Schützen Sie Ihr geliebtes Haustier mit der besten Versicherung. Nur wenige Schritte zu Ihrem persönlichen Angebot!</p>
+            </div>
+            
         <form id="insuranceForm">
                         <!-- Inline Form Row -->
                         <div class="inline-form">
                             <div class="form-line">
-                                <span class="form-text">Ich wohne in</span>
-                                <input type="text" id="plz" class="form-input plz-input" placeholder="PLZ" maxlength="5">
+                                <span class="form-text">🏘️ Ich wohne in</span>
+                                <input type="text" id="plz" class="form-input plz-input" placeholder="z.B. 10115" maxlength="5">
                                 <span id="cityName" class="form-text city-display"></span>
+                            </div>
+                            <!-- Success message for PLZ -->
+                            <div class="success-box" id="plzSuccess" style="display: none;">
+                                <div class="success-icon">✅</div>
+                                <div class="success-message">Perfekt! Wir haben Ihre Stadt gefunden.</div>
                             </div>
                             <!-- Error message for PLZ -->
                             <div class="error-box" id="plzError">
@@ -27,22 +49,22 @@
                             
                             <div class="form-line">
                                 <select id="tierKategorie" class="form-select">
-                                    <option value="katze" selected>Meine Katze</option>
-                                    <option value="hund">Mein Hund</option>
-                                    <option value="pferd">Mein Pferd</option>
+                                    <option value="katze" selected>🐱 Meine Katze</option>
+                                    <option value="hund">🐶 Mein Hund</option>
+                                    <option value="pferd">🐴 Mein Pferd</option>
                                 </select>
                                 
                                 <span class="form-text">ist</span>
                                 
                                 <select id="geschlecht" class="form-select">
-                                    <option value="maennlich" selected>männlich</option>
-                                    <option value="weiblich">weiblich</option>
+                                    <option value="maennlich" selected>♂️ männlich</option>
+                                    <option value="weiblich">♀️ weiblich</option>
                                 </select>
 
                                 <span class="form-text">und ein</span>
                                 
                                 <select id="rasse" class="form-select">
-                                    <option value="" selected>Rasse auswählen...</option>
+                                    <option value="" selected>🎯 Rasse auswählen...</option>
                                 </select>
                             </div>
                         </div>
@@ -50,20 +72,22 @@
                         <!-- Birth Date Question -->
                         <div class="form-question">
                             <div class="question-header">
+                                <span class="question-icon">🎂</span>
                                 <span class="question-title">Wann wurde Ihr Tier geboren?</span>
-                                <span class="info-icon">ⓘ</span>
+                                <span class="info-icon" title="Das Alter Ihres Tieres beeinflusst den Versicherungsbeitrag">ⓘ</span>
                             </div>
                             <div class="date-input-container">
-                                <label class="date-label">Geburtsdatum <span class="required">*</span></label>
+                                <label class="date-label">📅 Geburtsdatum <span class="required">*</span></label>
                                 <div class="date-input-wrapper">
                                     <input type="text" id="geburtsdatum" class="date-input" 
-                                           placeholder="TT.MM.JJJJ"
+                                           placeholder="z.B. 15.03.2020"
                                            maxlength="10"
                                            pattern="^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d$"
                                            title="Bitte geben Sie das Datum im Format TT.MM.JJJJ ein"
                                            required>
                                     <span class="date-display" id="dateDisplay"></span>
                                 </div>
+                                <div class="input-help">💡 Tipp: Geben Sie das Datum im Format TT.MM.JJJJ ein</div>
                             </div>
                             <!-- Error message for birth date -->
                             <div class="error-box" id="geburtsdatumError">
@@ -79,17 +103,21 @@
 
                         <!-- Neutered Question -->
                         <div class="form-question">
-                            <div class="question-title">Wurde Ihr Tier kastriert oder sterilisiert?</div>
+                            <div class="question-header">
+                                <span class="question-icon">🏥</span>
+                                <div class="question-title">Wurde Ihr Tier kastriert oder sterilisiert?</div>
+                                <span class="info-icon" title="Dies kann Einfluss auf die Gesundheitsrisiken haben">ⓘ</span>
+                            </div>
                             <div class="radio-group">
-                                <label class="radio-option">
+                                <label class="radio-option enhanced">
                                     <input type="radio" name="kastriert" value="ja">
                                     <span class="radio-custom"></span>
-                                    <span>Ja</span>
+                                    <span class="radio-text">✅ Ja, ist kastriert/sterilisiert</span>
                                 </label>
-                                <label class="radio-option">
+                                <label class="radio-option enhanced">
                                     <input type="radio" name="kastriert" value="nein">
                                     <span class="radio-custom"></span>
-                                    <span>Nein</span>
+                                    <span class="radio-text">❌ Nein, nicht kastriert/sterilisiert</span>
                                 </label>
                             </div>
                             <!-- Error message for neutering -->
@@ -102,19 +130,20 @@
                         <!-- Housing Question -->
                         <div class="form-question">
                             <div class="question-header">
+                                <span class="question-icon">🏠</span>
                                 <span class="question-title" id="haltungTitle">Wie wird Ihre Katze gehalten?</span>
-                                <span class="info-icon">ⓘ</span>
+                                <span class="info-icon" title="Die Haltungsart beeinflusst das Versicherungsrisiko">ⓘ</span>
                             </div>
                             <div class="radio-group">
-                                <label class="radio-option">
+                                <label class="radio-option enhanced">
                                     <input type="radio" name="haltung" value="wohnung">
                                     <span class="radio-custom"></span>
-                                    <span id="indoorText">ausschließlich in der Wohnung</span>
+                                    <span class="radio-text">🏠 <span id="indoorText">ausschließlich in der Wohnung</span></span>
                                 </label>
-                                <label class="radio-option">
+                                <label class="radio-option enhanced">
                                     <input type="radio" name="haltung" value="freigang">
                                     <span class="radio-custom"></span>
-                                    <span id="outdoorText">Freigänger</span>
+                                    <span class="radio-text">🌳 <span id="outdoorText">Freigänger</span></span>
                                 </label>
                             </div>
                             <!-- Error message for housing -->
@@ -126,20 +155,24 @@
 
                         <!-- New Health Issues Question -->
                         <div class="form-question">
-                            <div class="question-title">Sind Ihnen Krankheiten, Fehlentwicklungen oder Unfälle Ihres Tieres bekannt?</div>
+                            <div class="question-header">
+                                <span class="question-icon">🩺</span>
+                                <div class="question-title">Sind Ihnen Krankheiten, Fehlentwicklungen oder Unfälle Ihres Tieres bekannt?</div>
+                            </div>
                             <div class="question-help">
-                                Es zählen alle gesundheitlichen Beeinträchtigungen, die aktuell bestehen oder innerhalb der letzten 5 Jahre aufgetreten sind (dazu gehören nicht: Impfungen, Zahnpflege und Routineuntersuchungen).
+                                <span class="help-icon">💡</span>
+                                <span>Es zählen alle gesundheitlichen Beeinträchtigungen, die aktuell bestehen oder innerhalb der letzten 5 Jahre aufgetreten sind (dazu gehören nicht: Impfungen, Zahnpflege und Routineuntersuchungen).</span>
                             </div>
                             <div class="radio-group">
-                                <label class="radio-option">
+                                <label class="radio-option enhanced">
                                     <input type="radio" name="gesundheitsprobleme" value="ja" id="gesundheitsprobleme_ja">
                                     <span class="radio-custom"></span>
-                                    <span>Ja</span>
+                                    <span class="radio-text">⚠️ Ja, es sind Gesundheitsprobleme bekannt</span>
                                 </label>
-                                <label class="radio-option">
+                                <label class="radio-option enhanced">
                                     <input type="radio" name="gesundheitsprobleme" value="nein" id="gesundheitsprobleme_nein">
                                     <span class="radio-custom"></span>
-                                    <span>Nein</span>
+                                    <span class="radio-text">✅ Nein, keine Gesundheitsprobleme bekannt</span>
                                 </label>
                             </div>
                             <!-- Error message for health problems -->
@@ -230,7 +263,9 @@
                         <!-- Submit Button -->
                         <div class="button-container">
                             <button type="submit" class="cta-button" id="berechnenButton">
-                                JETZT TARIF BERECHNEN
+                                <span class="button-icon">🚀</span>
+                                <span class="button-text">JETZT KOSTENLOSEN TARIF BERECHNEN</span>
+                                <span class="button-subtext">Nur wenige Sekunden bis zu Ihrem Angebot!</span>
                             </button>
                         </div>
                 </form>

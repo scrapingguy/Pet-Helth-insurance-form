@@ -13,6 +13,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const krankheitenListe = document.getElementById("krankheitenListe");
   const submitButton = document.getElementById("berechnenButton");
 
+  // Progress tracking
+  const progressFill = document.getElementById("progressFill");
+  const progressText = document.getElementById("progressText");
+  const progressEmoji = document.getElementById("progressEmoji");
+  const emojis = ['🐾', '📋', '🎂', '🏠', '💊', '✅'];
+  let currentStep = 1;
+  const totalSteps = 6;
+
   // Treatment checkboxes
   const keinBesuchCheckbox = document.getElementById("neue_kein_besuch");
   const heilbehandlungCheckbox = document.getElementById("neue_heilbehandlung");
@@ -93,6 +101,71 @@ document.addEventListener("DOMContentLoaded", function () {
       // Partial input, don't show error yet
       input.setCustomValidity('');
     }
+  }
+
+  // Progress update function
+  function updateProgress(step) {
+    currentStep = Math.min(step, totalSteps);
+    const percentage = (currentStep / totalSteps) * 100;
+    
+    if (progressFill) {
+      progressFill.style.width = percentage + '%';
+    }
+    
+    if (progressText) {
+      progressText.textContent = `Schritt ${currentStep} von ${totalSteps}`;
+    }
+    
+    if (progressEmoji && emojis[currentStep - 1]) {
+      progressEmoji.textContent = emojis[currentStep - 1];
+    }
+    
+    // Celebrate when completed
+    if (currentStep === totalSteps) {
+      setTimeout(() => {
+        if (progressEmoji) {
+          progressEmoji.textContent = '🎉';
+          progressEmoji.style.animation = 'celebration 1s ease-in-out';
+        }
+      }, 800);
+    }
+  }
+
+  // Function to check form completion and update progress
+  function checkFormCompletion() {
+    let step = 1;
+    
+    // Step 1: PLZ and animal type
+    if (plzInput && plzInput.value.length === 5 && tierKategorieSelect && tierKategorieSelect.value) {
+      step = 2;
+    }
+    
+    // Step 2: Breed selection
+    if (step >= 2 && rasseSelect && rasseSelect.value) {
+      step = 3;
+    }
+    
+    // Step 3: Birth date
+    const birthDateInput = document.getElementById("geburtsdatum");
+    if (step >= 3 && birthDateInput && birthDateInput.value.length === 10) {
+      step = 4;
+    }
+    
+    // Step 4: Neutering status
+    const neuteringRadios = document.querySelectorAll('input[name="kastriert"]');
+    const neuteringSelected = Array.from(neuteringRadios).some(radio => radio.checked);
+    if (step >= 4 && neuteringSelected) {
+      step = 5;
+    }
+    
+    // Step 5: Housing
+    const housingRadios = document.querySelectorAll('input[name="haltung"]');
+    const housingSelected = Array.from(housingRadios).some(radio => radio.checked);
+    if (step >= 5 && housingSelected) {
+      step = 6;
+    }
+    
+    updateProgress(step);
   }
 
   // German postal code to city mapping (expanded dataset)
@@ -1729,6 +1802,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // PLZ input validation and city display
   if (plzInput) {
     const cityNameElement = document.getElementById("cityName");
+    const successBox = document.getElementById("plzSuccess");
+    const errorBox = document.getElementById("plzError");
 
     plzInput.addEventListener("input", function () {
       const plz = this.value;
@@ -1738,7 +1813,24 @@ document.addEventListener("DOMContentLoaded", function () {
           cityNameElement.textContent = plzCityMap[plz];
           cityNameElement.classList.add("show");
         }
+        // Show success message
+        if (successBox) {
+          successBox.classList.add("show");
+          successBox.style.display = "flex";
+        }
+        if (errorBox) {
+          errorBox.classList.remove("show");
+          errorBox.style.display = "none";
+        }
+        // Add success feedback
+        this.style.borderBottomColor = "#28a745";
+        this.style.background = "linear-gradient(180deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%)";
       } else {
+        // Hide success message
+        if (successBox) {
+          successBox.classList.remove("show");
+          successBox.style.display = "none";
+        }
         // Hide city name if PLZ is invalid or incomplete
         if (cityNameElement) {
           cityNameElement.classList.remove("show");
@@ -1749,7 +1841,14 @@ document.addEventListener("DOMContentLoaded", function () {
             }
           }, 300);
         }
+        // Reset styling
+        if (plz.length > 0) {
+          this.style.borderBottomColor = "#ff8c42";
+          this.style.background = "transparent";
+        }
       }
+      
+      checkFormCompletion();
     });
   }
 
@@ -1774,6 +1873,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Update housing question text based on animal type
       updateHousingText(selectedAnimal);
+      
+      // Add visual feedback
+      this.style.borderBottomColor = "#28a745";
+      this.style.background = "linear-gradient(180deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%)";
+      
+      checkFormCompletion();
     });
 
     // Initialize with current selection
@@ -1828,6 +1933,19 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       rasseSelect.appendChild(option);
     });
+    
+    // Add change listener for breed selection
+    if (!rasseSelect.dataset.listenerAdded) {
+      rasseSelect.addEventListener("change", function () {
+        if (this.value) {
+          // Add visual feedback
+          this.style.borderBottomColor = "#28a745";
+          this.style.background = "linear-gradient(180deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%)";
+        }
+        checkFormCompletion();
+      });
+      rasseSelect.dataset.listenerAdded = "true";
+    }
   }
 
   // Animal category change handler
@@ -1867,9 +1985,55 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // Add event listeners for all form interactions
+  
+  // Birth date input
+  const birthDateInput = document.getElementById("geburtsdatum");
+  if (birthDateInput) {
+    birthDateInput.addEventListener("input", function () {
+      validateDateInput(this);
+      checkFormCompletion();
+    });
+  }
+
+  // Neutering radio buttons
+  const neuteringRadios = document.querySelectorAll('input[name="kastriert"]');
+  neuteringRadios.forEach((radio) => {
+    radio.addEventListener("change", function () {
+      // Add visual feedback to the selected option
+      const parentOption = this.closest('.radio-option');
+      if (parentOption) {
+        parentOption.style.borderColor = "#28a745";
+        parentOption.style.background = "linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%)";
+      }
+      checkFormCompletion();
+    });
+  });
+
+  // Housing radio buttons
+  const housingRadios = document.querySelectorAll('input[name="haltung"]');
+  housingRadios.forEach((radio) => {
+    radio.addEventListener("change", function () {
+      // Add visual feedback to the selected option
+      const parentOption = this.closest('.radio-option');
+      if (parentOption) {
+        parentOption.style.borderColor = "#28a745";
+        parentOption.style.background = "linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%)";
+      }
+      checkFormCompletion();
+    });
+  });
+
   // Handle health problems radio button change
   gesundheitsproblemeRadios.forEach((radio) => {
     radio.addEventListener("change", function () {
+      // Add visual feedback
+      const parentOption = this.closest('.radio-option');
+      if (parentOption) {
+        parentOption.style.borderColor = "#28a745";
+        parentOption.style.background = "linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%)";
+      }
+      
       if (this.value === "ja" && behandlungsFrage) {
         behandlungsFrage.style.display = "block";
         // Also show the disease list
@@ -1904,6 +2068,7 @@ document.addEventListener("DOMContentLoaded", function () {
           option.classList.remove("grayed-option");
         });
       }
+      checkFormCompletion();
     });
   });
 
