@@ -17,8 +17,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const progressFill = document.getElementById("progressFill");
   const progressText = document.getElementById("progressText");
   const progressEmoji = document.getElementById("progressEmoji");
-  const emojis = ['🐾', '📋', '🎂', '🏠', '💊', '✅'];
-  let currentStep = 1;
+  const emojis = ['🐾', '📋', '🎂', '🏥', '🏠', '💊'];
+  let currentStep = 0;
   const totalSteps = 6;
 
   // Treatment checkboxes
@@ -104,68 +104,75 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Progress update function
-  function updateProgress(step) {
-    currentStep = Math.min(step, totalSteps);
+  function updateProgress(completedSteps) {
+    currentStep = Math.max(0, Math.min(completedSteps, totalSteps));
     const percentage = (currentStep / totalSteps) * 100;
-    
+
     if (progressFill) {
       progressFill.style.width = percentage + '%';
     }
-    
+
+    const displayStep = Math.min(currentStep + 1, totalSteps);
+
     if (progressText) {
-      progressText.textContent = `Schritt ${currentStep} von ${totalSteps}`;
+      progressText.textContent = `Schritt ${displayStep} von ${totalSteps}`;
     }
-    
-    if (progressEmoji && emojis[currentStep - 1]) {
-      progressEmoji.textContent = emojis[currentStep - 1];
-    }
-    
-    // Celebrate when completed
-    if (currentStep === totalSteps) {
-      setTimeout(() => {
-        if (progressEmoji) {
-          progressEmoji.textContent = '🎉';
-          progressEmoji.style.animation = 'celebration 1s ease-in-out';
-        }
-      }, 800);
+
+    if (progressEmoji) {
+      const emojiIndex = Math.min(displayStep - 1, emojis.length - 1);
+      progressEmoji.textContent = emojis[emojiIndex] || emojis[emojis.length - 1];
+      if (currentStep === totalSteps) {
+        progressEmoji.style.animation = 'celebration 1s ease-in-out';
+        setTimeout(() => {
+          if (progressEmoji && currentStep === totalSteps) {
+            progressEmoji.textContent = '🎉';
+          }
+        }, 800);
+      } else {
+        progressEmoji.style.animation = 'bounce 2s infinite';
+      }
     }
   }
 
   // Function to check form completion and update progress
   function checkFormCompletion() {
-    let step = 1;
-    
-    // Step 1: PLZ and animal type
-    if (plzInput && plzInput.value.length === 5 && tierKategorieSelect && tierKategorieSelect.value) {
-      step = 2;
+    let completedSteps = 0;
+
+    const hasPLZAndAnimal =
+      plzInput && plzInput.value.length === 5 && tierKategorieSelect && tierKategorieSelect.value;
+    if (hasPLZAndAnimal) {
+      completedSteps += 1;
     }
-    
-    // Step 2: Breed selection
-    if (step >= 2 && rasseSelect && rasseSelect.value) {
-      step = 3;
+
+    if (rasseSelect && rasseSelect.value) {
+      completedSteps += 1;
     }
-    
-    // Step 3: Birth date
+
     const birthDateInput = document.getElementById("geburtsdatum");
-    if (step >= 3 && birthDateInput && birthDateInput.value.length === 10) {
-      step = 4;
+    if (birthDateInput && birthDateInput.value.length === 10) {
+      completedSteps += 1;
     }
-    
-    // Step 4: Neutering status
+
     const neuteringRadios = document.querySelectorAll('input[name="kastriert"]');
-    const neuteringSelected = Array.from(neuteringRadios).some(radio => radio.checked);
-    if (step >= 4 && neuteringSelected) {
-      step = 5;
+    const neuteringSelected = Array.from(neuteringRadios).some((radio) => radio.checked);
+    if (neuteringSelected) {
+      completedSteps += 1;
     }
-    
-    // Step 5: Housing
+
     const housingRadios = document.querySelectorAll('input[name="haltung"]');
-    const housingSelected = Array.from(housingRadios).some(radio => radio.checked);
-    if (step >= 5 && housingSelected) {
-      step = 6;
+    const housingSelected = Array.from(housingRadios).some((radio) => radio.checked);
+    if (housingSelected) {
+      completedSteps += 1;
     }
-    
-    updateProgress(step);
+
+    if (gesundheitsproblemeRadios && gesundheitsproblemeRadios.length > 0) {
+      const healthSelected = Array.from(gesundheitsproblemeRadios).some((radio) => radio.checked);
+      if (healthSelected) {
+        completedSteps += 1;
+      }
+    }
+
+    updateProgress(completedSteps);
   }
 
   // German postal code to city mapping (expanded dataset)
@@ -3347,6 +3354,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Initialize German date display on page load
+  // Initialize progress and date display on page load
+  checkFormCompletion();
   updateGermanDateDisplay();
 });
