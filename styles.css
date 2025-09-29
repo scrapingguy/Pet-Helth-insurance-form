@@ -96,7 +96,7 @@
             max-height: 100%;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
+            /* overflow-y: auto; */
             padding: var(--spacing-md);
             -webkit-overflow-scrolling: touch;
         }
