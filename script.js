@@ -4178,8 +4178,8 @@ function selectPlan(planName) {
   highlightTableColumn(planName);
   showSelectedPlan();
   showAddonSection();
+  updateAddonPricing();
   enableContinueButton();
-  updateConfirmationSection();
   scheduleIframeHeightUpdate();
 }
 
