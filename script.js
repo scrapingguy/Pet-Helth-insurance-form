@@ -345,14 +345,71 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    if (!validateFormWithErrors()) {
+      updateStepsUI();
+      scheduleIframeHeightUpdate();
+      return;
+    }
+
     saveFormState();
+
+    const jsonData = generateFormJSON();
+
+    try {
+      localStorage.setItem("petInsuranceFormData", JSON.stringify(jsonData));
+    } catch (error) {
+      console.warn("Konnte Formulardaten nicht speichern", error);
+    }
 
     if (typeof resetPricingView === "function") {
       resetPricingView();
     }
 
+    clearPricingError();
+    setPricingLoading(true);
+
     showScreen("pricingScreen");
     scheduleIframeHeightUpdate();
+
+    fetch("https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz", {
+      method: "POST",
+      headers: {
+        accept: "application/json, text/plain, */*",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(jsonData),
+      redirect: "follow",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(
+            `Die Tarifberechnung ist momentan nicht verfügbar (Status ${response.status}).`
+          );
+        }
+        return response.json();
+      })
+      .then((result) => {
+        if (result?.errors && result.errors.length > 0) {
+          throw new Error(result.errors[0].message || "Unbekannter API-Fehler.");
+        }
+
+        try {
+          localStorage.setItem("apiResponseData", JSON.stringify(result));
+        } catch (error) {
+          console.warn("Konnte API-Antwort nicht speichern", error);
+        }
+
+        setPricingLoading(false);
+        scheduleIframeHeightUpdate();
+      })
+      .catch((error) => {
+        console.error("API-Anfrage fehlgeschlagen", error);
+        setPricingLoading(false);
+        showApiError(
+          "Die dynamische Tarifberechnung ist derzeit nicht möglich. Wir zeigen Ihnen die Standardtarife."
+        );
+        scheduleIframeHeightUpdate();
+      });
   }
 
   if (nextStepBtn) {
@@ -2737,412 +2794,125 @@ document.addEventListener("DOMContentLoaded", function () {
     return jsonData;
   }
 
-  // Function to update pricing modal with real API data
-  function updatePricingModal(apiResponse) {
-    try {
-      let parsedResponse;
-      if (typeof apiResponse === "string") {
-        parsedResponse = JSON.parse(apiResponse);
-      } else {
-        parsedResponse = apiResponse;
-      }
-
-      // Handle the new nested response structure
-      let products = [];
-      if (
-        parsedResponse.success &&
-        parsedResponse.data &&
-        parsedResponse.data.data &&
-        parsedResponse.data.data.productResponse &&
-        parsedResponse.data.data.productResponse.products
-      ) {
-        products = parsedResponse.data.data.productResponse.products;
-      } else if (
-        parsedResponse.data &&
-        parsedResponse.data.productResponse &&
-        parsedResponse.data.productResponse.products
-      ) {
-        // Fallback for old structure
-        products = parsedResponse.data.productResponse.products;
-      } else {
-        throw new Error("Products not found in response structure");
-      }
-
-      if (products.length === 0) {
-        showApiError(
-          "Keine Tarife für Ihre Eingaben gefunden. Bitte überprüfen Sie Ihre Angaben."
-        );
-        return;
-      }
-
-      // Find the plan options container
-      const planOptions = document.querySelector(".plan-options");
-      if (!planOptions) {
-        console.error("Plan options container not found");
-        showApiError("Fehler beim Anzeigen der Tarife.");
-        return;
-      }
-
-      // Clear existing plans
-      planOptions.innerHTML = "";
-
-      // Create plan cards from API data
-      products.forEach((product, index) => {
-        const planCard = document.createElement("div");
-        planCard.className = `plan-card${
-          product.topSeller ? " recommended" : ""
-        }`;
-
-        // Add top seller badge if applicable
-        const topSellerBadge = product.topSeller
-          ? '<div class="top-seller-badge">Beliebteste</div>'
-          : "";
-
-        // Format price (monthly)
-        let formattedPrice = "0,00";
-        if (product.priceAmount) {
-          formattedPrice = product.priceAmount.toFixed(2).replace(".", ",");
-        }
-
-        // Calculate annual price
-        const annualPrice = (product.priceAmount * 12)
-          .toFixed(2)
-          .replace(".", ",");
-
-        // Build treatment options HTML
-        let treatmentOptionsHtml = "";
-        if (product.options && product.options.length > 0) {
-          const hbOption = product.options.find((opt) => opt.ident === "HB");
-          if (hbOption && hbOption.params && hbOption.params.length > 0) {
-            const config = hbOption.params[0].config;
-            if (config && config.length > 0) {
-              const availableOptions = config.filter((c) => !c.disabled);
-              if (availableOptions.length > 0) {
-                treatmentOptionsHtml = `
-                                    <div class="treatment-options">
-                                        <h4>Heilbehandlungsschutz (optional)</h4>
-                                        <div class="options-group">
-                                            ${availableOptions
-                                              .map(
-                                                (opt) =>
-                                                  `<div class="treatment-option" data-price="${
-                                                    opt.price
-                                                  }" data-value="${opt.value}">
-                                                    <input type="radio" name="treatment_${
-                                                      product.id
-                                                    }" value="${opt.value}" 
-                                                           ${
-                                                             opt.value ===
-                                                             hbOption.params[0]
-                                                               .initialValue
-                                                               ? "checked"
-                                                               : ""
-                                                           }
-                                                           id="treatment_${
-                                                             product.id
-                                                           }_${opt.value}">
-                                                    <label for="treatment_${
-                                                      product.id
-                                                    }_${opt.value}">${
-                                                    opt.displayValue
-                                                  }</label>
-                                                    ${
-                                                      opt.price > 0
-                                                        ? `<span class="option-price">+${opt.price
-                                                            .toFixed(2)
-                                                            .replace(
-                                                              ".",
-                                                              ","
-                                                            )}€</span>`
-                                                        : ""
-                                                    }
-                                                </div>`
-                                              )
-                                              .join("")}
-                                        </div>
-                                    </div>
-                                `;
-              }
-            }
-          }
-        }
-
-        // Contract duration options
-        let durationHtml = "";
-        if (product.contractDuration && product.contractDuration.allowChange) {
-          durationHtml = `
-                        <div class="contract-duration">
-                            <h4>Vertragslaufzeit</h4>
-                            <select class="duration-select" data-product="${
-                              product.id
-                            }">
-                                ${product.contractDuration.availableDurations
-                                  .map(
-                                    (duration) =>
-                                      `<option value="${duration}" ${
-                                        duration ===
-                                        product.contractDuration.defaultDuration
-                                          ? "selected"
-                                          : ""
-                                      }>
-                                        ${duration} Jahr${
-                                        duration > 1 ? "e" : ""
-                                      }
-                                    </option>`
-                                  )
-                                  .join("")}
-                            </select>
-                        </div>
-                    `;
-        }
-
-        planCard.innerHTML = `
-                    ${topSellerBadge}
-                    <div class="plan-header">
-                        <div class="plan-name">${
-                          product.title || `Plan ${index + 1}`
-                        }</div>
-                        <div class="plan-price">
-                            <span class="monthly-price">${formattedPrice} €</span>
-                            <span class="price-period">/Monat</span>
-                        </div>
-                        <div class="annual-price">${annualPrice}€ jährlich</div>
-                    </div>
-                    
-                    <div class="plan-features">
-                        <div class="base-coverage">
-                            <h4>Grundschutz</h4>
-                            <ul>
-                                <li>✓ OP-Kostenschutz</li>
-                                <li>✓ Nachbehandlung nach Operationen</li>
-                                <li>✓ Keine Wartezeiten bei Unfällen</li>
-                                <li>✓ 24/7 Notfallschutz</li>
-                            </ul>
-                        </div>
-                        
-                        ${treatmentOptionsHtml}
-                        ${durationHtml}
-                    </div>
-                    
-                    <div class="plan-footer">
-                        <button class="plan-button" data-product-id="${
-                          product.id
-                        }" 
-                                data-product-ident="${product.ident}" 
-                                data-product-title="${product.title}"
-                                data-base-price="${product.priceAmount}">
-                            ${product.title} auswählen
-                        </button>
-                    </div>
-                `;
-
-        planOptions.appendChild(planCard);
-      });
-
-      // Add event listeners for treatment options
-      document
-        .querySelectorAll('input[name^="treatment_"]')
-        .forEach((radio) => {
-          radio.addEventListener("change", function () {
-            updatePlanPrice(this);
-          });
-        });
-
-      // Add event listeners for duration changes
-      document.querySelectorAll(".duration-select").forEach((select) => {
-        select.addEventListener("change", function () {
-          updatePlanDuration(this);
-        });
-      });
-
-      // Add click handlers to new plan buttons
-      const planButtons = planOptions.querySelectorAll(".plan-button");
-      planButtons.forEach((button) => {
-        button.addEventListener("click", function () {
-          selectPlan(this);
-        });
-      });
-    } catch (error) {
-      console.error("Error parsing API response:", error);
-      showApiError("Fehler beim Verarbeiten der Server-Antwort.");
+  function clearPricingError() {
+    const errorBanner = document.getElementById("pricingErrorBanner");
+    if (errorBanner && errorBanner.parentElement) {
+      errorBanner.parentElement.removeChild(errorBanner);
+      scheduleIframeHeightUpdate();
     }
   }
 
-  // Helper function to update plan price when treatment options change
-  function updatePlanPrice(radioInput) {
-    const planCard = radioInput.closest(".plan-card");
-    const selectButton = planCard.querySelector(".plan-button");
-    const monthlyPriceElement = planCard.querySelector(".monthly-price");
-    const annualPriceElement = planCard.querySelector(".annual-price");
+  function setPricingLoading(isLoading) {
+    const pricingScreen = document.getElementById("pricingScreen");
+    if (!pricingScreen) {
+      return;
+    }
 
-    const basePrice = parseFloat(selectButton.dataset.basePrice);
-    const optionPrice =
-      parseFloat(radioInput.closest(".treatment-option").dataset.price) || 0;
-    const totalMonthly = basePrice + optionPrice;
-    const totalAnnual = totalMonthly * 12;
+    let indicator = document.getElementById("pricingLoadingIndicator");
+    if (!indicator) {
+      indicator = document.createElement("div");
+      indicator.id = "pricingLoadingIndicator";
+      indicator.style.display = "none";
+      indicator.style.margin = "16px 0";
+      indicator.style.padding = "12px 16px";
+      indicator.style.borderRadius = "8px";
+      indicator.style.background = "#eef5ff";
+      indicator.style.color = "#084298";
+      indicator.style.fontWeight = "500";
+      indicator.style.alignItems = "center";
+      indicator.style.gap = "8px";
 
-    monthlyPriceElement.textContent = `${totalMonthly
-      .toFixed(2)
-      .replace(".", ",")} €`;
-    annualPriceElement.textContent = `${totalAnnual
-      .toFixed(2)
-      .replace(".", ",")}€ jährlich`;
-  }
+      const spinner = document.createElement("span");
+      spinner.className = "pricing-loading-spinner";
+      spinner.style.width = "16px";
+      spinner.style.height = "16px";
+      spinner.style.border = "2px solid #84a9ff";
+      spinner.style.borderTopColor = "transparent";
+      spinner.style.borderRadius = "50%";
+      spinner.style.display = "inline-block";
+      spinner.style.animation = "pricingSpinner 0.8s linear infinite";
 
-  // Helper function to handle contract duration changes
-  function updatePlanDuration(selectElement) {
-    const duration = selectElement.value;
-    const productId = selectElement.dataset.product;
-    // Add logic here to update pricing based on duration if needed
-  }
+      const text = document.createElement("span");
+      text.textContent = "Tarife werden geladen …";
 
-  // Helper function to handle plan selection
-  function selectPlan(buttonElement) {
-    const productId = buttonElement.dataset.productId;
-    const productIdent = buttonElement.dataset.productIdent;
-    const productTitle = buttonElement.dataset.productTitle;
-    const planCard = buttonElement.closest(".plan-card");
+      indicator.appendChild(spinner);
+      indicator.appendChild(text);
 
-    // Get selected treatment option
-    const selectedTreatment = planCard.querySelector(
-      'input[name^="treatment_"]:checked'
-    );
-    const treatmentValue = selectedTreatment ? selectedTreatment.value : null;
-    const treatmentPrice = selectedTreatment
-      ? parseFloat(
-          selectedTreatment.closest(".treatment-option").dataset.price
-        ) || 0
-      : 0;
+      if (!document.getElementById("pricingLoadingStyles")) {
+        const styleEl = document.createElement("style");
+        styleEl.id = "pricingLoadingStyles";
+        styleEl.textContent = `@keyframes pricingSpinner { to { transform: rotate(360deg); } }`;
+        document.head.appendChild(styleEl);
+      }
 
-    // Get selected duration
-    const durationSelect = planCard.querySelector(".duration-select");
-    const selectedDuration = durationSelect ? durationSelect.value : 1;
+      const insertionTarget =
+        pricingScreen.querySelector(".plans-title-section") ||
+        pricingScreen.firstElementChild;
+      if (insertionTarget) {
+        insertionTarget.insertAdjacentElement("afterend", indicator);
+      } else {
+        pricingScreen.prepend(indicator);
+      }
+    }
 
-    // Get final price
-    const finalPrice = planCard.querySelector(".monthly-price").textContent;
-
-    const selectionData = {
-      productId,
-      productIdent,
-      productTitle,
-      treatmentValue,
-      treatmentPrice,
-      selectedDuration,
-      finalPrice,
-    };
-
-    // Store selection data
-    localStorage.setItem("selectedPlan", JSON.stringify(selectionData));
-
-    // Show confirmation
-    alert(
-      `Sie haben den Tarif "${productTitle}" für ${finalPrice}/Monat ausgewählt.`
-    );
-
-    // You can redirect to next step here
-    // window.location.href = 'next-step.html';
+    indicator.style.display = isLoading ? "flex" : "none";
+    scheduleIframeHeightUpdate();
   }
 
   // Function to show error message when API fails
   function showApiError(
     errorMessage = "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
   ) {
-    const planOptions = document.querySelector(".plan-options");
-    if (!planOptions) {
-      console.error("Plan options container not found");
+    const pricingScreen = document.getElementById("pricingScreen");
+    if (!pricingScreen) {
+      console.error("Pricing screen container not found");
       return;
     }
 
-    // Clear existing content and show error
-    planOptions.innerHTML = `
-            <div class="api-error" style="text-align: center; padding: 40px; color: #e74c3c;">
-                <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
-                <h3 style="margin-bottom: 15px; color: #2c3e50;">Fehler beim Laden der Tarife</h3>
-                <p style="margin-bottom: 20px; line-height: 1.6;">${errorMessage}</p>
-                <button type="button" class="cta-button" onclick="location.reload()" style="background: #e74c3c; border: none; padding: 12px 24px; color: white; border-radius: 4px; cursor: pointer;">
-                    Seite neu laden
-                </button>
-            </div>
-        `;
+    let errorBanner = document.getElementById("pricingErrorBanner");
+    if (!errorBanner) {
+      errorBanner = document.createElement("div");
+      errorBanner.id = "pricingErrorBanner";
+      errorBanner.setAttribute("role", "alert");
+      errorBanner.style.background = "#fff3cd";
+      errorBanner.style.border = "1px solid #ffeeba";
+      errorBanner.style.color = "#856404";
+      errorBanner.style.padding = "16px";
+      errorBanner.style.borderRadius = "8px";
+      errorBanner.style.margin = "16px 0";
+      errorBanner.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.08)";
 
-    console.error("API Error - showing error message to user");
-  }
-
-  // Fallback function to show static pricing if API fails
-  function showStaticPricing() {
-    showApiError();
-  }
-
-  // Form submission
-  if (form) {
-    form.addEventListener("submit", function (e) {
-      scheduleIframeHeightUpdate();
-      e.preventDefault();
-
-      // Validate form and show errors
-      const isValid = validateFormWithErrors();
-
-      if (isValid) {
-        // Generate JSON data
-        const jsonData = generateFormJSON();
-
-        // Validate form data before sending
-        const validationResult = validateFormData();
-        if (!validationResult.isValid) {
-          showUserAlert(validationResult.message, "error");
-          return;
-        }
-
-        // Store form data
-        localStorage.setItem("petInsuranceFormData", JSON.stringify(jsonData));
-
-        // Try API call first, but fallback to plans page if it fails
-        // Try API call first, but fallback to plans page if it fails
-        fetch(
-          "https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz",
-          {
-            method: "POST",
-            headers: {
-              accept: "application/json, text/plain, */*",
-              "content-type": "application/json",
-            },
-            body: JSON.stringify(jsonData),
-            redirect: "follow",
-          }
-        )
-          .then((response) => {
-            if (!response.ok) {
-              // If API fails, still redirect to pricing page with static data
-              window.location.href =
-                "simple-pricing.html?from=form&source=static";
-              return;
-            }
-            return response.text();
-          })
-          .then((result) => {
-            if (!result) return; // Already redirected
-
-            try {
-              const jsonResult = JSON.parse(result);
-              if (jsonResult.errors && jsonResult.errors.length > 0) {
-                throw new Error(`API Error: ${jsonResult.errors[0].message}`);
-              }
-
-              // Store API response for plans page
-              localStorage.setItem("apiResponseData", result);
-              window.location.href = "simple-pricing.html?from=form&source=api";
-            } catch (parseError) {
-              window.location.href =
-                "simple-pricing.html?from=form&source=static";
-            }
-          })
-          .catch((error) => {
-            // Always redirect to pricing page even if API fails
-            window.location.href =
-              "simple-pricing.html?from=form&source=static";
-          });
+      const insertionTarget =
+        pricingScreen.querySelector(".plans-title-section") ||
+        pricingScreen.firstElementChild;
+      if (insertionTarget) {
+        insertionTarget.insertAdjacentElement("afterend", errorBanner);
+      } else {
+        pricingScreen.prepend(errorBanner);
       }
-    });
+    } else {
+      errorBanner.style.display = "block";
+    }
+
+    errorBanner.innerHTML = "";
+
+    const title = document.createElement("div");
+    title.style.fontWeight = "600";
+    title.style.marginBottom = "4px";
+    title.textContent = "Hinweis";
+
+    const message = document.createElement("div");
+    message.textContent = errorMessage;
+
+    const fallback = document.createElement("div");
+    fallback.style.marginTop = "8px";
+    fallback.textContent = "Die Standardtarife stehen weiterhin zur Auswahl.";
+
+    errorBanner.appendChild(title);
+    errorBanner.appendChild(message);
+    errorBanner.appendChild(fallback);
+
+    scheduleIframeHeightUpdate();
   }
 
   // Enhanced form validation with user-friendly messages
@@ -3712,6 +3482,33 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  function initializeAppScreen() {
+    const params = new URLSearchParams(window.location.search);
+    const screenParam = (params.get("screen") || "").toLowerCase();
+    const fromParam = (params.get("from") || "").toLowerCase();
+
+    const screenMap = {
+      form: "formScreen",
+      pricing: "pricingScreen",
+      success: "successScreen",
+    };
+
+    let targetScreen = "formScreen";
+
+    if (fromParam === "form") {
+      targetScreen = "pricingScreen";
+    } else if (screenParam && screenMap[screenParam]) {
+      targetScreen = screenMap[screenParam];
+    }
+
+    if (!document.getElementById(targetScreen)) {
+      targetScreen = "formScreen";
+    }
+
+    showScreen(targetScreen);
+    scheduleIframeHeightUpdate();
+  }
+
   // Initial button state
   updateSubmitButton();
 
@@ -3719,6 +3516,7 @@ document.addEventListener("DOMContentLoaded", function () {
   checkFormCompletion();
   updateGermanDateDisplay();
   updateStepThreeAvailability();
+  initializeAppScreen();
 });
 
 let selectedPlan = null;
