@@ -3844,9 +3844,10 @@ function normalizePricingProducts(products) {
 }
 
 function setPriceCardsLoading(isLoading) {
-  const priceCards = document.querySelectorAll(".price-card");
-  priceCards.forEach((card) => {
-    card.classList.toggle("price-loading", isLoading);
+  const selectButtons = document.querySelectorAll(".table-select-btn");
+  selectButtons.forEach((btn) => {
+    btn.classList.toggle("loading", isLoading);
+    btn.disabled = isLoading;
   });
 
   if (isLoading) {
@@ -3856,6 +3857,10 @@ function setPriceCardsLoading(isLoading) {
 
     document.querySelectorAll("[data-plan-period]").forEach((element) => {
       element.textContent = "wird berechnet …";
+    });
+  } else {
+    selectButtons.forEach((btn) => {
+      btn.disabled = false;
     });
   }
 }
@@ -4022,7 +4027,7 @@ function initializeSuccessModule() {
 
 function setupPricingEventListeners() {
   const selectButtons = document.querySelectorAll(
-    ".select-btn, .table-select-btn"
+    ".table-select-btn"
   );
 
   selectButtons.forEach((btn) => {
@@ -4088,36 +4093,16 @@ function setupPricingEventListeners() {
 }
 
 function selectPlan(planName) {
-  document.querySelectorAll(".price-card").forEach((card) => {
-    card.classList.remove("selected");
-  });
-
-  document.querySelectorAll(".select-btn, .table-select-btn").forEach((btn) => {
+  document.querySelectorAll(".table-select-btn").forEach((btn) => {
     btn.classList.remove("selected");
   });
 
-  document.querySelectorAll(".mobile-plan-row").forEach((row) => {
-    row.classList.remove("selected");
-  });
-
-  const planCard = document.querySelector(
-    `[data-plan="${planName}"].price-card`
-  );
-  if (planCard) {
-    planCard.classList.add("selected");
-  }
-
   const planButtons = document.querySelectorAll(
-    `[data-plan="${planName}"].select-btn, [data-plan="${planName}"].table-select-btn`
+    `[data-plan="${planName}"].table-select-btn`
   );
   planButtons.forEach((button) => {
     button.classList.add("selected");
   });
-
-  const mobilePlanRow = document.querySelector(`.mobile-plan-row[data-plan="${planName}"]`);
-  if (mobilePlanRow) {
-    mobilePlanRow.classList.add("selected");
-  }
 
   selectedPlan = planName;
   highlightTableColumn(planName);
@@ -4228,16 +4213,8 @@ function resetPricingView() {
   selectedPlan = null;
   addonSelected = false;
 
-  document.querySelectorAll(".price-card").forEach((card) => {
-    card.classList.remove("selected");
-  });
-
-  document.querySelectorAll(".select-btn, .table-select-btn").forEach((btn) => {
+  document.querySelectorAll(".table-select-btn").forEach((btn) => {
     btn.classList.remove("selected");
-  });
-
-  document.querySelectorAll(".mobile-plan-row").forEach((row) => {
-    row.classList.remove("selected");
   });
 
   clearTableColumnHighlight();
@@ -4750,66 +4727,3 @@ function getPlanName(plan) {
 function goBack() {
   goBackToForm();
 }
-
-const style = document.createElement("style");
-style.textContent = `
-    .price-card.selected {
-        border: 2px solid #ff8c42 !important;
-        box-shadow: 0 4px 20px rgba(200, 10, 80, 0.15) !important;
-        transform: translateY(-2px) !important;
-    }
-    
-    .select-btn.selected,
-    .table-select-btn.selected {
-        background: #ff8c42 !important;
-        color: white !important;
-        border-color: #ff8c42 !important;
-    }
-    
-    .selected-column {
-        background: rgba(200, 10, 80, 0.05) !important;
-        border-left: 2px solid #ff8c42 !important;
-        border-right: 2px solid #ff8c42 !important;
-    }
-    
-    .comparison-table .selected-column:first-of-type {
-        border-left: 2px solid #ff8c42 !important;
-    }
-    
-    .comparison-table .selected-column:last-of-type {
-        border-right: 2px solid #ff8c42 !important;
-    }
-
-    .price-card.price-loading .currency,
-    .price-card.price-loading .amount,
-    .price-card.price-loading .period {
-        visibility: hidden;
-    }
-
-    .price-card.price-loading .price {
-        position: relative;
-        min-height: 1.6rem;
-    }
-
-    .price-card.price-loading .price::after {
-        content: "Tarif wird geladen …";
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #6b7280;
-        font-size: 0.9rem;
-        font-weight: 600;
-    }
-
-    .addon-option.disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    .addon-option.disabled input {
-        pointer-events: none;
-    }
-`;
-document.head.appendChild(style);
