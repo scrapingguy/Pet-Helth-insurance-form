@@ -567,6 +567,60 @@
         </section>
 
         <section class="pricing-section full-width-section">
+          <div class="mobile-plan-summary" aria-label="Tarifübersicht mobil">
+            <div class="mobile-plan-row" data-plan="basis">
+              <div class="mobile-plan-info">
+                <div class="mobile-plan-name">Basis</div>
+                <div class="mobile-plan-description">
+                  Grundschutz für Operationen
+                </div>
+                <div class="mobile-plan-price">
+                  <span class="currency">€</span>
+                  <span class="plan-amount" data-plan-amount="basis">7.33</span>
+                  <span class="period" data-plan-period="basis">pro Monat</span>
+                </div>
+              </div>
+              <button class="select-btn mobile-select-btn" data-plan="basis">
+                Basis auswählen
+              </button>
+            </div>
+
+            <div class="mobile-plan-row" data-plan="smart">
+              <div class="mobile-plan-info">
+                <div class="mobile-plan-name">Smart</div>
+                <div class="mobile-plan-description">
+                  Erweiterte Absicherung mit Vorsorge
+                </div>
+                <div class="mobile-plan-price">
+                  <span class="currency">€</span>
+                  <span class="plan-amount" data-plan-amount="smart">11.05</span>
+                  <span class="period" data-plan-period="smart">pro Monat</span>
+                </div>
+              </div>
+              <button class="select-btn mobile-select-btn" data-plan="smart">
+                Smart auswählen
+              </button>
+            </div>
+
+            <div class="mobile-plan-row popular" data-plan="komfort">
+              <div class="mobile-plan-info">
+                <div class="mobile-plan-badge">Unser Bestseller</div>
+                <div class="mobile-plan-name">Komfort</div>
+                <div class="mobile-plan-description">
+                  Vollschutz mit allen Leistungen
+                </div>
+                <div class="mobile-plan-price">
+                  <span class="currency">€</span>
+                  <span class="plan-amount" data-plan-amount="komfort">18.36</span>
+                  <span class="period" data-plan-period="komfort">pro Monat</span>
+                </div>
+              </div>
+              <button class="select-btn mobile-select-btn" data-plan="komfort">
+                Komfort auswählen
+              </button>
+            </div>
+          </div>
+
           <div class="pricing-cards">
             <div class="price-card" data-plan="basis">
               <div class="card-header">
@@ -575,8 +629,8 @@
               </div>
               <div class="price">
                 <span class="currency">€</span>
-                <span class="amount">7.33</span>
-                <span class="period">pro Monat</span>
+                <span class="amount" data-plan-amount="basis">7.33</span>
+                <span class="period" data-plan-period="basis">pro Monat</span>
               </div>
               <div class="features">
                 <div class="feature">✓ OP-Schutz bis 5.000€</div>
@@ -596,13 +650,13 @@
               </div>
               <div class="price">
                 <span class="currency">€</span>
-                <span class="amount">11.05</span>
-                <span class="period">pro Monat</span>
+                <span class="amount" data-plan-amount="smart">11.05</span>
+                <span class="period" data-plan-period="smart">pro Monat</span>
               </div>
               <div class="features">
                 <div class="feature">✓ Alles aus Basis</div>
                 <div class="feature">✓ OP-Schutz bis 10.000€</div>
-                <div class="feature">✓ Orthesen & Hilfsmittel</div>
+                <div class="feature">✓ Orthesen &amp; Hilfsmittel</div>
                 <div class="feature">✓ 3 Monate Wartezeit</div>
               </div>
               <button class="select-btn" data-plan="smart">
@@ -618,8 +672,8 @@
               </div>
               <div class="price">
                 <span class="currency">€</span>
-                <span class="amount">18.36</span>
-                <span class="period">pro Monat</span>
+                <span class="amount" data-plan-amount="komfort">18.36</span>
+                <span class="period" data-plan-period="komfort">pro Monat</span>
               </div>
               <div class="features">
                 <div class="feature">✓ Alles aus Smart</div>
@@ -631,6 +685,133 @@
                 Komfort auswählen
               </button>
             </div>
+          </div>
+        </section>
+
+        <section class="comparison-section full-width-section">
+          <h2>Leistungsvergleich der Tarife</h2>
+          <div class="table-wrapper">
+            <table class="comparison-table" role="grid">
+              <thead>
+                <tr>
+                  <th class="feature-col" scope="col">Leistung</th>
+                  <th class="plan-col" scope="col">
+                    <div class="plan-col-header">
+                      <div class="plan-col-title">Basis</div>
+                      <div class="plan-col-price">
+                        <span class="currency">€</span>
+                        <span class="plan-amount" data-plan-amount="basis">7.33</span>
+                        <span class="period" data-plan-period="basis">pro Monat</span>
+                      </div>
+                      <button class="table-select-btn" data-plan="basis">
+                        Auswählen
+                      </button>
+                    </div>
+                  </th>
+                  <th class="plan-col" scope="col">
+                    <div class="plan-col-header">
+                      <div class="plan-col-title">Smart</div>
+                      <div class="plan-col-price">
+                        <span class="currency">€</span>
+                        <span class="plan-amount" data-plan-amount="smart">11.05</span>
+                        <span class="period" data-plan-period="smart">pro Monat</span>
+                      </div>
+                      <button class="table-select-btn" data-plan="smart">
+                        Auswählen
+                      </button>
+                    </div>
+                  </th>
+                  <th class="plan-col featured" scope="col">
+                    <div class="plan-col-header">
+                      <div class="plan-col-badge">Unser Bestseller</div>
+                      <div class="plan-col-title">Komfort</div>
+                      <div class="plan-col-price">
+                        <span class="currency">€</span>
+                        <span class="plan-amount" data-plan-amount="komfort">18.36</span>
+                        <span class="period" data-plan-period="komfort">pro Monat</span>
+                      </div>
+                      <button class="table-select-btn" data-plan="komfort">
+                        Auswählen
+                      </button>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="category-row">
+                  <td class="category-header" colspan="4">
+                    In allen Tarifen enthalten
+                  </td>
+                </tr>
+                <tr>
+                  <td class="feature-name">
+                    Operationen aufgrund Unfall oder Krankheit
+                  </td>
+                  <td class="feature-value plan-col">✓</td>
+                  <td class="feature-value plan-col">✓</td>
+                  <td class="feature-value plan-col">✓</td>
+                </tr>
+                <tr>
+                  <td class="feature-name">
+                    Operationen unter Vollnarkose, Teilnarkose oder Sedation
+                  </td>
+                  <td class="feature-value plan-col">✓</td>
+                  <td class="feature-value plan-col">✓</td>
+                  <td class="feature-value plan-col">✓</td>
+                </tr>
+                <tr>
+                  <td class="feature-name">
+                    Letzte Untersuchung vor Operation &amp; Nachbehandlungen
+                  </td>
+                  <td class="feature-value plan-col">✓</td>
+                  <td class="feature-value plan-col">✓</td>
+                  <td class="feature-value plan-col">✓</td>
+                </tr>
+                <tr class="category-row">
+                  <td class="category-header" colspan="4">
+                    Tarifunterschiede im Überblick
+                  </td>
+                </tr>
+                <tr>
+                  <td class="feature-name">Jahreshöchstsentschädigung Operationen</td>
+                  <td class="feature-value plan-col">3.000 €</td>
+                  <td class="feature-value plan-col">7.500 €</td>
+                  <td class="feature-value plan-col">unbegrenzt</td>
+                </tr>
+                <tr>
+                  <td class="feature-name">
+                    Erstattung nach Gebührenordnung für Tierärztinnen und Tierärzte (GOT)
+                  </td>
+                  <td class="feature-value plan-col">2-fach</td>
+                  <td class="feature-value plan-col">4-fach</td>
+                  <td class="feature-value plan-col">4-fach</td>
+                </tr>
+                <tr>
+                  <td class="feature-name">Wartezeit bei Unfall</td>
+                  <td class="feature-value plan-col">24 Stunden</td>
+                  <td class="feature-value plan-col">24 Stunden</td>
+                  <td class="feature-value plan-col">Keine Wartezeit</td>
+                </tr>
+                <tr class="action-row">
+                  <td></td>
+                  <td class="plan-col">
+                    <button class="table-select-btn" data-plan="basis">
+                      Basis auswählen
+                    </button>
+                  </td>
+                  <td class="plan-col">
+                    <button class="table-select-btn" data-plan="smart">
+                      Smart auswählen
+                    </button>
+                  </td>
+                  <td class="plan-col">
+                    <button class="table-select-btn" data-plan="komfort">
+                      Komfort auswählen
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
 

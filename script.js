@@ -3847,13 +3847,17 @@ function setPriceCardsLoading(isLoading) {
   const priceCards = document.querySelectorAll(".price-card");
   priceCards.forEach((card) => {
     card.classList.toggle("price-loading", isLoading);
-    if (isLoading) {
-      const amountElement = card.querySelector(".amount");
-      if (amountElement) {
-        amountElement.textContent = "";
-      }
-    }
   });
+
+  if (isLoading) {
+    document.querySelectorAll("[data-plan-amount]").forEach((element) => {
+      element.textContent = "--";
+    });
+
+    document.querySelectorAll("[data-plan-period]").forEach((element) => {
+      element.textContent = "wird berechnet …";
+    });
+  }
 }
 
 function applyPricingData(pricingData, billingValue, retention, scheduleCode) {
@@ -3867,17 +3871,18 @@ function applyPricingData(pricingData, billingValue, retention, scheduleCode) {
   };
 
   Object.entries(normalized).forEach(([planKey, product]) => {
-    const amountElement = document.querySelector(`[data-plan="${planKey}"] .amount`);
-    if (amountElement) {
-      amountElement.textContent = Number.isFinite(product.basePrice)
-        ? formatCurrency(product.basePrice)
-        : "--";
-    }
+    const formattedAmount = Number.isFinite(product.basePrice)
+      ? formatCurrency(product.basePrice)
+      : "--";
+
+    document.querySelectorAll(`[data-plan-amount="${planKey}"]`).forEach((element) => {
+      element.textContent = formattedAmount;
+    });
   });
 
-  const periodText = getBillingPeriodText(billingValue);
-  document.querySelectorAll(".period").forEach((element) => {
-    element.textContent = `pro ${periodText}`;
+  const periodText = `pro ${getBillingPeriodText(billingValue)}`;
+  document.querySelectorAll("[data-plan-period]").forEach((element) => {
+    element.textContent = periodText;
   });
 
   setPriceCardsLoading(false);
@@ -4091,6 +4096,10 @@ function selectPlan(planName) {
     btn.classList.remove("selected");
   });
 
+  document.querySelectorAll(".mobile-plan-row").forEach((row) => {
+    row.classList.remove("selected");
+  });
+
   const planCard = document.querySelector(
     `[data-plan="${planName}"].price-card`
   );
@@ -4098,11 +4107,16 @@ function selectPlan(planName) {
     planCard.classList.add("selected");
   }
 
-  const planButton = document.querySelector(
+  const planButtons = document.querySelectorAll(
     `[data-plan="${planName}"].select-btn, [data-plan="${planName}"].table-select-btn`
   );
-  if (planButton) {
-    planButton.classList.add("selected");
+  planButtons.forEach((button) => {
+    button.classList.add("selected");
+  });
+
+  const mobilePlanRow = document.querySelector(`.mobile-plan-row[data-plan="${planName}"]`);
+  if (mobilePlanRow) {
+    mobilePlanRow.classList.add("selected");
   }
 
   selectedPlan = planName;
@@ -4220,6 +4234,10 @@ function resetPricingView() {
 
   document.querySelectorAll(".select-btn, .table-select-btn").forEach((btn) => {
     btn.classList.remove("selected");
+  });
+
+  document.querySelectorAll(".mobile-plan-row").forEach((row) => {
+    row.classList.remove("selected");
   });
 
   clearTableColumnHighlight();

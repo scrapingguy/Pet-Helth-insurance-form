@@ -1852,13 +1852,108 @@ body {
     background: white;
 }
 
+.mobile-plan-summary {
+    display: none;
+    gap: 16px;
+    margin: 0 auto 32px;
+    width: min(1100px, calc(100% - 48px));
+}
+
+.mobile-plan-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--background-primary);
+    border: 1px solid var(--border-medium);
+    border-radius: 12px;
+    padding: 18px 20px;
+    gap: 16px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.mobile-plan-row.popular {
+    border-color: var(--primary-color);
+    background: #ff8a4214;
+}
+
+.mobile-plan-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+.mobile-plan-row.selected {
+    border-color: var(--primary-color);
+    border-width: 2px;
+    box-shadow: 0 10px 24px rgba(255, 140, 66, 0.25);
+    background: #ff8a4214;
+}
+
+.mobile-plan-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.mobile-plan-badge,
+.plan-col-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.mobile-plan-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.mobile-plan-description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.mobile-plan-price,
+.plan-col-price {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.mobile-plan-price .plan-amount,
+.plan-col-price .plan-amount {
+    font-size: 1.35rem;
+}
+
+.mobile-plan-price .period,
+.plan-col-price .period {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.mobile-select-btn {
+    flex-shrink: 0;
+    min-width: 140px;
+}
+
 .pricing-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 30px;
-    margin-bottom: 40px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto 40px;
+    width: min(1100px, calc(100% - 48px));
 }
 
 .price-card {
@@ -1989,6 +2084,7 @@ body {
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin: 0 auto;
+    width: min(1100px, calc(100% - 48px));
 }
 
 .comparison-table {
@@ -2018,9 +2114,34 @@ body {
     text-align: center;
 }
 
+
+.plan-col-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 8px;
+}
+
+.plan-col-header .table-select-btn {
+    width: 100%;
+    max-width: 180px;
+}
+
+.plan-col-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+}
+
 .plan-col.featured {
-    background: var(--primary-light);
+    background: #ff8a4214;
     font-weight: 500;
+}
+
+.plan-col.featured .plan-col-title {
+    color: var(--primary-color);
 }
 
 .plan-col.selected-column {
@@ -2068,6 +2189,10 @@ body {
     color: var(--text-primary);
 }
 
+.feature-value.plan-col {
+    font-weight: 600;
+}
+
 .feature-value.not-included {
     color: var(--text-secondary);
 }
@@ -2101,6 +2226,10 @@ body {
 
 .table-select-btn.featured:hover {
     background: var(--primary-hover);
+}
+
+.table-select-btn.selected {
+    box-shadow: 0 6px 16px rgba(255, 140, 66, 0.3);
 }
 
 /* Add-on Recommendation */
@@ -2587,10 +2716,25 @@ background: var(--border-light);
     }
     
     .pricing-cards {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        display: none;
     }
-    
+
+    .mobile-plan-summary {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mobile-plan-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .mobile-select-btn {
+        width: 100%;
+        min-width: unset;
+    }
+
     .price-card {
         padding: 25px 20px;
     }
