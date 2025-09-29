@@ -50,18 +50,356 @@ const scheduleIframeHeightUpdate = () => {
 let selectedPlan = null;
 let addonSection = null;
 
-// Pricing data
-const planPrices = {
-  basis: { monthly: 8.14, quarterly: 7.74, yearly: 7.33 },
-  smart: { monthly: 12.28, quarterly: 11.67, yearly: 11.05 },
-  komfort: { monthly: 20.4, quarterly: 19.38, yearly: 18.36 },
+const RETENTION_VALUE_MAP = {
+  no: 0,
+  0: 0,
+  10: 10,
+  20: 20,
 };
 
-const deductibleMultipliers = {
-  no: 1.2,
-  10: 1.1,
-  20: 1.0,
+const PAYMENT_SCHEDULE_MAP = {
+  monthly: "M",
+  quarterly: "V",
+  "semi-annually": "H",
+  yearly: "J",
 };
+
+const PAYMENT_PERIOD_TEXT = {
+  monthly: "Monat",
+  quarterly: "Quartal",
+  "semi-annually": "Halbjahr",
+  yearly: "Jahr",
+};
+
+const PRICING_CACHE_PREFIX = "pricingData";
+const pricingCache = new Map();
+let latestPricingData = null;
+let activePricingRequestId = 0;
+
+function getPricingCacheKey(retention, scheduleCode) {
+  return `${retention}_${scheduleCode}`;
+}
+
+function readPricingFromStorage(key) {
+  if (pricingCache.has(key)) {
+    return pricingCache.get(key);
+  }
+
+  try {
+    const raw = localStorage.getItem(`${PRICING_CACHE_PREFIX}:${key}`);
+    if (!raw) {
+      return null;
+    }
+    const parsed = JSON.parse(raw);
+    pricingCache.set(key, parsed);
+    return parsed;
+  } catch (error) {
+    console.warn("Konnte zwischengespeicherte Preisdaten nicht lesen", error);
+    return null;
+  }
+}
+
+function writePricingToStorage(key, data) {
+  pricingCache.set(key, data);
+  try {
+    localStorage.setItem(`${PRICING_CACHE_PREFIX}:${key}`, JSON.stringify(data));
+  } catch (error) {
+    console.warn("Konnte Preisdaten nicht im localStorage speichern", error);
+  }
+}
+
+function getFormPayloadFromStorage() {
+  try {
+    const stored = localStorage.getItem("petInsuranceFormData");
+    if (!stored) {
+      return null;
+    }
+    return JSON.parse(stored);
+  } catch (error) {
+    console.warn("Konnte gespeicherte Formulardaten nicht lesen", error);
+    return null;
+  }
+}
+
+function getDefaultPricingPayload() {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const startDay = `${tomorrow.getDate()}`.padStart(2, "0");
+  const startMonth = `${tomorrow.getMonth() + 1}`.padStart(2, "0");
+  const startYear = tomorrow.getFullYear();
+  const formattedStartDate = `${startDay}.${startMonth}.${startYear}`;
+  const sessionId =
+    Math.random().toString(36).slice(2, 15) +
+    Math.random().toString(36).slice(2, 15);
+
+  return {
+    id: null,
+    applicationNumber: null,
+    sessionId,
+    hash: null,
+    step: 2,
+    firstPageValid: true,
+    currentStep: 2,
+    useragent: navigator.userAgent,
+    confirmSectionsValidated: false,
+    consultation: false,
+    consultationAt: null,
+    contractDocuments: false,
+    contractDocumentsAt: null,
+    downloadDocuments: false,
+    downloadDocumentsAt: null,
+    finished: false,
+    finishedAt: null,
+    agencyMail: false,
+    agencyMailAt: null,
+    agencyId: null,
+    agencyIdChanged: false,
+    agencySite: false,
+    agencyDecision: "AGENCY",
+    abTest: { group: null, tests: [], id: null },
+    nlf: {
+      valid: true,
+      zip: "10115",
+      city: "Berlin",
+      street: "",
+      animalCategory: "CAT",
+      animalGender: "FEMALE",
+      animalRace: "K035",
+      age: null,
+      birthdate: "",
+      streetNumber: "",
+    },
+    person: [
+      {
+        salutation: "UNKNOWN",
+        firstname: "",
+        lastname: "",
+        street: "",
+        number: "",
+        zip: "10115",
+        city: "Berlin",
+        age: null,
+        birthdate: null,
+        coverage: 65000,
+        retention: 20,
+        product: null,
+        options: [],
+        payment_schedule: "M",
+        contract_term: 1,
+        email: null,
+        phone: null,
+      },
+    ],
+    animal: {
+      category: "CAT",
+      gender: "FEMALE",
+      race: "K035",
+      birthDate: "01.01.2020",
+      age: null,
+      sterilized: true,
+      catHousingType: "INDOOR",
+      preExistingDiagnosis: false,
+      excludedExistingDiagnosis: false,
+      treatments: [],
+      surgeryAmount: 0,
+      name: null,
+      label: null,
+      labelValue: null,
+      operationArea: null,
+      hasPreviousDiagnosis: null,
+      previousDiagnosis: [],
+      consultation: {
+        sumInsuredType: null,
+        sumInsuredValue: null,
+        grantIllness: null,
+        bestCoverage: null,
+        recommendedProduct: "",
+      },
+    },
+    price: -1,
+    pricePositions: [],
+    trackingId: null,
+    visitorId: "",
+    contactByEmail: false,
+    contactByEmailAt: null,
+    got_insurance: null,
+    previous_insurance: null,
+    previous_insurance_list: [],
+    got_damage: null,
+    damage_count: null,
+    hb_selection: null,
+    start_date: formattedStartDate,
+    got_agency: null,
+    want_agency: null,
+    bank: {
+      name: null,
+      owner: null,
+      iban: null,
+      bic: null,
+      sepaMandate: false,
+      sepaMandateAt: null,
+    },
+    consultationProtocol: null,
+    mazData: {
+      token: null,
+      importedData: false,
+    },
+    prefillContext: null,
+  };
+}
+
+function buildPricingRequestPayload(retention, scheduleCode) {
+  const basePayload = getFormPayloadFromStorage() || getDefaultPricingPayload();
+  if (!basePayload?.person?.length) {
+    return null;
+  }
+
+  const cloned = JSON.parse(JSON.stringify(basePayload));
+  cloned.person[0] = {
+    ...cloned.person[0],
+    retention,
+    payment_schedule: scheduleCode,
+  };
+
+  return cloned;
+}
+
+async function requestPricingData(retention, scheduleCode) {
+  const payload = buildPricingRequestPayload(retention, scheduleCode);
+  if (!payload) {
+    throw new Error("Keine gültigen Formulardaten für die Tarifberechnung gefunden.");
+  }
+
+  const response = await fetch("https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz", {
+    method: "POST",
+    headers: {
+      accept: "application/json, text/plain, */*",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(payload),
+    redirect: "follow",
+  });
+
+  if (!response.ok) {
+    throw new Error(`API-Status ${response.status}`);
+  }
+
+  const result = await response.json();
+
+  if (result?.errors?.length) {
+    throw new Error(result.errors[0]?.message || "Unbekannter API-Fehler");
+  }
+
+  const products = result?.data?.productResponse?.products;
+  if (!Array.isArray(products) || products.length === 0) {
+    throw new Error("Keine Produkte im API-Ergebnis enthalten.");
+  }
+
+  return {
+    retention,
+    schedule: scheduleCode,
+    fetchedAt: new Date().toISOString(),
+    products,
+  };
+}
+
+function normalizePricingProducts(products) {
+  const map = {};
+
+  if (!Array.isArray(products)) {
+    return map;
+  }
+
+  products.forEach((product) => {
+    const titleKey = (product?.title || product?.ident || "").toLowerCase().trim();
+    if (!titleKey) {
+      return;
+    }
+
+    const addonOptions = {};
+    if (Array.isArray(product?.options)) {
+      product.options.forEach((option) => {
+        if (!Array.isArray(option?.params)) {
+          return;
+        }
+        option.params.forEach((param) => {
+          if (!Array.isArray(param?.config)) {
+            return;
+          }
+          param.config.forEach((configEntry) => {
+            const valueKey = String(configEntry?.value);
+            addonOptions[valueKey] = {
+              price: typeof configEntry?.price === "number" ? configEntry.price : Number(configEntry?.price),
+              disabled: Boolean(configEntry?.disabled) || configEntry?.price === -1,
+              displayValue: configEntry?.displayValue || "",
+              displayValueWithPrice: configEntry?.displayValueWithPrice || "",
+            };
+          });
+        });
+      });
+    }
+
+    map[titleKey] = {
+      basePrice:
+        typeof product?.priceAmount === "number"
+          ? product.priceAmount
+          : Number(product?.priceAmount),
+      priceUnit: product?.priceUnit || null,
+      addonOptions,
+      raw: product,
+    };
+  });
+
+  return map;
+}
+
+function setPriceCardsLoading(isLoading) {
+  const priceCards = document.querySelectorAll(".price-card");
+  priceCards.forEach((card) => {
+    card.classList.toggle("price-loading", isLoading);
+    if (isLoading) {
+      const amountElement = card.querySelector(".amount");
+      if (amountElement) {
+        amountElement.textContent = "";
+      }
+    }
+  });
+}
+
+function applyPricingData(pricingData, billingValue, retention, scheduleCode) {
+  const normalized = normalizePricingProducts(pricingData?.products);
+  latestPricingData = {
+    cacheKey: getPricingCacheKey(retention, scheduleCode),
+    retention,
+    schedule: scheduleCode,
+    billing: billingValue,
+    products: normalized,
+  };
+
+  Object.entries(normalized).forEach(([planKey, product]) => {
+    const amountElement = document.querySelector(`[data-plan="${planKey}"] .amount`);
+    if (amountElement) {
+      amountElement.textContent = Number.isFinite(product.basePrice)
+        ? formatCurrency(product.basePrice)
+        : "--";
+    }
+  });
+
+  const periodText = getBillingPeriodText(billingValue);
+  document.querySelectorAll(".period").forEach((element) => {
+    element.textContent = `pro ${periodText}`;
+  });
+
+  setPriceCardsLoading(false);
+
+  if (selectedPlan) {
+    showSelectedPlan();
+  }
+
+  updateAddonPricing();
+  scheduleIframeHeightUpdate();
+}
 
 // Initialize when page loads
 document.addEventListener("DOMContentLoaded", function () {
@@ -69,6 +407,7 @@ document.addEventListener("DOMContentLoaded", function () {
   setupEventListeners();
 
   // Initialize pricing display
+  setPriceCardsLoading(true);
   updatePrices();
 
   // Make sure continue button starts disabled
@@ -191,6 +530,7 @@ function selectPlan(planName) {
   showSelectedPlan();
   showAddonSection();
   enableContinueButton();
+  updateAddonPricing();
   scheduleIframeHeightUpdate();
 }
 
@@ -244,7 +584,11 @@ function showSelectedPlan() {
   const selectedPlanPrice = document.getElementById("selectedPlanPrice");
 
   if (selectedPlanName) selectedPlanName.textContent = planName;
-  if (selectedPlanPrice) selectedPlanPrice.textContent = `€${price}${period}`;
+  if (selectedPlanPrice) {
+    selectedPlanPrice.textContent = Number.isFinite(price)
+      ? `€${formatCurrency(price)}${period}`
+      : "--";
+  }
   if (selectedPlanElement) selectedPlanElement.style.display = "block";
   scheduleIframeHeightUpdate();
 }
@@ -289,74 +633,114 @@ function disableContinueButton() {
   scheduleIframeHeightUpdate();
 }
 
-function updatePrices() {
+async function updatePrices() {
   const deductibleSelect = document.getElementById("deductible");
   const paymentSelect = document.getElementById("paymentFrequency");
 
   const deductible = deductibleSelect ? deductibleSelect.value : "20";
   const billing = paymentSelect ? paymentSelect.value : "monthly";
-  const multiplier = deductibleMultipliers[deductible] || 1.0;
 
-  Object.keys(planPrices).forEach((plan) => {
-    const basePrice = planPrices[plan][billing] || planPrices[plan].monthly;
-    const finalPrice = (basePrice * multiplier).toFixed(2);
+  const retention = RETENTION_VALUE_MAP[deductible] ?? 20;
+  const scheduleCode = PAYMENT_SCHEDULE_MAP[billing] ?? "M";
+  const cacheKey = getPricingCacheKey(retention, scheduleCode);
 
-    // Update price display
-    const amountElement = document.querySelector(
-      `[data-plan="${plan}"] .amount`
-    );
-    if (amountElement) {
-      amountElement.textContent = finalPrice;
-    }
-  });
+  setPriceCardsLoading(true);
 
-  // Update period text
-  const periodText = getBillingPeriodText(billing);
-  document.querySelectorAll(".period").forEach((element) => {
-    element.textContent = `pro ${periodText}`;
-  });
-
-  // Update selected plan if one is chosen
-  if (selectedPlan) {
-    showSelectedPlan();
+  const cachedPricing = readPricingFromStorage(cacheKey);
+  if (cachedPricing) {
+    applyPricingData(cachedPricing, billing, retention, scheduleCode);
+    return;
   }
 
-  scheduleIframeHeightUpdate();
+  const requestId = ++activePricingRequestId;
+
+  try {
+    const pricingData = await requestPricingData(retention, scheduleCode);
+    writePricingToStorage(cacheKey, pricingData);
+
+    if (requestId !== activePricingRequestId) {
+      return;
+    }
+
+    applyPricingData(pricingData, billing, retention, scheduleCode);
+  } catch (error) {
+    console.error("Tarifdaten konnten nicht geladen werden", error);
+    if (requestId === activePricingRequestId) {
+      setPriceCardsLoading(false);
+      alert(
+        "Die Tarifberechnung ist momentan nicht verfügbar. Bitte versuchen Sie es in Kürze erneut."
+      );
+    }
+  }
 }
 
 function getCurrentPrice(plan) {
-  const deductibleSelect = document.getElementById("deductible");
-  const paymentSelect = document.getElementById("paymentFrequency");
+  if (!latestPricingData?.products) {
+    return NaN;
+  }
 
-  const deductible = deductibleSelect ? deductibleSelect.value : "20";
-  const billing = paymentSelect ? paymentSelect.value : "monthly";
-  const multiplier = deductibleMultipliers[deductible] || 1.0;
-  const basePrice = planPrices[plan][billing] || planPrices[plan].monthly;
+  const product = latestPricingData.products[plan];
+  if (!product || !Number.isFinite(product.basePrice)) {
+    return NaN;
+  }
 
-  return (basePrice * multiplier).toFixed(2);
+  return product.basePrice;
 }
 
 function getBillingPeriod() {
   const paymentSelect = document.getElementById("paymentFrequency");
-  const billing = paymentSelect ? paymentSelect.value : "monthly";
+  const billing = paymentSelect ? paymentSelect.value : latestPricingData?.billing || "monthly";
 
-  return billing === "monthly"
-    ? "/Monat"
-    : billing === "quarterly"
-    ? "/Quartal"
-    : billing === "yearly"
-    ? "/Jahr"
-    : "/Monat";
+  switch (billing) {
+    case "monthly":
+      return "/Monat";
+    case "quarterly":
+      return "/Quartal";
+    case "semi-annually":
+      return "/Halbjahr";
+    case "yearly":
+      return "/Jahr";
+    default:
+      return "/Monat";
+  }
 }
 
 function getBillingPeriodText(billing) {
-  return billing === "monthly"
-    ? "Monat"
-    : billing === "quarterly"
-    ? "Quartal"
-    : billing === "yearly"
-    ? "Jahr"
-    : "Monat";
+  return PAYMENT_PERIOD_TEXT[billing] || PAYMENT_PERIOD_TEXT.monthly;
+}
+
+function formatCurrency(value) {
+  if (!Number.isFinite(value)) {
+    return "--";
+  }
+
+  return value.toLocaleString("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function getSelectedAddonPrice() {
+  const selectedOption = document.querySelector(
+    'input[name="addonCoverage"]:checked'
+  );
+  if (!selectedOption || !latestPricingData?.products) {
+    return 0;
+  }
+
+  let planKey = selectedPlan;
+  if (!planKey || !latestPricingData.products[planKey]) {
+    [planKey] = Object.keys(latestPricingData.products);
+  }
+
+  const product = latestPricingData.products[planKey];
+  const addonData = product?.addonOptions?.[selectedOption.value];
+
+  if (!addonData || addonData.disabled || !Number.isFinite(addonData.price)) {
+    return 0;
+  }
+
+  return addonData.price;
 }
 
 // Addon management functions
@@ -374,7 +758,7 @@ function selectAddon() {
     addonSelectBtn.disabled = true;
 
     // Update the confirmation section with current data
-    updateConfirmationSection();
+    updateAddonPricing();
 
     // Scroll to confirmation section
     confirmationSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -395,75 +779,173 @@ function removeAddon() {
     addonSelectBtn.style.backgroundColor = "";
     addonSelectBtn.disabled = false;
   }
+  updateAddonPricing();
   scheduleIframeHeightUpdate();
 }
 
 function updateAddonPricing() {
+  const addonPriceElement = document.querySelector(".addon-price-amount");
+  const addonPricePeriod = document.querySelector(".addon-price-period");
+  const billingValue = document.getElementById("paymentFrequency")?.value || latestPricingData?.billing || "monthly";
+
+  if (addonPricePeriod) {
+    addonPricePeriod.textContent = `pro ${getBillingPeriodText(billingValue)}`;
+  }
+
+  if (!latestPricingData?.products) {
+    if (addonPriceElement) {
+      addonPriceElement.textContent = "--";
+    }
+    updateConfirmationSection();
+    scheduleIframeHeightUpdate();
+    return;
+  }
+
+  let activePlanKey = selectedPlan;
+  if (!activePlanKey || !latestPricingData.products[activePlanKey]) {
+    [activePlanKey] = Object.keys(latestPricingData.products);
+  }
+
+  const product = latestPricingData.products[activePlanKey];
+  if (!product) {
+    if (addonPriceElement) {
+      addonPriceElement.textContent = "--";
+    }
+    updateConfirmationSection();
+    scheduleIframeHeightUpdate();
+    return;
+  }
+
   const selectedOption = document.querySelector(
     'input[name="addonCoverage"]:checked'
   );
-  if (selectedOption) {
-    const addonPriceElement = document.querySelector(".addon-price-amount");
-    const value = selectedOption.value;
 
-    // Update pricing based on selection
-    if (value === "2000") {
-      if (addonPriceElement) addonPriceElement.textContent = "23,38 €";
-    } else if (value === "5000") {
-      if (addonPriceElement) addonPriceElement.textContent = "33,33 €";
-    }
+  const addonOptions = product.addonOptions || {};
+  const optionEntries = Object.entries(addonOptions).filter(
+    ([, data]) => !data.disabled && Number.isFinite(data.price)
+  );
 
-    // Update confirmation section if visible
-    const confirmationSection = document.getElementById("addonConfirmation");
-    if (confirmationSection && confirmationSection.style.display !== "none") {
-      updateConfirmationSection();
+  let selectedValue = selectedOption ? selectedOption.value : null;
+  if (!selectedValue || !addonOptions[selectedValue] || addonOptions[selectedValue].disabled) {
+    if (optionEntries.length > 0) {
+      selectedValue = optionEntries[0][0];
+      const fallbackInput = document.querySelector(
+        `input[name="addonCoverage"][value="${selectedValue}"]`
+      );
+      if (fallbackInput) {
+        fallbackInput.checked = true;
+      }
     }
   }
+
+  document.querySelectorAll(".addon-option").forEach((label) => {
+    const input = label.querySelector('input[name="addonCoverage"]');
+    const textSpan = label.querySelector("span");
+    if (!input || !textSpan) {
+      return;
+    }
+
+    const config = addonOptions[input.value];
+    const isDisabled = !config || config.disabled || !Number.isFinite(config.price);
+    input.disabled = isDisabled;
+    label.classList.toggle("disabled", isDisabled);
+
+    if (config) {
+      const baseText = config.displayValue || textSpan.textContent.split("(")[0].trim();
+      const priceSuffix = !isDisabled
+        ? ` (${formatCurrency(config.price)} €)`
+        : "";
+      textSpan.textContent = `${baseText}${priceSuffix}`;
+    }
+  });
+
+  const activeAddon = addonOptions[selectedValue] || null;
+  const addonPrice = activeAddon && !activeAddon.disabled && Number.isFinite(activeAddon.price)
+    ? activeAddon.price
+    : 0;
+
+  if (addonPriceElement) {
+    addonPriceElement.textContent = Number.isFinite(addonPrice)
+      ? `${formatCurrency(addonPrice)} €`
+      : "--";
+  }
+
+  updateConfirmationSection();
   scheduleIframeHeightUpdate();
 }
 
 function updateConfirmationSection() {
-  // Get current plan details
   const planNames = {
     basis: "Basis",
     smart: "Smart",
     komfort: "Komfort",
   };
 
-  const planName = planNames[selectedPlan] || "Komfort";
-  const planPrice = getCurrentPrice(selectedPlan);
+  const planKey = selectedPlan || Object.keys(latestPricingData?.products || { komfort: {} })[0] || "komfort";
+  const planName = planNames[planKey] || planKey;
+  const planPriceValue = getCurrentPrice(planKey);
 
-  // Get selected addon option
-  const selectedAddon = document.querySelector(
+  const addonConfirmation = document.getElementById("addonConfirmation");
+  const addonIsSelected = addonConfirmation
+    ? addonConfirmation.style.display !== "none"
+    : false;
+
+  const selectedAddonOption = document.querySelector(
     'input[name="addonCoverage"]:checked'
   );
-  let addonPrice = 23.38;
-  let addonText = "Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss";
 
-  if (selectedAddon) {
-    if (selectedAddon.value === "5000") {
-      addonPrice = 33.33;
-      addonText = "Bis 5.000 € Heilbehandlungsschutz + 100 € Vorsorgezuschuss";
+  let addonPriceValue = addonIsSelected ? getSelectedAddonPrice() : 0;
+  let addonText = addonIsSelected
+    ? "Heilbehandlungs- und Vorsorgeschutz"
+    : "Kein Zusatzbaustein ausgewählt.";
+
+  if (addonIsSelected && latestPricingData?.products) {
+    const planProduct = latestPricingData.products[planKey];
+    const addonMap = planProduct?.addonOptions || {};
+    if (selectedAddonOption) {
+      const addonInfo = addonMap[selectedAddonOption.value];
+      if (addonInfo?.displayValue) {
+        addonText = addonInfo.displayValue;
+      }
+      if (addonInfo?.disabled || !Number.isFinite(addonInfo?.price)) {
+        addonPriceValue = 0;
+      }
     }
   }
 
-  // Calculate total
-  const totalPrice = parseFloat(planPrice) + addonPrice;
+  const totalPriceValue = Number.isFinite(planPriceValue)
+    ? planPriceValue + addonPriceValue
+    : NaN;
 
-  // Update confirmation section elements
   const tariffTitle = document.getElementById("selectedTariffTitle");
   const tariffPrice = document.getElementById("selectedTariffPrice");
   const addonOption = document.getElementById("addonSelectedOption");
   const addonSelectedPrice = document.getElementById("addonSelectedPrice");
   const totalPriceElement = document.getElementById("totalPrice");
 
-  if (tariffTitle) tariffTitle.textContent = `Ihr Tarif: ${planName}`;
-  if (tariffPrice) tariffPrice.textContent = `${planPrice} €`;
-  if (addonOption) addonOption.textContent = addonText;
-  if (addonSelectedPrice)
-    addonSelectedPrice.textContent = `${addonPrice.toFixed(2)} €`;
-  if (totalPriceElement)
-    totalPriceElement.textContent = `${totalPrice.toFixed(2)} €`;
+  if (tariffTitle) {
+    tariffTitle.textContent = `Ihr Tarif: ${planName}`;
+  }
+
+  if (tariffPrice) {
+    tariffPrice.textContent = Number.isFinite(planPriceValue)
+      ? `${formatCurrency(planPriceValue)} €`
+      : "--";
+  }
+
+  if (addonOption) {
+    addonOption.textContent = addonText;
+  }
+
+  if (addonSelectedPrice) {
+    addonSelectedPrice.textContent = `${formatCurrency(addonPriceValue)} €`;
+  }
+
+  if (totalPriceElement) {
+    totalPriceElement.textContent = Number.isFinite(totalPriceValue)
+      ? `${formatCurrency(totalPriceValue)} €`
+      : "--";
+  }
   scheduleIframeHeightUpdate();
 }
 
@@ -592,6 +1074,38 @@ style.textContent = `
     
     .comparison-table .selected-column:last-of-type {
         border-right: 2px solid #ff8c42 !important;
+    }
+
+    .price-card.price-loading .currency,
+    .price-card.price-loading .amount,
+    .price-card.price-loading .period {
+        visibility: hidden;
+    }
+
+    .price-card.price-loading .price {
+        position: relative;
+        min-height: 1.6rem;
+    }
+
+    .price-card.price-loading .price::after {
+        content: "Tarif wird geladen …";
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b7280;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .addon-option.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .addon-option.disabled input {
+        pointer-events: none;
     }
 `;
 document.head.appendChild(style);
