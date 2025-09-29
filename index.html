@@ -456,6 +456,24 @@
                   Hat oder hatte Ihr Tier eine der folgenden Erkrankungen oder
                   besteht der Verdacht auf eine dieser Erkrankungen?
                 </div>
+                <div class="radio-group">
+                  <label class="radio-option">
+                    <input
+                      type="radio"
+                      name="spezielle_krankheiten"
+                      value="ja" />
+                    <span class="radio-custom"></span>
+                    <span>Ja</span>
+                  </label>
+                  <label class="radio-option">
+                    <input
+                      type="radio"
+                      name="spezielle_krankheiten"
+                      value="nein" />
+                    <span class="radio-custom"></span>
+                    <span>Nein</span>
+                  </label>
+                </div>
                 <div class="disease-list">
                   <div class="disease-columns">
                     <div class="disease-column">
@@ -490,24 +508,6 @@
                       </ul>
                     </div>
                   </div>
-                </div>
-                <div class="radio-group">
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="spezielle_krankheiten"
-                      value="ja" />
-                    <span class="radio-custom"></span>
-                    <span>Ja</span>
-                  </label>
-                  <label class="radio-option">
-                    <input
-                      type="radio"
-                      name="spezielle_krankheiten"
-                      value="nein" />
-                    <span class="radio-custom"></span>
-                    <span>Nein</span>
-                  </label>
                 </div>
               </div>
             </div>
@@ -586,8 +586,12 @@
                       <div class="plan-col-title">Basis</div>
                       <div class="plan-col-price">
                         <span class="currency">€</span>
-                        <span class="plan-amount" data-plan-amount="basis">--</span>
-                        <span class="period" data-plan-period="basis">wird berechnet …</span>
+                        <span class="plan-amount" data-plan-amount="basis"
+                          >--</span
+                        >
+                        <span class="period" data-plan-period="basis"
+                          >wird berechnet …</span
+                        >
                       </div>
                       <button class="table-select-btn" data-plan="basis">
                         Auswählen
@@ -599,8 +603,12 @@
                       <div class="plan-col-title">Smart</div>
                       <div class="plan-col-price">
                         <span class="currency">€</span>
-                        <span class="plan-amount" data-plan-amount="smart">--</span>
-                        <span class="period" data-plan-period="smart">wird berechnet …</span>
+                        <span class="plan-amount" data-plan-amount="smart"
+                          >--</span
+                        >
+                        <span class="period" data-plan-period="smart"
+                          >wird berechnet …</span
+                        >
                       </div>
                       <button class="table-select-btn" data-plan="smart">
                         Auswählen
@@ -612,8 +620,12 @@
                       <div class="plan-col-title">Komfort</div>
                       <div class="plan-col-price">
                         <span class="currency">€</span>
-                        <span class="plan-amount" data-plan-amount="komfort">--</span>
-                        <span class="period" data-plan-period="komfort">wird berechnet …</span>
+                        <span class="plan-amount" data-plan-amount="komfort"
+                          >--</span
+                        >
+                        <span class="period" data-plan-period="komfort"
+                          >wird berechnet …</span
+                        >
                       </div>
                       <button class="table-select-btn" data-plan="komfort">
                         Auswählen
@@ -658,14 +670,17 @@
                   </td>
                 </tr>
                 <tr>
-                  <td class="feature-name">Jahreshöchstsentschädigung Operationen</td>
+                  <td class="feature-name">
+                    Jahreshöchstsentschädigung Operationen
+                  </td>
                   <td class="feature-value plan-col">3.000 €</td>
                   <td class="feature-value plan-col">7.500 €</td>
                   <td class="feature-value plan-col">unbegrenzt</td>
                 </tr>
                 <tr>
                   <td class="feature-name">
-                    Erstattung nach Gebührenordnung für Tierärztinnen und Tierärzte (GOT)
+                    Erstattung nach Gebührenordnung für Tierärztinnen und
+                    Tierärzte (GOT)
                   </td>
                   <td class="feature-value plan-col">2-fach</td>
                   <td class="feature-value plan-col">4-fach</td>
@@ -705,15 +720,21 @@
                 <div class="mobile-plan-card-price">
                   <span class="currency">€</span>
                   <span class="plan-amount" data-plan-amount="basis">--</span>
-                  <span class="period" data-plan-period="basis">wird berechnet …</span>
+                  <span class="period" data-plan-period="basis"
+                    >wird berechnet …</span
+                  >
                 </div>
               </header>
               <div class="mobile-plan-section">
                 <h3>In allen Tarifen enthalten</h3>
                 <ul>
                   <li>Operationen aufgrund Unfall oder Krankheit</li>
-                  <li>Operationen unter Vollnarkose, Teilnarkose oder Sedation</li>
-                  <li>Letzte Untersuchung vor Operation &amp; Nachbehandlungen</li>
+                  <li>
+                    Operationen unter Vollnarkose, Teilnarkose oder Sedation
+                  </li>
+                  <li>
+                    Letzte Untersuchung vor Operation &amp; Nachbehandlungen
+                  </li>
                 </ul>
               </div>
               <div class="mobile-plan-section">
@@ -733,7 +754,9 @@
                   </div>
                 </dl>
               </div>
-              <button class="table-select-btn" data-plan="basis">Basis auswählen</button>
+              <button class="table-select-btn" data-plan="basis">
+                Basis auswählen
+              </button>
             </article>
 
             <article class="mobile-plan-card" data-plan="smart" role="listitem">
@@ -742,15 +765,21 @@
                 <div class="mobile-plan-card-price">
                   <span class="currency">€</span>
                   <span class="plan-amount" data-plan-amount="smart">--</span>
-                  <span class="period" data-plan-period="smart">wird berechnet …</span>
+                  <span class="period" data-plan-period="smart"
+                    >wird berechnet …</span
+                  >
                 </div>
               </header>
               <div class="mobile-plan-section">
                 <h3>In allen Tarifen enthalten</h3>
                 <ul>
                   <li>Operationen aufgrund Unfall oder Krankheit</li>
-                  <li>Operationen unter Vollnarkose, Teilnarkose oder Sedation</li>
-                  <li>Letzte Untersuchung vor Operation &amp; Nachbehandlungen</li>
+                  <li>
+                    Operationen unter Vollnarkose, Teilnarkose oder Sedation
+                  </li>
+                  <li>
+                    Letzte Untersuchung vor Operation &amp; Nachbehandlungen
+                  </li>
                 </ul>
               </div>
               <div class="mobile-plan-section">
@@ -770,10 +799,15 @@
                   </div>
                 </dl>
               </div>
-              <button class="table-select-btn" data-plan="smart">Smart auswählen</button>
+              <button class="table-select-btn" data-plan="smart">
+                Smart auswählen
+              </button>
             </article>
 
-            <article class="mobile-plan-card " data-plan="komfort" role="listitem">
+            <article
+              class="mobile-plan-card"
+              data-plan="komfort"
+              role="listitem">
               <header class="mobile-plan-card-header">
                 <div class="mobile-plan-card-title">
                   Komfort
@@ -782,15 +816,21 @@
                 <div class="mobile-plan-card-price">
                   <span class="currency">€</span>
                   <span class="plan-amount" data-plan-amount="komfort">--</span>
-                  <span class="period" data-plan-period="komfort">wird berechnet …</span>
+                  <span class="period" data-plan-period="komfort"
+                    >wird berechnet …</span
+                  >
                 </div>
               </header>
               <div class="mobile-plan-section">
                 <h3>In allen Tarifen enthalten</h3>
                 <ul>
                   <li>Operationen aufgrund Unfall oder Krankheit</li>
-                  <li>Operationen unter Vollnarkose, Teilnarkose oder Sedation</li>
-                  <li>Letzte Untersuchung vor Operation &amp; Nachbehandlungen</li>
+                  <li>
+                    Operationen unter Vollnarkose, Teilnarkose oder Sedation
+                  </li>
+                  <li>
+                    Letzte Untersuchung vor Operation &amp; Nachbehandlungen
+                  </li>
                 </ul>
               </div>
               <div class="mobile-plan-section">
@@ -810,18 +850,23 @@
                   </div>
                 </dl>
               </div>
-              <button class="table-select-btn" data-plan="komfort">Komfort auswählen</button>
+              <button class="table-select-btn" data-plan="komfort">
+                Komfort auswählen
+              </button>
             </article>
           </div>
         </section>
 
-        <section id="addonSection" class="addon-section full-width-section" hidden>
+        <section
+          id="addonSection"
+          class="addon-section full-width-section"
+          hidden>
           <div class="addon-intro">
             <p>
               Wenn Sie Ihr Tier nicht nur gegen Operationen absichern möchten,
               sondern auch darüber hinaus für alle ambulanten und stationären
-              Behandlungen ohne Operation bei Unfall oder Krankheit, empfehlen wir
-              Ihnen den folgenden Zusatzbaustein.
+              Behandlungen ohne Operation bei Unfall oder Krankheit, empfehlen
+              wir Ihnen den folgenden Zusatzbaustein.
             </p>
           </div>
           <div class="addon-card">
@@ -847,7 +892,9 @@
               <div class="addon-price">
                 <div class="addon-price-amount">--</div>
                 <div class="addon-price-period">wird berechnet …</div>
-                <button type="button" class="addon-select-btn">Auswählen</button>
+                <button type="button" class="addon-select-btn">
+                  Auswählen
+                </button>
               </div>
             </div>
             <fieldset class="addon-options">
@@ -856,11 +903,17 @@
               </legend>
               <label class="addon-option">
                 <input type="radio" name="addonCoverage" value="2000" checked />
-                <span>Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss</span>
+                <span
+                  >Bis 2.000 € Heilbehandlungsschutz + 50 €
+                  Vorsorgezuschuss</span
+                >
               </label>
               <label class="addon-option">
                 <input type="radio" name="addonCoverage" value="5000" />
-                <span>Bis 5.000 € Heilbehandlungsschutz + 100 € Vorsorgezuschuss</span>
+                <span
+                  >Bis 5.000 € Heilbehandlungsschutz + 100 €
+                  Vorsorgezuschuss</span
+                >
               </label>
             </fieldset>
           </div>
@@ -888,7 +941,10 @@
                   <p id="addonSelectedOption">
                     Kein Zusatzbaustein ausgewählt.
                   </p>
-                  <button type="button" class="remove-addon-btn" aria-label="Remove addon">
+                  <button
+                    type="button"
+                    class="remove-addon-btn"
+                    aria-label="Remove addon">
                     <span>entfernen</span>
                     <span class="remove-icon">🗑</span>
                   </button>
@@ -939,7 +995,9 @@
 
                   <div class="form-row">
                     <div class="form-group">
-                      <label for="customerEmail">E-Mail-Adresse (optional)</label>
+                      <label for="customerEmail"
+                        >E-Mail-Adresse (optional)</label
+                      >
                       <input
                         type="email"
                         id="customerEmail"
@@ -993,7 +1051,6 @@
       </section>
 
       <section id="successScreen" class="app-screen" hidden>
-
         <section class="success-section full-width-section">
           <div class="success-card">
             <div class="success-icon">✓</div>
@@ -1025,7 +1082,10 @@
             </div>
 
             <div class="action-buttons">
-              <button class="btn-back" type="button" onclick="goBackToPricing()">
+              <button
+                class="btn-back"
+                type="button"
+                onclick="goBackToPricing()">
                 ← Zurück zur Auswahl
               </button>
             </div>
