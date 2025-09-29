@@ -66,7 +66,7 @@ function showScreen(targetId) {
     }
   });
 
-  document.querySelector('main').scrollTo({ top: 0, behavior: "smooth" });
+  document.querySelector("main").scrollTo({ top: 0, behavior: "smooth" });
 
   if (typeof scheduleIframeHeightUpdate === "function") {
     scheduleIframeHeightUpdate();
@@ -321,10 +321,13 @@ document.addEventListener("DOMContentLoaded", function () {
       rasse: rasseSelect?.value || "",
       rasseLabel: selectedBreedOption?.textContent?.trim() || "",
       geburtsdatum: document.getElementById("geburtsdatum")?.value || "",
-      kastriert: document.querySelector('input[name="kastriert"]:checked')?.value || "",
-      haltung: document.querySelector('input[name="haltung"]:checked')?.value || "",
+      kastriert:
+        document.querySelector('input[name="kastriert"]:checked')?.value || "",
+      haltung:
+        document.querySelector('input[name="haltung"]:checked')?.value || "",
       gesundheitsprobleme:
-        document.querySelector('input[name="gesundheitsprobleme"]:checked')?.value || "",
+        document.querySelector('input[name="gesundheitsprobleme"]:checked')
+          ?.value || "",
       timestamp: new Date().toISOString(),
     };
 
@@ -391,12 +394,15 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((result) => {
         if (result?.errors && result.errors.length > 0) {
-          throw new Error(result.errors[0].message || "Unbekannter API-Fehler.");
+          throw new Error(
+            result.errors[0].message || "Unbekannter API-Fehler."
+          );
         }
 
         const retentionValue = jsonData?.person?.[0]?.retention ?? 20;
         const scheduleCode = jsonData?.person?.[0]?.payment_schedule ?? "M";
-        const billingValue = document.getElementById("paymentFrequency")?.value || "monthly";
+        const billingValue =
+          document.getElementById("paymentFrequency")?.value || "monthly";
         const products = result?.data?.data?.productResponse?.products;
 
         if (Array.isArray(products) && products.length > 0) {
@@ -407,7 +413,12 @@ document.addEventListener("DOMContentLoaded", function () {
             products,
           };
 
-          applyPricingData(pricingData, billingValue, retentionValue, scheduleCode);
+          applyPricingData(
+            pricingData,
+            billingValue,
+            retentionValue,
+            scheduleCode
+          );
         } else {
           throw new Error("Keine Produkte im API-Ergebnis enthalten.");
         }
@@ -2752,14 +2763,21 @@ document.addEventListener("DOMContentLoaded", function () {
         gender: sex,
         race: breedCode,
         birthDate: birthDate,
-        age: null,
+        //calulate age from birthday
+        age: birthDate
+          ? Math.floor(
+              (new Date().getTime() -
+                new Date(birthDate.split(".").reverse().join("-")).getTime()) /
+                (1000 * 60 * 60 * 24 * 365.25)
+            )
+          : null,
         sterilized: sterilized,
         // Only include catHousingType for cats
         ...(animal === "CAT" && { catHousingType: environment }),
         preExistingDiagnosis: preExistingDiagnosis,
         excludedExistingDiagnosis: excludedExistingDiagnosis,
-        treatments: treatments,
-        surgeryAmount: surgeryAmount,
+        treatments: treatments.length > 0 ? treatments : ["NO_TREATMENT"],
+        surgeryAmount: surgeryAmount > 0 ? surgeryAmount : null,
         name: null,
         label: null,
         labelValue: null,
@@ -3715,18 +3733,23 @@ function buildPricingRequestPayload(retention, scheduleCode) {
 async function requestPricingData(retention, scheduleCode) {
   const payload = buildPricingRequestPayload(retention, scheduleCode);
   if (!payload) {
-    throw new Error("Keine gültigen Formulardaten für die Tarifberechnung gefunden.");
+    throw new Error(
+      "Keine gültigen Formulardaten für die Tarifberechnung gefunden."
+    );
   }
 
-  const response = await fetch("https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz", {
-    method: "POST",
-    headers: {
-      accept: "application/json, text/plain, */*",
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(payload),
-    redirect: "follow",
-  });
+  const response = await fetch(
+    "https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz",
+    {
+      method: "POST",
+      headers: {
+        accept: "application/json, text/plain, */*",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      redirect: "follow",
+    }
+  );
 
   if (!response.ok) {
     throw new Error(`API-Status ${response.status}`);
@@ -3768,7 +3791,11 @@ function detectPlanKey(product) {
     if (candidate.includes("smart") || candidate.includes("plus")) {
       return "smart";
     }
-    if (candidate.includes("basis") || candidate.includes("basic") || candidate.includes("start")) {
+    if (
+      candidate.includes("basis") ||
+      candidate.includes("basic") ||
+      candidate.includes("start")
+    ) {
       return "basis";
     }
   }
@@ -3805,8 +3832,7 @@ function normalizePricingProducts(products) {
               disabled:
                 Boolean(configEntry?.disabled) || configEntry?.price === -1,
               displayValue: configEntry?.displayValue || "",
-              displayValueWithPrice:
-                configEntry?.displayValueWithPrice || "",
+              displayValueWithPrice: configEntry?.displayValueWithPrice || "",
             };
           });
         });
@@ -3829,7 +3855,9 @@ function normalizePricingProducts(products) {
     }
 
     if (!planKey) {
-      planKey = PLAN_KEY_ORDER.find((candidate) => !assignedKeys.has(candidate));
+      planKey = PLAN_KEY_ORDER.find(
+        (candidate) => !assignedKeys.has(candidate)
+      );
     }
 
     if (!planKey) {
@@ -3896,9 +3924,10 @@ function applyPricingData(pricingData, billingValue, retention, scheduleCode) {
   document.querySelectorAll("[data-plan-amount]").forEach((element) => {
     const planKey = element.getAttribute("data-plan-amount");
     const product = normalized[planKey];
-    element.textContent = product && Number.isFinite(product.basePrice)
-      ? formatCurrency(product.basePrice)
-      : "--";
+    element.textContent =
+      product && Number.isFinite(product.basePrice)
+        ? formatCurrency(product.basePrice)
+        : "--";
   });
 
   const periodText = `pro ${getBillingPeriodText(billingValue)}`;
@@ -4042,9 +4071,7 @@ function initializeSuccessModule() {
 }
 
 function setupPricingEventListeners() {
-  const selectButtons = document.querySelectorAll(
-    ".table-select-btn"
-  );
+  const selectButtons = document.querySelectorAll(".table-select-btn");
 
   selectButtons.forEach((btn) => {
     btn.addEventListener("click", function (e) {
@@ -4319,7 +4346,9 @@ function getCurrentPrice(plan) {
 
 function getBillingPeriod() {
   const paymentSelect = document.getElementById("paymentFrequency");
-  const billing = paymentSelect ? paymentSelect.value : latestPricingData?.billing || "monthly";
+  const billing = paymentSelect
+    ? paymentSelect.value
+    : latestPricingData?.billing || "monthly";
 
   switch (billing) {
     case "monthly":
@@ -4359,7 +4388,10 @@ function removeAddon() {
 function updateAddonPricing() {
   const addonPriceElement = document.querySelector(".addon-price-amount");
   const addonPricePeriod = document.querySelector(".addon-price-period");
-  const billingValue = document.getElementById("paymentFrequency")?.value || latestPricingData?.billing || "monthly";
+  const billingValue =
+    document.getElementById("paymentFrequency")?.value ||
+    latestPricingData?.billing ||
+    "monthly";
 
   if (!latestPricingData?.products) {
     if (addonPriceElement) {
@@ -4377,7 +4409,9 @@ function updateAddonPricing() {
   }
 
   const activePlanKey = resolvePlanKey(selectedPlan);
-  const product = activePlanKey ? latestPricingData.products[activePlanKey] : null;
+  const product = activePlanKey
+    ? latestPricingData.products[activePlanKey]
+    : null;
   if (!product) {
     if (addonPriceElement) {
       addonPriceElement.textContent = "--";
@@ -4396,7 +4430,11 @@ function updateAddonPricing() {
   );
 
   let selectedValue = selectedOption ? selectedOption.value : null;
-  if (!selectedValue || !addonOptions[selectedValue] || addonOptions[selectedValue].disabled) {
+  if (
+    !selectedValue ||
+    !addonOptions[selectedValue] ||
+    addonOptions[selectedValue].disabled
+  ) {
     if (optionEntries.length > 0) {
       selectedValue = optionEntries[0][0];
       const fallbackInput = document.querySelector(
@@ -4416,20 +4454,24 @@ function updateAddonPricing() {
     }
 
     const config = addonOptions[input.value];
-    const isDisabled = !config || config.disabled || !Number.isFinite(config.price);
+    const isDisabled =
+      !config || config.disabled || !Number.isFinite(config.price);
     input.disabled = isDisabled;
     label.classList.toggle("disabled", isDisabled);
 
     if (config) {
-      const baseText = config.displayValueWithPrice || textSpan.textContent.split("(")[0].trim();
+      const baseText =
+        config.displayValueWithPrice ||
+        textSpan.textContent.split("(")[0].trim();
       textSpan.textContent = `${baseText}`;
     }
   });
 
   const activeAddon = addonOptions[selectedValue] || null;
-  const addonPrice = activeAddon && !activeAddon.disabled && Number.isFinite(activeAddon.price)
-    ? activeAddon.price
-    : 0;
+  const addonPrice =
+    activeAddon && !activeAddon.disabled && Number.isFinite(activeAddon.price)
+      ? activeAddon.price
+      : 0;
 
   if (addonPriceElement) {
     addonPriceElement.textContent = Number.isFinite(addonPrice)
@@ -4468,11 +4510,9 @@ function updateConfirmationSection() {
 
   if (addonSelected) {
     if (selectedAddonOption && selectedAddonOption.value === "5000") {
-      addonText =
-        "Bis 5.000 € Heilbehandlungsschutz + 100 € Vorsorgezuschuss";
+      addonText = "Bis 5.000 € Heilbehandlungsschutz + 100 € Vorsorgezuschuss";
     } else {
-      addonText =
-        "Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss";
+      addonText = "Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss";
     }
   }
 
@@ -4722,7 +4762,9 @@ function initializeCalendly() {
       email: customerData.email || "",
       customAnswers: {
         a1: customerData.phone || "",
-        a2: getPlanName(insuranceSelection.selectedPlan || selectedPlan || "smart"),
+        a2: getPlanName(
+          insuranceSelection.selectedPlan || selectedPlan || "smart"
+        ),
       },
     },
     utm: {
