@@ -2750,7 +2750,7 @@ document.addEventListener("DOMContentLoaded", function () {
           birthdate: null,
           coverage: 65000,
           retention: 20,
-          product: null,
+    product: null,
           options: [],
           payment_schedule: "M",
           contract_term: 1,
@@ -2823,7 +2823,7 @@ document.addEventListener("DOMContentLoaded", function () {
       prefillContext: null,
     };
 
-    return jsonData;
+    return applySelectedPlanDetailsToPayload(jsonData);
   }
 
   function clearPricingError() {
@@ -3568,10 +3568,11 @@ const PAYMENT_PERIOD_TEXT = {
   yearly: "Jahr",
 };
 
-const PLAN_KEY_ORDER = ["basis", "smart", "komfort"];
+const DEFAULT_PLAN_KEY_ORDER = ["basis", "smart", "komfort"];
 
 let latestPricingData = null;
 let activePricingRequestId = 0;
+let selectedPlanPricing = null;
 
 function getFormPayloadFromStorage() {
   try {
@@ -3598,7 +3599,7 @@ function getDefaultPricingPayload() {
     Math.random().toString(36).slice(2, 15) +
     Math.random().toString(36).slice(2, 15);
 
-  return {
+  const payload = {
     id: null,
     applicationNumber: null,
     sessionId,
@@ -3648,7 +3649,7 @@ function getDefaultPricingPayload() {
         birthdate: null,
         coverage: 65000,
         retention: 20,
-        product: null,
+  product: null,
         options: [],
         payment_schedule: "M",
         contract_term: 1,
@@ -3712,6 +3713,9 @@ function getDefaultPricingPayload() {
     },
     prefillContext: null,
   };
+
+  const scheduleCode = payload?.person?.[0]?.payment_schedule || "M";
+  return applySelectedPlanDetailsToPayload(payload, scheduleCode);
 }
 
 function buildPricingRequestPayload(retention, scheduleCode) {
@@ -3727,7 +3731,7 @@ function buildPricingRequestPayload(retention, scheduleCode) {
     payment_schedule: scheduleCode,
   };
 
-  return cloned;
+  return applySelectedPlanDetailsToPayload(cloned, scheduleCode);
 }
 
 async function requestPricingData(retention, scheduleCode) {
@@ -3803,12 +3807,29 @@ function detectPlanKey(product) {
   return null;
 }
 
+function sanitizePlanKey(value) {
+  if (typeof value !== "string" || !value.trim()) {
+    return null;
+  }
+
+  const normalized = value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ß/g, "ss")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+
+  return normalized || null;
+}
+
 function normalizePricingProducts(products) {
   const normalized = {};
   const assignedKeys = new Set();
+  const planOrder = [];
 
   if (!Array.isArray(products)) {
-    return normalized;
+    return { products: normalized, order: planOrder };
   }
 
   products.forEach((product, index) => {
@@ -3846,6 +3867,8 @@ function normalizePricingProducts(products) {
           : Number(product?.priceAmount),
       priceUnit: product?.priceUnit || null,
       addonOptions,
+      ident: product?.ident || null,
+      title: product?.title || product?.productName || product?.label || null,
       raw: product,
     };
 
@@ -3855,7 +3878,21 @@ function normalizePricingProducts(products) {
     }
 
     if (!planKey) {
-      planKey = PLAN_KEY_ORDER.find(
+      const normalizedTitle = sanitizePlanKey(product?.title);
+      if (normalizedTitle && !assignedKeys.has(normalizedTitle)) {
+        planKey = normalizedTitle;
+      }
+    }
+
+    if (!planKey) {
+      const normalizedIdent = sanitizePlanKey(product?.ident);
+      if (normalizedIdent && !assignedKeys.has(normalizedIdent)) {
+        planKey = normalizedIdent;
+      }
+    }
+
+    if (!planKey) {
+      planKey = DEFAULT_PLAN_KEY_ORDER.find(
         (candidate) => !assignedKeys.has(candidate)
       );
     }
@@ -3866,9 +3903,10 @@ function normalizePricingProducts(products) {
 
     assignedKeys.add(planKey);
     normalized[planKey] = entry;
+    planOrder.push(planKey);
   });
 
-  return normalized;
+  return { products: normalized, order: planOrder };
 }
 
 function resolvePlanKey(preferredKey) {
@@ -3880,7 +3918,11 @@ function resolvePlanKey(preferredKey) {
     return preferredKey;
   }
 
-  for (const candidate of PLAN_KEY_ORDER) {
+  const order = Array.isArray(latestPricingData.planOrder)
+    ? latestPricingData.planOrder
+    : DEFAULT_PLAN_KEY_ORDER;
+
+  for (const candidate of order) {
     if (latestPricingData.products[candidate]) {
       return candidate;
     }
@@ -3888,6 +3930,211 @@ function resolvePlanKey(preferredKey) {
 
   const fallbackKey = Object.keys(latestPricingData.products)[0];
   return fallbackKey || null;
+}
+
+function getPlanDisplayTitle(planKey, productEntry) {
+  const rawProduct = productEntry?.raw;
+  const titleCandidates = [
+    productEntry?.title,
+    rawProduct?.title,
+    rawProduct?.productName,
+    rawProduct?.label,
+    rawProduct?.ident,
+    planKey ? getPlanName(planKey) : null,
+  ];
+
+  for (const title of titleCandidates) {
+    if (typeof title === "string" && title.trim().length > 0) {
+      return title.trim();
+    }
+  }
+
+  return "Tarif";
+}
+
+function getActivePaymentContext(scheduleCodeOverride) {
+  const paymentSelect = document.getElementById("paymentFrequency");
+  const billingValue = paymentSelect?.value || latestPricingData?.billing || "monthly";
+  const scheduleCode =
+    scheduleCodeOverride ||
+    PAYMENT_SCHEDULE_MAP[billingValue] ||
+    latestPricingData?.schedule ||
+    "M";
+
+  return {
+    billingValue,
+    scheduleCode,
+  };
+}
+
+function updateSelectedPlanPricingSnapshot(scheduleCodeOverride) {
+  if (!selectedPlan) {
+    selectedPlanPricing = null;
+    return;
+  }
+
+  const resolvedPlanKey = resolvePlanKey(selectedPlan) || selectedPlan;
+  const { scheduleCode } = getActivePaymentContext(scheduleCodeOverride);
+
+  let price = null;
+  let description = null;
+  let ident = null;
+
+  if (latestPricingData?.products?.[resolvedPlanKey]) {
+    const product = latestPricingData.products[resolvedPlanKey];
+    if (Number.isFinite(product.basePrice)) {
+      price = product.basePrice;
+    }
+    description = getPlanDisplayTitle(resolvedPlanKey, product);
+    ident = product?.ident || product?.raw?.ident || null;
+  }
+
+  if (!Number.isFinite(price) && selectedPlanPricing?.planKey === resolvedPlanKey) {
+    price = Number.isFinite(selectedPlanPricing.price)
+      ? selectedPlanPricing.price
+      : null;
+    description = description || selectedPlanPricing.description || null;
+    ident = ident || selectedPlanPricing.ident || null;
+  }
+
+  if (!ident) {
+    try {
+      const storedSelection = JSON.parse(
+        localStorage.getItem("insuranceSelection") || "{}"
+      );
+      if (
+        storedSelection &&
+        (storedSelection.selectedPlan === resolvedPlanKey ||
+          !selectedPlan ||
+          !storedSelection.selectedPlan)
+      ) {
+        ident = storedSelection.planIdent || null;
+      }
+    } catch (error) {
+      console.warn("Konnte gespeicherte Auswahl nicht lesen", error);
+    }
+  }
+
+  selectedPlanPricing = {
+    planKey: resolvedPlanKey,
+    price: Number.isFinite(price) ? price : null,
+    description: description || getPlanName(resolvedPlanKey),
+    unit: scheduleCode,
+    ident: ident || null,
+  };
+}
+
+function getSelectedPlanPricingDetails(scheduleCodeOverride) {
+  if (!selectedPlan && !selectedPlanPricing) {
+    return null;
+  }
+
+  const resolvedPlanKey = resolvePlanKey(selectedPlan) || selectedPlan;
+  const { scheduleCode } = getActivePaymentContext(scheduleCodeOverride);
+
+  let price = null;
+  let description = null;
+  let ident = null;
+
+  if (latestPricingData?.products?.[resolvedPlanKey]) {
+    const product = latestPricingData.products[resolvedPlanKey];
+    if (Number.isFinite(product.basePrice)) {
+      price = product.basePrice;
+    }
+    description = getPlanDisplayTitle(resolvedPlanKey, product);
+    ident = product?.ident || product?.raw?.ident || null;
+  }
+
+  if (!Number.isFinite(price) && selectedPlanPricing) {
+    if (
+      !resolvedPlanKey ||
+      selectedPlanPricing.planKey === resolvedPlanKey ||
+      !selectedPlan
+    ) {
+      if (Number.isFinite(selectedPlanPricing.price)) {
+        price = selectedPlanPricing.price;
+      }
+      if (!description && selectedPlanPricing.description) {
+        description = selectedPlanPricing.description;
+      }
+      if (!ident && selectedPlanPricing.ident) {
+        ident = selectedPlanPricing.ident;
+      }
+    }
+  }
+
+  if (!Number.isFinite(price)) {
+    try {
+      const storedSelection = JSON.parse(
+        localStorage.getItem("insuranceSelection") || "{}"
+      );
+      const storedPrice = Number(storedSelection.planPrice);
+      if (Number.isFinite(storedPrice) && storedPrice > 0) {
+        price = storedPrice;
+        description =
+          description || getPlanName(storedSelection.selectedPlan || resolvedPlanKey);
+        ident = ident || storedSelection.planIdent || null;
+      }
+    } catch (error) {
+      console.warn("Konnte gespeicherte Auswahl nicht lesen", error);
+    }
+  }
+
+  if (!Number.isFinite(price)) {
+    return null;
+  }
+
+  return {
+    price,
+    description: description || getPlanName(resolvedPlanKey),
+    unit: scheduleCode,
+    ident: ident || null,
+  };
+}
+
+function applySelectedPlanDetailsToPayload(payload, scheduleCodeOverride) {
+  if (!payload || typeof payload !== "object") {
+    return payload;
+  }
+
+  if (Array.isArray(payload.person) && payload.person.length > 0) {
+    payload.person[0] = {
+      ...payload.person[0],
+      product: null,
+    };
+  }
+
+  const planDetails = getSelectedPlanPricingDetails(scheduleCodeOverride);
+
+  if (planDetails) {
+    if (Array.isArray(payload.person) && payload.person.length > 0) {
+      payload.person[0] = {
+        ...payload.person[0],
+        product: planDetails.ident || null,
+      };
+    }
+    payload.price = planDetails.price;
+    payload.pricePositions = [
+      {
+        __typename: "CalculatedPricePosition",
+        description: planDetails.description,
+        price: planDetails.price,
+        type: "PRODUCT",
+        unit: planDetails.unit,
+      },
+    ];
+  } else {
+    if (Array.isArray(payload.person) && payload.person.length > 0) {
+      payload.person[0] = {
+        ...payload.person[0],
+        product: null,
+      };
+    }
+    payload.price = -1;
+    payload.pricePositions = [];
+  }
+
+  return payload;
 }
 
 function setPriceCardsLoading(isLoading) {
@@ -3913,17 +4160,21 @@ function setPriceCardsLoading(isLoading) {
 }
 
 function applyPricingData(pricingData, billingValue, retention, scheduleCode) {
-  const normalized = normalizePricingProducts(pricingData?.products);
+  const { products: normalizedProducts, order: planOrder } =
+    normalizePricingProducts(pricingData?.products);
   latestPricingData = {
     retention,
     schedule: scheduleCode,
     billing: billingValue,
-    products: normalized,
+    products: normalizedProducts,
+    planOrder,
   };
+
+  updateSelectedPlanPricingSnapshot(scheduleCode);
 
   document.querySelectorAll("[data-plan-amount]").forEach((element) => {
     const planKey = element.getAttribute("data-plan-amount");
-    const product = normalized[planKey];
+    const product = normalizedProducts[planKey];
     element.textContent =
       product && Number.isFinite(product.basePrice)
         ? formatCurrency(product.basePrice)
@@ -4159,12 +4410,14 @@ function selectPlan(planName) {
   }
 
   selectedPlan = planName;
+  updateSelectedPlanPricingSnapshot();
   highlightTableColumn(planName);
   showSelectedPlan();
   showAddonSection();
   updateAddonPricing();
   enableContinueButton();
   scheduleIframeHeightUpdate();
+  updatePrices();
 }
 
 function highlightTableColumn(planName) {
@@ -4199,14 +4452,10 @@ function clearTableColumnHighlight() {
 function showSelectedPlan() {
   if (!selectedPlan) return;
 
-  const planNames = {
-    basis: "Basis",
-    smart: "Smart",
-    komfort: "Komfort",
-  };
-
-  const planName = planNames[selectedPlan] || selectedPlan;
-  const price = getCurrentPrice(selectedPlan);
+  const planDetails = getSelectedPlanPricingDetails();
+  const planName =
+    planDetails?.description || getPlanName(selectedPlan) || selectedPlan;
+  const price = planDetails?.price ?? getCurrentPrice(selectedPlan);
   const period = getBillingPeriod();
 
   const selectedPlanElement = document.getElementById("selectedPlan");
@@ -4265,6 +4514,7 @@ function disableContinueButton() {
 
 function resetPricingView() {
   selectedPlan = null;
+  selectedPlanPricing = null;
   addonSelected = false;
 
   document.querySelectorAll(".table-select-btn").forEach((btn) => {
@@ -4298,6 +4548,8 @@ async function updatePrices() {
 
   const retention = RETENTION_VALUE_MAP[deductible] ?? 20;
   const scheduleCode = PAYMENT_SCHEDULE_MAP[billing] ?? "M";
+
+  updateSelectedPlanPricingSnapshot(scheduleCode);
 
   latestPricingData = null;
   setPriceCardsLoading(true);
@@ -4483,12 +4735,6 @@ function updateAddonPricing() {
 }
 
 function updateConfirmationSection() {
-  const planNames = {
-    basis: "Basis",
-    smart: "Smart",
-    komfort: "Komfort",
-  };
-
   const confirmationHeading = document.getElementById("confirmationHeading");
   const tariffTitle = document.getElementById("selectedTariffTitle");
   const tariffPrice = document.getElementById("selectedTariffPrice");
@@ -4544,8 +4790,10 @@ function updateConfirmationSection() {
     return;
   }
 
-  const planName = planNames[selectedPlan] || selectedPlan;
-  const planPriceValue = getCurrentPrice(selectedPlan || "komfort");
+  const planDetails = getSelectedPlanPricingDetails();
+  const planName =
+    planDetails?.description || getPlanName(selectedPlan) || selectedPlan;
+  const planPriceValue = planDetails?.price ?? getCurrentPrice(selectedPlan || "komfort");
 
   if (confirmationHeading) {
     confirmationHeading.textContent =
@@ -4663,9 +4911,17 @@ function continueToApplication() {
     'input[name="addonCoverage"]:checked'
   )?.value;
 
+  const planDetails = getSelectedPlanPricingDetails();
+  const planPriceValue = planDetails?.price ?? getCurrentPrice(selectedPlan || "komfort");
+
   const selectionData = {
     selectedPlan: selectedPlan,
-    planPrice: getCurrentPrice(selectedPlan || "komfort"),
+    planIdent: planDetails?.ident || null,
+    planTitle:
+      planDetails?.description ||
+      getPlanName(selectedPlan) ||
+      (selectedPlan ? selectedPlan.toString() : null),
+    planPrice: Number.isFinite(planPriceValue) ? planPriceValue : null,
     addonSelected,
     addonOption: addonSelected ? addonOptionValue || "2000" : null,
     timestamp: new Date().toISOString(),
@@ -4673,10 +4929,15 @@ function continueToApplication() {
 
   const selectedPlanData = {
     plan: selectedPlan,
+    ident: planDetails?.ident || null,
+    title:
+      planDetails?.description ||
+      getPlanName(selectedPlan) ||
+      (selectedPlan ? selectedPlan.toString() : null),
     deductible: document.getElementById("deductible")?.value || "20",
     paymentFrequency:
       document.getElementById("paymentFrequency")?.value || "monthly",
-    price: getCurrentPrice(selectedPlan || "komfort"),
+    price: Number.isFinite(planPriceValue) ? planPriceValue : null,
   };
 
   try {
@@ -4702,9 +4963,9 @@ function loadSelectionData() {
 
   const selectedPlanElement = document.getElementById("selected-plan");
   if (selectedPlanElement) {
-    selectedPlanElement.textContent = getPlanName(
-      selectionData.selectedPlan || selectedPlan || "smart"
-    );
+    selectedPlanElement.textContent =
+      selectionData.planTitle ||
+      getPlanName(selectionData.selectedPlan || selectedPlan || "smart");
   }
 
   const monthlyPremium = document.getElementById("monthly-premium");
@@ -4762,9 +5023,9 @@ function initializeCalendly() {
       email: customerData.email || "",
       customAnswers: {
         a1: customerData.phone || "",
-        a2: getPlanName(
-          insuranceSelection.selectedPlan || selectedPlan || "smart"
-        ),
+        a2:
+          insuranceSelection.planTitle ||
+          getPlanName(insuranceSelection.selectedPlan || selectedPlan || "smart"),
       },
     },
     utm: {
@@ -4779,16 +5040,74 @@ function initializeCalendly() {
 }
 
 function getPlanName(plan) {
-  switch (plan) {
-    case "basis":
-      return "Basis Tarif";
-    case "smart":
-      return "Smart Tarif";
-    case "komfort":
-      return "Komfort Tarif";
-    default:
-      return "Smart Tarif";
+  if (plan == null) {
+    return selectedPlanPricing?.description || "Tarif";
   }
+
+  const value = String(plan);
+
+  if (latestPricingData?.products) {
+    if (latestPricingData.products[value]?.title) {
+      return latestPricingData.products[value].title;
+    }
+
+    const productsArray = Object.values(latestPricingData.products);
+    const matchedProduct = productsArray.find((productEntry) => {
+      const ident = productEntry?.ident || productEntry?.raw?.ident;
+      const title = productEntry?.title || productEntry?.raw?.title;
+      return ident === value || title === value;
+    });
+
+    if (matchedProduct) {
+      return (
+        matchedProduct.title ||
+        matchedProduct.raw?.title ||
+        matchedProduct.raw?.productName ||
+        value
+      );
+    }
+  }
+
+  if (selectedPlanPricing) {
+    if (
+      selectedPlanPricing.planKey === value ||
+      selectedPlanPricing.ident === value
+    ) {
+      return selectedPlanPricing.description || value;
+    }
+  }
+
+  try {
+    const storedSelection = JSON.parse(
+      localStorage.getItem("insuranceSelection") || "{}"
+    );
+    if (storedSelection) {
+      if (
+        storedSelection.selectedPlan === value ||
+        storedSelection.planIdent === value
+      ) {
+        return (
+          storedSelection.planTitle ||
+          storedSelection.selectedPlan ||
+          value
+        );
+      }
+    }
+  } catch (error) {
+    console.warn("Konnte gespeicherte Auswahl nicht lesen", error);
+  }
+
+  const fallbackMap = {
+    basis: "Basis",
+    smart: "Smart",
+    komfort: "Komfort",
+  };
+
+  if (fallbackMap[value]) {
+    return fallbackMap[value];
+  }
+
+  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function goBack() {
