@@ -394,15 +394,8 @@ document.addEventListener("DOMContentLoaded", function () {
           throw new Error(result.errors[0].message || "Unbekannter API-Fehler.");
         }
 
-        try {
-          localStorage.setItem("apiResponseData", JSON.stringify(result));
-        } catch (error) {
-          console.warn("Konnte API-Antwort nicht speichern", error);
-        }
-
         const retentionValue = jsonData?.person?.[0]?.retention ?? 20;
         const scheduleCode = jsonData?.person?.[0]?.payment_schedule ?? "M";
-        const cacheKey = getPricingCacheKey(retentionValue, scheduleCode);
         const billingValue = document.getElementById("paymentFrequency")?.value || "monthly";
         const products = result?.data?.data?.productResponse?.products;
 
@@ -414,7 +407,6 @@ document.addEventListener("DOMContentLoaded", function () {
             products,
           };
 
-          writePricingToStorage(cacheKey, pricingData);
           applyPricingData(pricingData, billingValue, retentionValue, scheduleCode);
         } else {
           throw new Error("Keine Produkte im API-Ergebnis enthalten.");
@@ -3560,42 +3552,8 @@ const PAYMENT_PERIOD_TEXT = {
 
 const PLAN_KEY_ORDER = ["basis", "smart", "komfort"];
 
-const PRICING_CACHE_PREFIX = "pricingData";
-const pricingCache = new Map();
 let latestPricingData = null;
 let activePricingRequestId = 0;
-
-function getPricingCacheKey(retention, scheduleCode) {
-  return `${retention}_${scheduleCode}`;
-}
-
-function readPricingFromStorage(key) {
-  if (pricingCache.has(key)) {
-    return pricingCache.get(key);
-  }
-
-  try {
-    const raw = localStorage.getItem(`${PRICING_CACHE_PREFIX}:${key}`);
-    if (!raw) {
-      return null;
-    }
-    const parsed = JSON.parse(raw);
-    pricingCache.set(key, parsed);
-    return parsed;
-  } catch (error) {
-    console.warn("Konnte zwischengespeicherte Preisdaten nicht lesen", error);
-    return null;
-  }
-}
-
-function writePricingToStorage(key, data) {
-  pricingCache.set(key, data);
-  try {
-    localStorage.setItem(`${PRICING_CACHE_PREFIX}:${key}`, JSON.stringify(data));
-  } catch (error) {
-    console.warn("Konnte Preisdaten nicht im localStorage speichern", error);
-  }
-}
 
 function getFormPayloadFromStorage() {
   try {
@@ -3929,7 +3887,6 @@ function setPriceCardsLoading(isLoading) {
 function applyPricingData(pricingData, billingValue, retention, scheduleCode) {
   const normalized = normalizePricingProducts(pricingData?.products);
   latestPricingData = {
-    cacheKey: getPricingCacheKey(retention, scheduleCode),
     retention,
     schedule: scheduleCode,
     billing: billingValue,
@@ -4314,24 +4271,15 @@ async function updatePrices() {
 
   const retention = RETENTION_VALUE_MAP[deductible] ?? 20;
   const scheduleCode = PAYMENT_SCHEDULE_MAP[billing] ?? "M";
-  const cacheKey = getPricingCacheKey(retention, scheduleCode);
 
   latestPricingData = null;
   setPriceCardsLoading(true);
   updateAddonPricing();
 
-  const cachedPricing = readPricingFromStorage(cacheKey);
-  if (cachedPricing) {
-    applyPricingData(cachedPricing, billing, retention, scheduleCode);
-    scheduleIframeHeightUpdate();
-    return;
-  }
-
   const requestId = ++activePricingRequestId;
 
   try {
     const pricingData = await requestPricingData(retention, scheduleCode);
-    writePricingToStorage(cacheKey, pricingData);
 
     if (requestId !== activePricingRequestId) {
       return;
