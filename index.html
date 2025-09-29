@@ -690,26 +690,28 @@
             </fieldset>
           </div>
 
-          <div id="addonConfirmation" class="addon-confirmation" style="display: none">
+          <div id="addonConfirmation" class="addon-confirmation">
             <div class="confirmation-content">
-              <h2>Glückwunsch, Sie haben Ihr passendes Produkt gefunden</h2>
+              <h2 id="confirmationHeading">Wählen Sie Ihren Tarif</h2>
 
               <div class="confirmation-item">
                 <div class="confirmation-details">
-                  <h3 id="selectedTariffTitle">Ihr Tarif: Komfort</h3>
-                  <p>Selbstbeteiligung: 20 %</p>
+                  <h3 id="selectedTariffTitle">Noch kein Tarif ausgewählt</h3>
+                  <p id="selectedTariffDetails">
+                    Bitte wählen Sie einen Tarif, um alle Details zu sehen.
+                  </p>
                 </div>
                 <div class="confirmation-price">
-                  <span id="selectedTariffPrice">20,40 €</span>
+                  <span id="selectedTariffPrice">--</span>
                   <span>pro Monat</span>
                 </div>
               </div>
 
-              <div class="confirmation-item">
+              <div class="confirmation-item" id="addonSummary" hidden>
                 <div class="confirmation-details">
                   <h3>Heilbehandlungs- und Vorsorgeschutz</h3>
                   <p id="addonSelectedOption">
-                    Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss
+                    Kein Zusatzbaustein ausgewählt.
                   </p>
                   <button type="button" class="remove-addon-btn" aria-label="Remove addon">
                     <span>entfernen</span>
@@ -717,8 +719,15 @@
                   </button>
                 </div>
                 <div class="confirmation-price">
-                  <span id="addonSelectedPrice">28,62 €</span>
+                  <span id="addonSelectedPrice">0,00 €</span>
                   <span>pro Monat</span>
+                </div>
+              </div>
+
+              <div class="confirmation-item" id="addonPlaceholder">
+                <div class="confirmation-details">
+                  <h3>Zusatzbaustein</h3>
+                  <p>Kein Zusatzbaustein ausgewählt.</p>
                 </div>
               </div>
 
@@ -727,7 +736,7 @@
                   <h3>Ihr Gesamtbeitrag</h3>
                 </div>
                 <div class="confirmation-price">
-                  <span id="totalPrice">49,02 €</span>
+                  <span id="totalPrice">--</span>
                   <span>pro Monat</span>
                 </div>
               </div>
@@ -755,13 +764,12 @@
 
                   <div class="form-row">
                     <div class="form-group">
-                      <label for="customerEmail">E-Mail-Adresse *</label>
+                      <label for="customerEmail">E-Mail-Adresse (optional)</label>
                       <input
                         type="email"
                         id="customerEmail"
                         name="customerEmail"
                         class="form-control"
-                        required
                         placeholder="max@example.com" />
                     </div>
                     <div class="form-group">
@@ -810,19 +818,6 @@
       </section>
 
       <section id="successScreen" class="app-screen" hidden>
-        <section class="application-header full-width-section">
-          <div class="progress-bar">
-            <div class="progress-step completed">
-              <div class="step-number">1</div>
-              <div class="step-label">Tierdaten</div>
-            </div>
-            <div class="progress-line completed"></div>
-            <div class="progress-step completed">
-              <div class="step-number">2</div>
-              <div class="step-label">Tarifauswahl</div>
-            </div>
-          </div>
-        </section>
 
         <section class="success-section full-width-section">
           <div class="success-card">

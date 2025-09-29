@@ -66,7 +66,7 @@ function showScreen(targetId) {
     }
   });
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  document.querySelector('main').scrollTo({ top: 0, behavior: "smooth" });
 
   if (typeof scheduleIframeHeightUpdate === "function") {
     scheduleIframeHeightUpdate();
@@ -3520,6 +3520,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 let selectedPlan = null;
+let addonSelected = false;
 let addonSection = null;
 let calendlyInitialized = false;
 
@@ -3540,6 +3541,87 @@ document.addEventListener("DOMContentLoaded", function () {
   initializeSuccessModule();
 });
 
+function updateAddonSelectionUI() {
+  const addonSelectBtn = document.querySelector(".addon-select-btn");
+  const addonSummary = document.getElementById("addonSummary");
+  const addonPlaceholder = document.getElementById("addonPlaceholder");
+  const removeBtn = document.querySelector(".remove-addon-btn");
+
+  if (addonSelectBtn) {
+    if (addonSelected) {
+      addonSelectBtn.textContent = "Ausgewählt ✓";
+      addonSelectBtn.style.backgroundColor = "#28a745";
+      addonSelectBtn.disabled = true;
+    } else {
+      addonSelectBtn.textContent = "Auswählen";
+      addonSelectBtn.style.backgroundColor = "";
+      addonSelectBtn.disabled = false;
+    }
+  }
+
+  if (addonSummary) {
+    addonSummary.hidden = !addonSelected;
+  }
+
+  if (addonPlaceholder) {
+    addonPlaceholder.hidden = addonSelected;
+  }
+
+  if (removeBtn) {
+    removeBtn.style.display = addonSelected ? "inline-flex" : "none";
+  }
+}
+
+function getSelectedAddonPrice() {
+  const selectedOption = document.querySelector(
+    'input[name="addonCoverage"]:checked'
+  );
+  if (!selectedOption) {
+    return 0;
+  }
+
+  return selectedOption.value === "5000" ? 33.33 : 23.38;
+}
+
+function getDeductibleDescription(value) {
+  switch (value) {
+    case "no":
+      return "Keine Selbstbeteiligung";
+    case "10":
+      return "10 % Selbstbeteiligung";
+    case "20":
+      return "20 % Selbstbeteiligung";
+    default:
+      return `${value}% Selbstbeteiligung`;
+  }
+}
+
+function getPaymentFrequencyDescription(value) {
+  switch (value) {
+    case "monthly":
+      return "monatliche Zahlung";
+    case "quarterly":
+      return "vierteljährliche Zahlung";
+    case "semi-annually":
+      return "halbjährliche Zahlung";
+    case "yearly":
+      return "jährliche Zahlung";
+    default:
+      return "monatliche Zahlung";
+  }
+}
+
+function formatCurrency(value) {
+  if (!Number.isFinite(value)) {
+    return "--";
+  }
+
+  return value.toLocaleString("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
 function initializePricingModule() {
   const pricingScreen = document.getElementById("pricingScreen");
   if (!pricingScreen) {
@@ -3551,9 +3633,7 @@ function initializePricingModule() {
   disableContinueButton();
 
   addonSection = document.getElementById("addonSection");
-  if (addonSection) {
-    addonSection.hidden = true;
-  }
+  updateConfirmationSection();
 
   const interactiveFields = document.querySelectorAll(
     "main input, main select, main textarea, main button"
@@ -3664,6 +3744,7 @@ function selectPlan(planName) {
   showSelectedPlan();
   showAddonSection();
   enableContinueButton();
+  updateConfirmationSection();
   scheduleIframeHeightUpdate();
 }
 
@@ -3761,6 +3842,7 @@ function disableContinueButton() {
 
 function resetPricingView() {
   selectedPlan = null;
+  addonSelected = false;
 
   document.querySelectorAll(".price-card").forEach((card) => {
     card.classList.remove("selected");
@@ -3774,23 +3856,6 @@ function resetPricingView() {
   hideSelectedPlan();
   disableContinueButton();
 
-  const addonSelectBtn = document.querySelector(".addon-select-btn");
-  const addonConfirmation = document.getElementById("addonConfirmation");
-
-  if (addonSelectBtn) {
-    addonSelectBtn.textContent = "Auswählen";
-    addonSelectBtn.style.backgroundColor = "";
-    addonSelectBtn.disabled = false;
-  }
-
-  if (addonConfirmation) {
-    addonConfirmation.style.display = "none";
-  }
-
-  if (addonSection) {
-    addonSection.hidden = true;
-  }
-
   const addonCoverageDefault = document.querySelector(
     'input[name="addonCoverage"][value="2000"]'
   );
@@ -3798,7 +3863,7 @@ function resetPricingView() {
     addonCoverageDefault.checked = true;
   }
 
-  scheduleIframeHeightUpdate();
+  updateConfirmationSection();
 }
 
 function updatePrices() {
@@ -3830,7 +3895,7 @@ function updatePrices() {
     showSelectedPlan();
   }
 
-  scheduleIframeHeightUpdate();
+  updateConfirmationSection();
 }
 
 function getCurrentPrice(plan) {
@@ -3869,31 +3934,20 @@ function getBillingPeriodText(billing) {
 }
 
 function selectAddon() {
-  const confirmationSection = document.getElementById("addonConfirmation");
-  const addonSelectBtn = document.querySelector(".addon-select-btn");
+  addonSelected = true;
+  updateAddonSelectionUI();
+  updateConfirmationSection();
 
-  if (confirmationSection && addonSelectBtn) {
-    confirmationSection.style.display = "block";
-    addonSelectBtn.textContent = "Ausgewählt ✓";
-    addonSelectBtn.style.backgroundColor = "#28a745";
-    addonSelectBtn.disabled = true;
-    updateConfirmationSection();
+  const confirmationSection = document.getElementById("addonConfirmation");
+  if (confirmationSection) {
     confirmationSection.scrollIntoView({ behavior: "smooth", block: "start" });
   }
-  scheduleIframeHeightUpdate();
 }
 
 function removeAddon() {
-  const confirmationSection = document.getElementById("addonConfirmation");
-  const addonSelectBtn = document.querySelector(".addon-select-btn");
-
-  if (confirmationSection && addonSelectBtn) {
-    confirmationSection.style.display = "none";
-    addonSelectBtn.textContent = "Auswählen";
-    addonSelectBtn.style.backgroundColor = "";
-    addonSelectBtn.disabled = false;
-  }
-  scheduleIframeHeightUpdate();
+  addonSelected = false;
+  updateAddonSelectionUI();
+  updateConfirmationSection();
 }
 
 function updateAddonPricing() {
@@ -3909,13 +3963,8 @@ function updateAddonPricing() {
     } else if (value === "5000") {
       if (addonPriceElement) addonPriceElement.textContent = "33,33 €";
     }
-
-    const confirmationSection = document.getElementById("addonConfirmation");
-    if (confirmationSection && confirmationSection.style.display !== "none") {
-      updateConfirmationSection();
-    }
   }
-  scheduleIframeHeightUpdate();
+  updateConfirmationSection();
 }
 
 function updateConfirmationSection() {
@@ -3925,35 +3974,102 @@ function updateConfirmationSection() {
     komfort: "Komfort",
   };
 
-  const planName = planNames[selectedPlan] || "Komfort";
-  const planPrice = getCurrentPrice(selectedPlan || "komfort");
-
-  const selectedAddon = document.querySelector(
-    'input[name="addonCoverage"]:checked'
-  );
-  let addonPrice = 23.38;
-  let addonText = "Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss";
-
-  if (selectedAddon && selectedAddon.value === "5000") {
-    addonPrice = 33.33;
-    addonText = "Bis 5.000 € Heilbehandlungsschutz + 100 € Vorsorgezuschuss";
-  }
-
-  const totalPrice = parseFloat(planPrice) + addonPrice;
-
+  const confirmationHeading = document.getElementById("confirmationHeading");
   const tariffTitle = document.getElementById("selectedTariffTitle");
   const tariffPrice = document.getElementById("selectedTariffPrice");
+  const tariffDetails = document.getElementById("selectedTariffDetails");
   const addonOption = document.getElementById("addonSelectedOption");
   const addonSelectedPrice = document.getElementById("addonSelectedPrice");
   const totalPriceElement = document.getElementById("totalPrice");
+  const deductibleSelect = document.getElementById("deductible");
+  const paymentSelect = document.getElementById("paymentFrequency");
 
-  if (tariffTitle) tariffTitle.textContent = `Ihr Tarif: ${planName}`;
-  if (tariffPrice) tariffPrice.textContent = `${planPrice} €`;
-  if (addonOption) addonOption.textContent = addonText;
-  if (addonSelectedPrice)
-    addonSelectedPrice.textContent = `${addonPrice.toFixed(2)} €`;
-  if (totalPriceElement)
-    totalPriceElement.textContent = `${totalPrice.toFixed(2)} €`;
+  const deductibleValue = deductibleSelect ? deductibleSelect.value : "20";
+  const paymentValue = paymentSelect ? paymentSelect.value : "monthly";
+  const selectedAddonOption = document.querySelector(
+    'input[name="addonCoverage"]:checked'
+  );
+
+  let addonPriceValue = addonSelected ? getSelectedAddonPrice() : 0;
+  let addonText = "Kein Zusatzbaustein ausgewählt.";
+
+  if (addonSelected) {
+    if (selectedAddonOption && selectedAddonOption.value === "5000") {
+      addonText =
+        "Bis 5.000 € Heilbehandlungsschutz + 100 € Vorsorgezuschuss";
+    } else {
+      addonText =
+        "Bis 2.000 € Heilbehandlungsschutz + 50 € Vorsorgezuschuss";
+    }
+  }
+
+  if (!selectedPlan) {
+    if (confirmationHeading) {
+      confirmationHeading.textContent = "Wählen Sie Ihren Tarif";
+    }
+    if (tariffTitle) {
+      tariffTitle.textContent = "Noch kein Tarif ausgewählt";
+    }
+    if (tariffDetails) {
+      tariffDetails.textContent =
+        "Bitte wählen Sie einen Tarif, um alle Details zu sehen.";
+    }
+    if (tariffPrice) {
+      tariffPrice.textContent = "--";
+    }
+    if (addonOption) {
+      addonOption.textContent = addonText;
+    }
+    if (addonSelectedPrice) {
+      addonSelectedPrice.textContent = `${formatCurrency(addonPriceValue)} €`;
+    }
+    if (totalPriceElement) {
+      totalPriceElement.textContent = "--";
+    }
+    updateAddonSelectionUI();
+    scheduleIframeHeightUpdate();
+    return;
+  }
+
+  const planName = planNames[selectedPlan] || selectedPlan;
+  const planPriceValue = parseFloat(getCurrentPrice(selectedPlan || "komfort"));
+
+  if (confirmationHeading) {
+    confirmationHeading.textContent =
+      "Glückwunsch, Sie haben Ihr passendes Produkt gefunden";
+  }
+
+  if (tariffTitle) {
+    tariffTitle.textContent = `Ihr Tarif: ${planName}`;
+  }
+
+  if (tariffDetails) {
+    tariffDetails.textContent = `${getDeductibleDescription(
+      deductibleValue
+    )} · ${getPaymentFrequencyDescription(paymentValue)}`;
+  }
+
+  if (tariffPrice) {
+    tariffPrice.textContent = Number.isFinite(planPriceValue)
+      ? `${formatCurrency(planPriceValue)} €`
+      : "--";
+  }
+
+  if (addonOption) {
+    addonOption.textContent = addonText;
+  }
+
+  if (addonSelectedPrice) {
+    addonSelectedPrice.textContent = `${formatCurrency(addonPriceValue)} €`;
+  }
+
+  if (totalPriceElement) {
+    totalPriceElement.textContent = Number.isFinite(planPriceValue)
+      ? `${formatCurrency(planPriceValue + addonPriceValue)} €`
+      : "--";
+  }
+
+  updateAddonSelectionUI();
   scheduleIframeHeightUpdate();
 }
 
@@ -3964,6 +4080,7 @@ function validateCustomerForm() {
   const privacy = document.getElementById("privacyConsent");
 
   let isValid = true;
+  let emailInvalid = false;
 
   [name, email, phone].forEach((field) => {
     if (field) {
@@ -3976,9 +4093,11 @@ function validateCustomerForm() {
     isValid = false;
   }
 
-  if (!email || !email.value.trim() || !isValidEmail(email.value)) {
+  const emailValue = email?.value.trim() || "";
+  if (emailValue && !isValidEmail(emailValue)) {
     if (email) email.classList.add("error");
     isValid = false;
+    emailInvalid = true;
   }
 
   if (!phone || !phone.value.trim()) {
@@ -3992,9 +4111,15 @@ function validateCustomerForm() {
   }
 
   if (!isValid) {
-    alert(
-      "Bitte füllen Sie alle Pflichtfelder aus und stimmen Sie der Datenverarbeitung zu."
-    );
+    if (emailInvalid) {
+      alert(
+        "Bitte geben Sie eine gültige E-Mail-Adresse ein oder lassen Sie das Feld leer."
+      );
+    } else {
+      alert(
+        "Bitte füllen Sie alle Pflichtfelder aus und stimmen Sie der Datenverarbeitung zu."
+      );
+    }
   }
 
   return isValid;
@@ -4021,14 +4146,15 @@ function storeCustomerData() {
 }
 
 function continueToApplication() {
+  const addonOptionValue = document.querySelector(
+    'input[name="addonCoverage"]:checked'
+  )?.value;
+
   const selectionData = {
     selectedPlan: selectedPlan,
     planPrice: getCurrentPrice(selectedPlan || "komfort"),
-    addonSelected:
-      document.getElementById("addonConfirmation")?.style.display !== "none",
-    addonOption:
-      document.querySelector('input[name="addonCoverage"]:checked')?.value ||
-      "2000",
+    addonSelected,
+    addonOption: addonSelected ? addonOptionValue || "2000" : null,
     timestamp: new Date().toISOString(),
   };
 
