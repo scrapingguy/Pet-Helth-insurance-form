@@ -33,6 +33,8 @@ function postIframeHeight() {
   // window.parent.postMessage({ iframeHeight: height }, "*");
   if ("parentIframe" in window) {
     parentIframe.resize();
+      parentIframe.autoResize(true);
+
   }
 }
 
