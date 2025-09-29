@@ -28,9 +28,9 @@ function getDocHeight() {
 // }
 
 function postIframeHeight() {
-  const height = getDocHeight();
-  console.log("Posting iframe height:", height);
-  window.parent.postMessage({ iframeHeight: height }, "*");
+  // const height = getDocHeight();
+  // console.log("Posting iframe height:", height);
+  // window.parent.postMessage({ iframeHeight: height }, "*");
   if ("parentIframe" in window) {
     parentIframe.resize();
   }
@@ -403,14 +403,21 @@ document.addEventListener("DOMContentLoaded", function () {
         const retentionValue = jsonData?.person?.[0]?.retention ?? 20;
         const scheduleCode = jsonData?.person?.[0]?.payment_schedule ?? "M";
         const cacheKey = getPricingCacheKey(retentionValue, scheduleCode);
-        if (Array.isArray(result?.data?.data?.productResponse?.products)) {
-          writePricingToStorage(cacheKey, {
+        const billingValue = document.getElementById("paymentFrequency")?.value || "monthly";
+        const products = result?.data?.data?.productResponse?.products;
+
+        if (Array.isArray(products) && products.length > 0) {
+          const pricingData = {
             retention: retentionValue,
             schedule: scheduleCode,
             fetchedAt: new Date().toISOString(),
-            products: result.data.productResponse.products,
-          });
-          updatePrices();
+            products,
+          };
+
+          writePricingToStorage(cacheKey, pricingData);
+          applyPricingData(pricingData, billingValue, retentionValue, scheduleCode);
+        } else {
+          throw new Error("Keine Produkte im API-Ergebnis enthalten.");
         }
 
         setPricingLoading(false);
@@ -2315,15 +2322,15 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // PLZ input validation and city display
-  if (plzInput) {
-    plzInput.addEventListener("input", function () {
-      const plz = this.value;
-      if (plz.length === 5 && plzCityMap[plz]) {
-        // Could display city name here if needed
-        // PLZ validation successful
-      }
-    });
-  }
+  // if (plzInput) {
+  //   plzInput.addEventListener("input", function () {
+  //     const plz = this.value;
+  //     if (plz.length === 5 && plzCityMap[plz]) {
+  //       // Could display city name here if needed
+  //       // PLZ validation successful
+  //     }
+  //   });
+  // }
 
   // Function to update breed dropdown based on selected animal category
   function updateBreedOptions(animalType) {
@@ -3013,15 +3020,6 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     }
 
-    // 4. Check if PLZ has corresponding city
-    if (plz && !plzCityMap[plz]) {
-      return {
-        isValid: false,
-        message:
-          "❌ Postleitzahl nicht gefunden!\n\nDiese Postleitzahl ist nicht in unserer Datenbank.\n\n✅ Bitte überprüfen Sie die PLZ oder verwenden Sie eine andere.",
-      };
-    }
-
     return { isValid: true };
   }
 
@@ -3560,6 +3558,8 @@ const PAYMENT_PERIOD_TEXT = {
   yearly: "Jahr",
 };
 
+const PLAN_KEY_ORDER = ["basis", "smart", "komfort"];
+
 const PRICING_CACHE_PREFIX = "pricingData";
 const pricingCache = new Map();
 let latestPricingData = null;
@@ -3793,19 +3793,40 @@ async function requestPricingData(retention, scheduleCode) {
   };
 }
 
-function normalizePricingProducts(products) {
-  const map = {};
+function detectPlanKey(product) {
+  const candidates = [
+    product?.title,
+    product?.ident,
+    product?.productName,
+    product?.productCode,
+  ]
+    .filter(Boolean)
+    .map((value) => String(value).toLowerCase());
 
-  if (!Array.isArray(products)) {
-    return map;
+  for (const candidate of candidates) {
+    if (candidate.includes("komfort") || candidate.includes("premium")) {
+      return "komfort";
+    }
+    if (candidate.includes("smart") || candidate.includes("plus")) {
+      return "smart";
+    }
+    if (candidate.includes("basis") || candidate.includes("basic") || candidate.includes("start")) {
+      return "basis";
+    }
   }
 
-  products.forEach((product) => {
-    const titleKey = (product?.title || product?.ident || "").toLowerCase().trim();
-    if (!titleKey) {
-      return;
-    }
+  return null;
+}
 
+function normalizePricingProducts(products) {
+  const normalized = {};
+  const assignedKeys = new Set();
+
+  if (!Array.isArray(products)) {
+    return normalized;
+  }
+
+  products.forEach((product, index) => {
     const addonOptions = {};
     if (Array.isArray(product?.options)) {
       product.options.forEach((option) => {
@@ -3819,17 +3840,22 @@ function normalizePricingProducts(products) {
           param.config.forEach((configEntry) => {
             const valueKey = String(configEntry?.value);
             addonOptions[valueKey] = {
-              price: typeof configEntry?.price === "number" ? configEntry.price : Number(configEntry?.price),
-              disabled: Boolean(configEntry?.disabled) || configEntry?.price === -1,
+              price:
+                typeof configEntry?.price === "number"
+                  ? configEntry.price
+                  : Number(configEntry?.price),
+              disabled:
+                Boolean(configEntry?.disabled) || configEntry?.price === -1,
               displayValue: configEntry?.displayValue || "",
-              displayValueWithPrice: configEntry?.displayValueWithPrice || "",
+              displayValueWithPrice:
+                configEntry?.displayValueWithPrice || "",
             };
           });
         });
       });
     }
 
-    map[titleKey] = {
+    const entry = {
       basePrice:
         typeof product?.priceAmount === "number"
           ? product.priceAmount
@@ -3838,9 +3864,44 @@ function normalizePricingProducts(products) {
       addonOptions,
       raw: product,
     };
+
+    let planKey = detectPlanKey(product);
+    if (planKey && assignedKeys.has(planKey)) {
+      planKey = null;
+    }
+
+    if (!planKey) {
+      planKey = PLAN_KEY_ORDER.find((candidate) => !assignedKeys.has(candidate));
+    }
+
+    if (!planKey) {
+      planKey = `plan_${index}`;
+    }
+
+    assignedKeys.add(planKey);
+    normalized[planKey] = entry;
   });
 
-  return map;
+  return normalized;
+}
+
+function resolvePlanKey(preferredKey) {
+  if (!latestPricingData?.products) {
+    return null;
+  }
+
+  if (preferredKey && latestPricingData.products[preferredKey]) {
+    return preferredKey;
+  }
+
+  for (const candidate of PLAN_KEY_ORDER) {
+    if (latestPricingData.products[candidate]) {
+      return candidate;
+    }
+  }
+
+  const fallbackKey = Object.keys(latestPricingData.products)[0];
+  return fallbackKey || null;
 }
 
 function setPriceCardsLoading(isLoading) {
@@ -3875,14 +3936,12 @@ function applyPricingData(pricingData, billingValue, retention, scheduleCode) {
     products: normalized,
   };
 
-  Object.entries(normalized).forEach(([planKey, product]) => {
-    const formattedAmount = Number.isFinite(product.basePrice)
+  document.querySelectorAll("[data-plan-amount]").forEach((element) => {
+    const planKey = element.getAttribute("data-plan-amount");
+    const product = normalized[planKey];
+    element.textContent = product && Number.isFinite(product.basePrice)
       ? formatCurrency(product.basePrice)
       : "--";
-
-    document.querySelectorAll(`[data-plan-amount="${planKey}"]`).forEach((element) => {
-      element.textContent = formattedAmount;
-    });
   });
 
   const periodText = `pro ${getBillingPeriodText(billingValue)}`;
@@ -3943,7 +4002,7 @@ function getSelectedAddonPrice() {
     return 0;
   }
 
-  const planKey = selectedPlan || Object.keys(latestPricingData.products)[0];
+  const planKey = resolvePlanKey(selectedPlan);
   if (!planKey) {
     return 0;
   }
@@ -4104,6 +4163,17 @@ function selectPlan(planName) {
     button.classList.add("selected");
   });
 
+  document.querySelectorAll(".mobile-plan-card").forEach((card) => {
+    card.classList.remove("selected");
+  });
+
+  const mobileCard = document.querySelector(
+    `.mobile-plan-card[data-plan="${planName}"]`
+  );
+  if (mobileCard) {
+    mobileCard.classList.add("selected");
+  }
+
   selectedPlan = planName;
   highlightTableColumn(planName);
   showSelectedPlan();
@@ -4217,6 +4287,10 @@ function resetPricingView() {
     btn.classList.remove("selected");
   });
 
+  document.querySelectorAll(".mobile-plan-card").forEach((card) => {
+    card.classList.remove("selected");
+  });
+
   clearTableColumnHighlight();
   hideSelectedPlan();
   disableContinueButton();
@@ -4242,7 +4316,9 @@ async function updatePrices() {
   const scheduleCode = PAYMENT_SCHEDULE_MAP[billing] ?? "M";
   const cacheKey = getPricingCacheKey(retention, scheduleCode);
 
+  latestPricingData = null;
   setPriceCardsLoading(true);
+  updateAddonPricing();
 
   const cachedPricing = readPricingFromStorage(cacheKey);
   if (cachedPricing) {
@@ -4280,7 +4356,12 @@ function getCurrentPrice(plan) {
     return NaN;
   }
 
-  const product = latestPricingData.products[plan];
+  const resolvedPlanKey = resolvePlanKey(plan);
+  if (!resolvedPlanKey) {
+    return NaN;
+  }
+
+  const product = latestPricingData.products[resolvedPlanKey];
   if (!product || !Number.isFinite(product.basePrice)) {
     return NaN;
   }
@@ -4332,24 +4413,23 @@ function updateAddonPricing() {
   const addonPricePeriod = document.querySelector(".addon-price-period");
   const billingValue = document.getElementById("paymentFrequency")?.value || latestPricingData?.billing || "monthly";
 
-  if (addonPricePeriod) {
-    addonPricePeriod.textContent = `pro ${getBillingPeriodText(billingValue)}`;
-  }
-
   if (!latestPricingData?.products) {
     if (addonPriceElement) {
       addonPriceElement.textContent = "--";
+    }
+    if (addonPricePeriod) {
+      addonPricePeriod.textContent = "wird berechnet …";
     }
     updateConfirmationSection();
     return;
   }
 
-  let activePlanKey = selectedPlan;
-  if (!activePlanKey || !latestPricingData.products[activePlanKey]) {
-    [activePlanKey] = Object.keys(latestPricingData.products);
+  if (addonPricePeriod) {
+    addonPricePeriod.textContent = `pro ${getBillingPeriodText(billingValue)}`;
   }
 
-  const product = latestPricingData.products[activePlanKey];
+  const activePlanKey = resolvePlanKey(selectedPlan);
+  const product = activePlanKey ? latestPricingData.products[activePlanKey] : null;
   if (!product) {
     if (addonPriceElement) {
       addonPriceElement.textContent = "--";
