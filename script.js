@@ -4473,11 +4473,8 @@ function updateAddonPricing() {
     label.classList.toggle("disabled", isDisabled);
 
     if (config) {
-      const baseText = config.displayValue || textSpan.textContent.split("(")[0].trim();
-      const priceSuffix = !isDisabled
-        ? ` (${formatCurrency(config.price)} €)`
-        : "";
-      textSpan.textContent = `${baseText}${priceSuffix}`;
+      const baseText = config.displayValueWithPrice || textSpan.textContent.split("(")[0].trim();
+      textSpan.textContent = `${baseText}`;
     }
   });
 
