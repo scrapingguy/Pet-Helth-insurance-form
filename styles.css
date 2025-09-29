@@ -1065,7 +1065,7 @@
         }
 
         .embedded-full .table-wrapper {
-            max-height: calc(var(--embed-max-height, 100vh) - 3 * var(--spacing-lg));
+            /* max-height: calc(var(--embed-max-height, 100vh) - 3 * var(--spacing-lg)); */
             overflow-y: auto;
         }
 
