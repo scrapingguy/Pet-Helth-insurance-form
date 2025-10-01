@@ -1,6 +1,15 @@
 //<div class="custom-iframe-wrapper" id="myIframe">
 //  <iframe src="https://vierbeinerabsicherung.moazzammalek.com/" id="moazzammalek" loading="lazy"></iframe>
 //</div>
+import {
+  catPricingTableData,
+  catPricingTableHeader,
+  dogPricingTableData,
+  dogPricingTableHeader,
+  horsePricingTableData,
+  horsePricingTableHeader,
+} from "./pricingtable.js";
+
 window.iframeResizer = {
   license: "GPLv3",
   onReady: () => {
@@ -10,6 +19,37 @@ window.iframeResizer = {
     }
   },
 };
+const PRICING_DATA_MAP = {
+  katze: {
+    sections: catPricingTableData,
+    headers: catPricingTableHeader,
+  },
+  hund: {
+    sections: dogPricingTableData,
+    headers: dogPricingTableHeader,
+  },
+  pferd: {
+    sections: horsePricingTableData,
+    headers: horsePricingTableHeader,
+  },
+};
+
+const PLAN_KEY_SEQUENCE = ["basis", "smart", "komfort"];
+
+const PLAN_LABELS = {
+  basis: "Basis",
+  smart: "Smart",
+  komfort: "Komfort",
+};
+
+const SECTION_TITLE_FALLBACKS = [
+  "In allen Tarifen enthalten",
+  "Mehr Leistung im Rahmen einer Operation",
+  "Mehr für Sie und Ihr Tier",
+  "Mehr Service für Sie",
+];
+
+let currentPricingAnimalKey = null;
 function getDocHeight() {
   const lastElement = document.querySelector("main"); // or your form wrapper
   if (!lastElement) return document.body.scrollHeight;
@@ -74,6 +114,10 @@ function showScreen(targetId) {
     scheduleIframeHeightUpdate();
   }
 
+  if (targetId === "pricingScreen") {
+    renderPricingComparison(true);
+  }
+
   if (targetId === "successScreen") {
     loadSelectionData();
     initializeCalendly();
@@ -91,6 +135,353 @@ function goBackToPricing() {
 window.showScreen = showScreen;
 window.goBackToForm = goBackToForm;
 window.goBackToPricing = goBackToPricing;
+
+function getPricingConfigForAnimal(animalKey) {
+  return PRICING_DATA_MAP[animalKey] || PRICING_DATA_MAP.katze;
+}
+
+function resolveSelectedAnimalKey() {
+  const tierKategorieSelect = document.getElementById("tierKategorie");
+  if (tierKategorieSelect?.value) {
+    return tierKategorieSelect.value;
+  }
+
+  const storedData = getFormPayloadFromStorage();
+  if (storedData) {
+    if (storedData.tierKategorie) {
+      return storedData.tierKategorie;
+    }
+
+    const category = storedData.nlf?.animalCategory;
+    if (category) {
+      switch (category) {
+        case "CAT":
+          return "katze";
+        case "DOG":
+          return "hund";
+        case "HORSE":
+          return "pferd";
+        default:
+          break;
+      }
+    }
+  }
+
+  return "katze";
+}
+
+function resolveSectionTitle(headers, index) {
+  const headerValue = headers?.[index];
+  if (typeof headerValue === "string" && headerValue.trim().length > 0) {
+    return headerValue.trim();
+  }
+
+  return SECTION_TITLE_FALLBACKS[index] || "Weitere Leistungen";
+}
+
+function normalizeFeatureValue(value) {
+  if (value === null || value === undefined) {
+    return "–";
+  }
+
+  const text = String(value).trim();
+  if (!text) {
+    return "–";
+  }
+
+  if (/^true$/i.test(text)) {
+    return "✓";
+  }
+
+  if (/^false$/i.test(text)) {
+    return "✗";
+  }
+
+  return text;
+}
+
+function resolveFeatureTitle(rowData) {
+  if (rowData && typeof rowData.Title === "string" && rowData.Title.trim()) {
+    return rowData.Title.trim();
+  }
+
+  if (rowData && typeof rowData.tooltip === "string") {
+    const candidate = rowData.tooltip
+      .split("\n")
+      .map((line) => line.trim())
+      .find((line) => line.length > 0);
+    if (candidate) {
+      return candidate;
+    }
+  }
+
+  return "–";
+}
+
+function createDesktopSectionHeader(sectionTitle, sectionIndex) {
+  const headerRow = document.createElement("tr");
+  headerRow.className = "pricing-section-header-row";
+  headerRow.dataset.sectionIndex = String(sectionIndex);
+
+  const headerCell = document.createElement("td");
+  headerCell.className = "pricing-section-header-cell";
+  headerCell.colSpan = PLAN_KEY_SEQUENCE.length + 1;
+
+  const toggleButton = document.createElement("button");
+  toggleButton.type = "button";
+  toggleButton.className = "pricing-section-toggle";
+  toggleButton.dataset.sectionIndex = String(sectionIndex);
+  toggleButton.innerHTML = `
+    <span class="pricing-section-title">${sectionTitle}</span>
+    <span class="pricing-section-icon" aria-hidden="true"></span>
+  `;
+
+  if (sectionIndex === 0) {
+    toggleButton.setAttribute("aria-expanded", "true");
+    toggleButton.dataset.locked = "true";
+    toggleButton.disabled = true;
+    toggleButton.classList.add("is-static");
+  } else {
+    toggleButton.setAttribute("aria-expanded", "false");
+  }
+
+  headerCell.appendChild(toggleButton);
+  headerRow.appendChild(headerCell);
+  return headerRow;
+}
+
+function appendDesktopSectionRows(tableBody, sectionRows, sectionIndex) {
+  sectionRows.forEach((rowData) => {
+    const row = document.createElement("tr");
+    row.className = "pricing-section-row";
+    row.dataset.sectionIndex = String(sectionIndex);
+
+    if (sectionIndex !== 0) {
+      row.hidden = true;
+    }
+
+    const featureCell = document.createElement("td");
+    featureCell.className = "feature-name";
+    featureCell.textContent = resolveFeatureTitle(rowData);
+    if (rowData.tooltip) {
+      featureCell.title = rowData.tooltip;
+      featureCell.classList.add("has-tooltip");
+    }
+    row.appendChild(featureCell);
+
+    PLAN_KEY_SEQUENCE.forEach((planKey, planIndex) => {
+      const valueCell = document.createElement("td");
+      valueCell.className = "feature-value plan-col";
+      valueCell.textContent = normalizeFeatureValue(
+        rowData[`value ${planIndex + 1}`]
+      );
+      row.appendChild(valueCell);
+    });
+
+    tableBody.appendChild(row);
+  });
+}
+
+function renderDesktopPricingTable(tableBody, sections, headers) {
+  sections.forEach((sectionRows, sectionIndex) => {
+    const sectionTitle = resolveSectionTitle(headers, sectionIndex);
+    const headerRow = createDesktopSectionHeader(sectionTitle, sectionIndex);
+    tableBody.appendChild(headerRow);
+    appendDesktopSectionRows(tableBody, sectionRows, sectionIndex);
+  });
+}
+
+function renderMobilePricingCards(container, sections, headers) {
+  PLAN_KEY_SEQUENCE.forEach((planKey, planIndex) => {
+    const card = document.createElement("article");
+    card.className = "mobile-plan-card";
+    card.dataset.plan = planKey;
+    card.setAttribute("role", "listitem");
+
+    const header = document.createElement("header");
+    header.className = "mobile-plan-card-header";
+
+    const titleDiv = document.createElement("div");
+    titleDiv.className = "mobile-plan-card-title";
+    titleDiv.textContent = PLAN_LABELS[planKey] || planKey;
+    if (planKey === "komfort") {
+      const badge = document.createElement("span");
+      badge.className = "plan-col-badge";
+      badge.textContent = "Unser Bestseller";
+      titleDiv.appendChild(badge);
+    }
+
+    const priceDiv = document.createElement("div");
+    priceDiv.className = "mobile-plan-card-price";
+    priceDiv.innerHTML = `
+      <span class="currency">€</span>
+      <span class="plan-amount" data-plan-amount="${planKey}">--</span>
+      <span class="period" data-plan-period="${planKey}">wird berechnet …</span>
+    `;
+
+    header.appendChild(titleDiv);
+    header.appendChild(priceDiv);
+    card.appendChild(header);
+
+    sections.forEach((sectionRows, sectionIndex) => {
+      const sectionTitle = resolveSectionTitle(headers, sectionIndex);
+      const sectionBlock = document.createElement("div");
+      sectionBlock.className = "mobile-plan-section";
+
+      const toggleButton = document.createElement("button");
+      toggleButton.type = "button";
+      toggleButton.className = "mobile-section-toggle";
+      toggleButton.dataset.plan = planKey;
+      toggleButton.dataset.sectionIndex = String(sectionIndex);
+      toggleButton.innerHTML = `
+        <span class="mobile-section-title">${sectionTitle}</span>
+        <span class="pricing-section-icon" aria-hidden="true"></span>
+      `;
+
+      if (sectionIndex === 0) {
+        toggleButton.setAttribute("aria-expanded", "true");
+        toggleButton.dataset.locked = "true";
+        toggleButton.disabled = true;
+        toggleButton.classList.add("is-static");
+      } else {
+        toggleButton.setAttribute("aria-expanded", "false");
+      }
+
+      sectionBlock.appendChild(toggleButton);
+
+      const content = document.createElement("div");
+      content.className = "mobile-section-content";
+      content.dataset.plan = planKey;
+      content.dataset.sectionIndex = String(sectionIndex);
+      if (sectionIndex !== 0) {
+        content.hidden = true;
+      }
+
+      const list = document.createElement("ul");
+      list.className = "mobile-feature-list";
+
+      sectionRows.forEach((rowData) => {
+        const listItem = document.createElement("li");
+        listItem.className = "mobile-feature";
+
+        const featureName = document.createElement("span");
+        featureName.className = "feature-name";
+        featureName.textContent = resolveFeatureTitle(rowData);
+        if (rowData.tooltip) {
+          featureName.title = rowData.tooltip;
+          featureName.classList.add("has-tooltip");
+        }
+
+        const featureValue = document.createElement("span");
+        featureValue.className = "feature-value";
+        featureValue.textContent = normalizeFeatureValue(
+          rowData[`value ${planIndex + 1}`]
+        );
+
+        listItem.appendChild(featureName);
+        listItem.appendChild(featureValue);
+        list.appendChild(listItem);
+      });
+
+      content.appendChild(list);
+      sectionBlock.appendChild(content);
+      card.appendChild(sectionBlock);
+    });
+
+    const selectButton = document.createElement("button");
+    selectButton.className = "table-select-btn";
+    selectButton.setAttribute("data-plan", planKey);
+    selectButton.textContent = `${PLAN_LABELS[planKey] || planKey} auswählen`;
+    card.appendChild(selectButton);
+
+    container.appendChild(card);
+  });
+}
+
+function renderPricingComparison(force = false) {
+  const targetAnimalKey = resolveSelectedAnimalKey();
+  if (!targetAnimalKey) {
+    return;
+  }
+
+  if (!force && currentPricingAnimalKey === targetAnimalKey) {
+    return;
+  }
+
+  const { sections, headers } = getPricingConfigForAnimal(targetAnimalKey);
+  const tableBody = document.getElementById("pricingTableBody");
+  const mobileContainer = document.getElementById("comparisonMobileList");
+
+  if (!tableBody || !mobileContainer) {
+    return;
+  }
+
+  currentPricingAnimalKey = targetAnimalKey;
+
+  tableBody.innerHTML = "";
+  mobileContainer.innerHTML = "";
+
+  renderDesktopPricingTable(tableBody, sections, headers);
+  renderMobilePricingCards(mobileContainer, sections, headers);
+
+  const previouslySelectedPlan = selectedPlan;
+  if (previouslySelectedPlan) {
+    const planToRestore = previouslySelectedPlan;
+    selectedPlan = null;
+    selectPlan(planToRestore);
+  } else {
+    clearTableColumnHighlight();
+  }
+
+  scheduleIframeHeightUpdate();
+}
+
+function handleDesktopSectionToggle(button) {
+  if (!button || button.dataset.locked === "true" || button.disabled) {
+    return;
+  }
+
+  const sectionIndex = button.dataset.sectionIndex;
+  if (sectionIndex === undefined) {
+    return;
+  }
+
+  const shouldExpand = button.getAttribute("aria-expanded") !== "true";
+  button.setAttribute("aria-expanded", shouldExpand ? "true" : "false");
+
+  const rows = document.querySelectorAll(
+    `.pricing-section-row[data-section-index="${sectionIndex}"]`
+  );
+  rows.forEach((row) => {
+    row.hidden = !shouldExpand;
+  });
+
+  scheduleIframeHeightUpdate();
+}
+
+function handleMobileSectionToggle(button) {
+  if (!button || button.dataset.locked === "true" || button.disabled) {
+    return;
+  }
+
+  const sectionIndex = button.dataset.sectionIndex;
+  const plan = button.dataset.plan;
+  if (sectionIndex === undefined || !plan) {
+    return;
+  }
+
+  const shouldExpand = button.getAttribute("aria-expanded") !== "true";
+  button.setAttribute("aria-expanded", shouldExpand ? "true" : "false");
+
+  const content = document.querySelector(
+    `.mobile-section-content[data-plan="${plan}"][data-section-index="${sectionIndex}"]`
+  );
+  if (content) {
+    content.hidden = !shouldExpand;
+  }
+
+  scheduleIframeHeightUpdate();
+}
 
 // Pet Health Insurance Form JavaScript
 
@@ -116,6 +507,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let currentStepIndex = 0;
   let stepThreeEnabled = false;
+
+  if (tierKategorieSelect) {
+    tierKategorieSelect.addEventListener("change", () => {
+      if (currentScreenId === "pricingScreen") {
+        renderPricingComparison(true);
+      }
+    });
+  }
 
   function isStepThreeRequired() {
     const selected = document.querySelector(
@@ -4301,6 +4700,7 @@ function initializePricingModule() {
     return;
   }
 
+  renderPricingComparison(true);
   setupPricingEventListeners();
   setPriceCardsLoading(true);
   updatePrices();
@@ -4324,14 +4724,31 @@ function initializeSuccessModule() {
 }
 
 function setupPricingEventListeners() {
-  const selectButtons = document.querySelectorAll(".table-select-btn");
-
-  selectButtons.forEach((btn) => {
-    btn.addEventListener("click", function (e) {
+  document.addEventListener("click", function (e) {
+    const planButton = e.target.closest(
+      ".table-select-btn[data-plan]"
+    );
+    if (planButton) {
       e.preventDefault();
-      const plan = this.getAttribute("data-plan");
-      selectPlan(plan);
-    });
+      const plan = planButton.getAttribute("data-plan");
+      if (plan) {
+        selectPlan(plan);
+      }
+      return;
+    }
+
+    const desktopToggle = e.target.closest(".pricing-section-toggle");
+    if (desktopToggle) {
+      e.preventDefault();
+      handleDesktopSectionToggle(desktopToggle);
+      return;
+    }
+
+    const mobileToggle = e.target.closest(".mobile-section-toggle");
+    if (mobileToggle) {
+      e.preventDefault();
+      handleMobileSectionToggle(mobileToggle);
+    }
   });
 
   const deductibleSelect = document.getElementById("deductible");

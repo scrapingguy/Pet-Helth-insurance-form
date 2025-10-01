@@ -1925,6 +1925,57 @@ body {
     width: 100%;
     border-collapse: collapse;
 }
+.pricing-section-header-row {
+    background: var(--background-secondary);
+}
+.pricing-section-header-cell {
+    padding: 0;
+}
+.pricing-section-toggle {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.pricing-section-toggle:hover:not(.is-static),
+.pricing-section-toggle:focus-visible:not(.is-static) {
+    background: rgba(255, 140, 66, 0.08);
+    outline: none;
+}
+.pricing-section-toggle.is-static {
+    cursor: default;
+    pointer-events: none;
+    opacity: 1;
+    background: transparent;
+}
+.pricing-section-icon {
+    width: 14px;
+    height: 14px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+.pricing-section-toggle[aria-expanded="true"] .pricing-section-icon {
+    transform: rotate(45deg);
+}
+.pricing-section-toggle.is-static .pricing-section-icon {
+    display: none;
+}
+.pricing-section-title {
+    flex: 1;
+    text-align: left;
+}
 .comparison-mobile {
     display: none;
     margin-top: 24px;
@@ -1988,40 +2039,63 @@ body {
     margin-bottom: 10px;
     color: var(--text-primary);
 }
-.mobile-plan-section ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.mobile-section-toggle {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 12px 0;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-.mobile-plan-section ul li::before {
-    content: "✓";
-    color: var(--primary-color);
-    margin-right: 8px;
-    font-weight: 700;
-}
-.mobile-plan-section dl {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
     gap: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.mobile-section-toggle:hover:not(.is-static),
+.mobile-section-toggle:focus-visible:not(.is-static) {
+    color: var(--primary-color);
+    outline: none;
+}
+.mobile-section-toggle.is-static {
+    cursor: default;
+    pointer-events: none;
+    opacity: 1;
+}
+.mobile-section-content {
+    padding-bottom: 12px;
+}
+.mobile-plan-section + .mobile-plan-section {
+    border-top: 1px solid var(--border-light);
+    padding-top: 12px;
+}
+.mobile-feature-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 .mobile-feature {
-    display: grid;
-    gap: 4px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
 }
-.mobile-feature dt {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-}
-.mobile-feature dd {
-    margin: 0;
-    font-size: 1rem;
+.mobile-feature .feature-name {
     font-weight: 500;
+    color: var(--text-secondary);
+    flex: 1;
+}
+.mobile-feature .feature-value {
+    font-weight: 600;
     color: var(--text-primary);
+    text-align: right;
+}
+.has-tooltip {
+    cursor: help;
 }
 .mobile-plan-card .table-select-btn {
     width: 100%;
