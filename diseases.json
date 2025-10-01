@@ -1,0 +1,46 @@
+{
+  "katze": [
+    "FIP (Bauchfellentzündung)",
+    "FIV (Katzenaids)",
+    "FelV (Katzenleukämie)",
+    "Epilepsie",
+    "Morbus Cushing (Überfunktion der Nebenniere)",
+    "Babesiose (Hundemalaria)",
+    "Ehrlichiose (Infektionskrankheit durch Zecken)",
+    "Leishmaniose (Infektionskrankheit durch Sandmücken)",
+    "Borreliose (Infektionskrankheiten durch Zecken)",
+    "Morbus Addison (Unterfunktion der Nebenniere)",
+    "Anaplasmose (Infektionskrankheit durch Zecken)",
+    "Entzündung ZNS (zentrales Nervensystem)",
+    "Angeborener Lebershunt (Missbildung der Lebergefäße)",
+    "Lupus erythematodes (autoimmune Bindegewebserkrankung)",
+    "Myasthenia gravis (autoimmune Muskelerkrankung)",
+    "Bluter (Blutgerinnungsstörung)",
+    "Dirofilariose (Herzwurmerkrankung)"
+  ],
+  "hund": [
+    "Epilepsie",
+    "Morbus Cushing (Überfunktion der Nebenniere)",
+    "Babesiose (Hundemalaria)",
+    "Ehrlichiose (Infektionskrankheit durch Zecken)",
+    "Leishmaniose (Infektionskrankheit durch Sandmücken)",
+    "Morbus Addison (Unterfunktion der Nebenniere)",
+    "Anaplasmose (Infektionskrankheit durch Zecken)",
+    "Entzündung ZNS (zentrales Nervensystem)",
+    "Angeborener Lebershunt (Missbildung der Lebergefäße)",
+    "Lupus erythematodes (autoimmune Bindegewebserkrankung)",
+    "Myasthenia gravis (autoimmune Muskelerkrankung)",
+    "Bluter (Blutgerinnungsstörung)",
+    "Dirofilariose (Herzwurmerkrankung)",
+    "Borreliose (Infektionskrankheiten durch Zecken)"
+  ],
+  "pferd": [
+    "Entzündung ZNS (zentrales Nervensystem)",
+    "Botulismus (Nervenvergiftung)",
+    "Leptospirose (bakterielle Infektion)",
+    "Dummkoller (Gehirnwassersucht)",
+    "Equines Metabolisches Syndrom (Stoffwechselerkrankung)",
+    "Borna (Gehirn- / Rückenmarksentzündung)",
+    "Narkolepsie (Schlafkrankheit)"
+  ]
+}

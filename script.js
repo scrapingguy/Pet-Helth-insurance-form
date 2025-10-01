@@ -508,8 +508,75 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentStepIndex = 0;
   let stepThreeEnabled = false;
 
+  // Load disease data from JSON
+  let diseaseData = {};
+  fetch('diseases.json')
+    .then(response => response.json())
+    .then(data => {
+      diseaseData = data;
+      // Load diseases for the initially selected animal (default: cat)
+      updateDiseaseList(tierKategorieSelect?.value || 'katze');
+    })
+    .catch(error => {
+      console.error('Error loading disease data:', error);
+      // Fallback to default cat diseases if JSON fails to load
+      diseaseData = {
+        katze: ["FIP (Bauchfellentzündung)", "FIV (Katzenaids)", "FelV (Katzenleukämie)", "Epilepsie"],
+        hund: ["Epilepsie", "Morbus Cushing (Überfunktion der Nebenniere)", "Babesiose (Hundemalaria)"],
+        pferd: ["Entzündung ZNS (zentrales Nervensystem)", "Botulismus (Nervenvergiftung)"]
+      };
+      updateDiseaseList(tierKategorieSelect?.value || 'katze');
+    });
+
+  // Function to update disease list based on selected animal type
+  function updateDiseaseList(animalType) {
+    const diseaseColumnsContainer = document.getElementById('diseaseColumnsContainer');
+    if (!diseaseColumnsContainer || !diseaseData[animalType]) return;
+
+    const diseases = diseaseData[animalType];
+    const midPoint = Math.ceil(diseases.length / 2);
+    const firstColumnDiseases = diseases.slice(0, midPoint);
+    const secondColumnDiseases = diseases.slice(midPoint);
+
+    diseaseColumnsContainer.innerHTML = `
+      <div class="disease-column">
+        <ul>
+          ${firstColumnDiseases.map(disease => `<li>${disease}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="disease-column">
+        <ul>
+          ${secondColumnDiseases.map(disease => `<li>${disease}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+  }
+
+  // Function to update housing question visibility based on animal type
+  function updateHousingVisibility(animalType) {
+    const housingQuestion = document.getElementById('housingQuestion');
+    if (housingQuestion) {
+      if (animalType === 'katze') {
+        housingQuestion.style.display = 'block';
+      } else {
+        housingQuestion.style.display = 'none';
+        // Clear housing selection when hiding
+        const housingRadios = document.querySelectorAll('input[name="haltung"]');
+        housingRadios.forEach(radio => radio.checked = false);
+      }
+    }
+  }
+
   if (tierKategorieSelect) {
     tierKategorieSelect.addEventListener("change", () => {
+      const selectedAnimal = tierKategorieSelect.value;
+      
+      // Update disease list based on selected animal
+      updateDiseaseList(selectedAnimal);
+      
+      // Update housing question visibility based on selected animal
+      updateHousingVisibility(selectedAnimal);
+      
       if (currentScreenId === "pricingScreen") {
         renderPricingComparison(true);
       }
@@ -664,7 +731,9 @@ document.addEventListener("DOMContentLoaded", function () {
         valid = false;
       }
 
-      if (!haltungSelected) {
+      // Only validate housing for cats
+      const selectedAnimal = tierKategorieSelect?.value || 'katze';
+      if (selectedAnimal === 'katze' && !haltungSelected) {
         showError("haltungError", "haltung");
         valid = false;
       }
@@ -988,11 +1057,18 @@ document.addEventListener("DOMContentLoaded", function () {
       completedSteps += 1;
     }
 
-    const housingRadios = document.querySelectorAll('input[name="haltung"]');
-    const housingSelected = Array.from(housingRadios).some(
-      (radio) => radio.checked
-    );
-    if (housingSelected) {
+    // Only count housing for cats
+    const selectedAnimal = tierKategorieSelect?.value || 'katze';
+    if (selectedAnimal === 'katze') {
+      const housingRadios = document.querySelectorAll('input[name="haltung"]');
+      const housingSelected = Array.from(housingRadios).some(
+        (radio) => radio.checked
+      );
+      if (housingSelected) {
+        completedSteps += 1;
+      }
+    } else {
+      // For non-cats, automatically count this step as complete since it's hidden
       completedSteps += 1;
     }
 
@@ -3941,6 +4017,9 @@ document.addEventListener("DOMContentLoaded", function () {
   updateGermanDateDisplay();
   updateStepThreeAvailability();
   initializeAppScreen();
+  
+  // Initialize housing visibility based on default animal selection
+  updateHousingVisibility(tierKategorieSelect?.value || 'katze');
 });
 
 let selectedPlan = null;
