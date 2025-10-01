@@ -9,6 +9,9 @@ import {
   horsePricingTableData,
   horsePricingTableHeader,
 } from "./pricingtable.js";
+import {
+  catDisease,dogDisease,horseDisease
+} from "./diseases.js";
 
 window.iframeResizer = {
   license: "GPLv3",
@@ -508,25 +511,12 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentStepIndex = 0;
   let stepThreeEnabled = false;
 
-  // Load disease data from JSON
-  let diseaseData = {};
-  fetch('diseases.json')
-    .then(response => response.json())
-    .then(data => {
-      diseaseData = data;
-      // Load diseases for the initially selected animal (default: cat)
-      updateDiseaseList(tierKategorieSelect?.value || 'katze');
-    })
-    .catch(error => {
-      console.error('Error loading disease data:', error);
-      // Fallback to default cat diseases if JSON fails to load
-      diseaseData = {
-        katze: ["FIP (Bauchfellentzündung)", "FIV (Katzenaids)", "FelV (Katzenleukämie)", "Epilepsie"],
-        hund: ["Epilepsie", "Morbus Cushing (Überfunktion der Nebenniere)", "Babesiose (Hundemalaria)"],
-        pferd: ["Entzündung ZNS (zentrales Nervensystem)", "Botulismus (Nervenvergiftung)"]
-      };
-      updateDiseaseList(tierKategorieSelect?.value || 'katze');
-    });
+  // Disease data mapping using imported variables
+  const diseaseData = {
+    katze: catDisease,
+    hund: dogDisease,
+    pferd: horseDisease
+  };
 
   // Function to update disease list based on selected animal type
   function updateDiseaseList(animalType) {
@@ -551,6 +541,9 @@ document.addEventListener("DOMContentLoaded", function () {
       </div>
     `;
   }
+
+  // Initialize disease list for default animal (cat)
+  updateDiseaseList(tierKategorieSelect?.value || 'katze');
 
   // Function to update housing question visibility based on animal type
   function updateHousingVisibility(animalType) {
