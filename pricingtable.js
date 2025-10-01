@@ -4,8 +4,8 @@ export const catPricingTableData = [
       Title: "Jahreshöchstentschädigung für Operationen",
       tooltip:
         "Es werden alle Einzelleistungen bis zur angegebenen Gesamtsumme pro Jahr erstattet, unabhängig von der Anzahl der Operationen.",
-      "value 1": "3.00€",
-      "value 2": "7.50€",
+      "value 1": "3.000€",
+      "value 2": "7.500€",
       "value 3": "unbegrenzt",
     },
     {
@@ -40,7 +40,7 @@ export const catPricingTableData = [
         "Übernahme der Tierarztkosten für die Strahlentherapie nach einer Operation bis zur vereinbarten Höhe, auch über den Nachbehandlungszeitraum hinaus.\n\nDie Erstattung erfolgt anteilig auf die Jahreshöchstentschädigung für Operationen.",
       "value 1": "-",
       "value 2": "500€",
-      "value 3": "2.50€",
+      "value 3": "2.500€",
     },
   ],
   [
@@ -86,54 +86,70 @@ export const catPricingTableData = [
     },
   ],
   [
-    {
-      Title: "Telemedizin",
-      tooltip:
-        "Im Rahmen der Diagnostik sind auch die Kosten für eine Videokonsultation bei einer Online-Tierärztin oder einem Online-Tierarzt mitversichert. Voraussetzung ist, dass die Rechnung nach GOT gestellt ist. Beispielsweise können monatliche Beiträge nicht erstattet werden.",
-      "value 1": "TRUE",
-      "value 2": "TRUE",
-      "value 3": "TRUE",
-    },
-    {
-      Title: "Schutz im Ausland",
-      tooltip:
-        "Versichert sind Behandlungskosten bei einer Tierärztin oder einem Tierarzt im Ausland bei einem vorübergehendem Aufenthalt bis zu 12 Monaten.",
-      "value 1": "",
-      "value 2": "",
-      "value 3": "",
-    },
-    {
-      Title: "",
-      tooltip: "12 Monate weltweit",
-      "value 1": "12 Monate weltweit",
-      "value 2": "12 Monate weltweit",
-      "value 3": "",
-    },
-    {
-      Title: "Futterberatung",
-      tooltip:
-        "Erstattet werden die Kosten für eine ernährungsmedizinische Beratung.",
-      "value 1": "-",
-      "value 2": "-",
-      "value 3": "-",
-    },
-    {
-      Title: "Trächtigkeitsuntersuchungen",
-      tooltip:
-        "Erstattet werden die Kosten für notwendige Untersuchungen und Behandlungen, wenn Ihr Tier trächtig wird. Dazu zählen:\n \nVorsorgeuntersuchungen während der Trächtigkeit\nGeburtshilfe und\ndie Nachbehandlung nach der Geburt.\n\nDie Behandlung der Jungtiere ist nicht versichert.",
-      "value 1": "-",
-      "value 2": "-",
-      "value 3": "-",
-    },
-    {
-      Title: "Kosten für Einschläferung",
-      tooltip:
-        "Wenn Ihr Tier unheilbar erkrankt ist oder bei einem Unfall schwer verletzt wurde, werden die Kosten der Einschläferung erstattet.",
-      "value 1": "-",
-      "value 2": "-",
-      "value 3": "-",
-    },
-  ],
+  {
+    "Title": "Telemedizin",
+    "tooltip": "Im Rahmen der Diagnostik sind auch die Kosten für eine Videokonsultation bei einer Online-Tierärztin oder einem Online-Tierarzt mitversichert. Voraussetzung ist, dass die Rechnung nach GOT gestellt ist. Beispielsweise können monatliche Beiträge nicht erstattet werden.",
+    "value 1": "TRUE",
+    "value 2": "TRUE",
+    "value 3": "TRUE"
+  },
+  {
+    "Title": "Schutz im Ausland",
+    "tooltip": "Versichert sind Behandlungskosten bei einer Tierärztin oder einem Tierarzt im Ausland bei einem vorübergehendem Aufenthalt bis zu 12 Monaten.",
+    "value 1": "12 Monate weltweit",
+    "value 2": "12 Monate weltweit",
+    "value 3": "12 Monate weltweit"
+  },
+  {
+    "Title": "Futterberatung",
+    "tooltip": "Erstattet werden die Kosten für eine ernährungsmedizinische Beratung.",
+    "value 1": "-",
+    "value 2": "-",
+    "value 3": "-"
+  },
+  {
+    "Title": "Trächtigkeitsuntersuchungen",
+    "tooltip": "Erstattet werden die Kosten für notwendige Untersuchungen und Behandlungen, wenn Ihr Tier trächtig wird. Dazu zählen:",
+    "value 1": "",
+    "value 2": "",
+    "value 3": ""
+  },
+  {
+    "Title": "Vorsorgeuntersuchungen während der Trächtigkeit",
+    "tooltip": "",
+    "value 1": "",
+    "value 2": "",
+    "value 3": ""
+  },
+  {
+    "Title": "Geburtshilfe und",
+    "tooltip": "",
+    "value 1": "",
+    "value 2": "",
+    "value 3": ""
+  },
+  {
+    "Title": "die Nachbehandlung nach der Geburt.",
+    "tooltip": "",
+    "value 1": "",
+    "value 2": "",
+    "value 3": ""
+  },
+  {
+    "Title": "Die Behandlung der Jungtiere ist nicht versichert.",
+    "tooltip": "-",
+    "value 1": "-",
+    "value 2": "-",
+    "value 3": ""
+  },
+  {
+    "Title": "Kosten für Einschläferung",
+    "tooltip": "Wenn Ihr Tier unheilbar erkrankt ist oder bei einem Unfall schwer verletzt wurde, werden die Kosten der Einschläferung erstattet.",
+    "value 1": "-",
+    "value 2": "-",
+    "value 3": "-"
+  }
+],
   [
     {
       Title: "Direkte Abrechnung mit der Tierärztin oder dem Tierarzt",
@@ -190,8 +206,8 @@ export const dogPricingTableData = [
       Title: "Jahreshöchstentschädigung für Operationen",
       tooltip:
         "Es werden alle Einzelleistungen bis zur angegebenen Gesamtsumme pro Jahr erstattet, unabhängig von der Anzahl der Operationen.",
-      "value 1": "3.00€",
-      "value 2": "7.50€",
+      "value 1": "3.000€",
+      "value 2": "7.500€",
       "value 3": "unbegrenzt",
     },
     {
@@ -226,7 +242,7 @@ export const dogPricingTableData = [
         "Übernahme der Tierarztkosten für die Strahlentherapie nach einer Operation bis zur vereinbarten Höhe, auch über den Nachbehandlungszeitraum hinaus.\n\nDie Erstattung erfolgt anteilig auf die Jahreshöchstentschädigung für Operationen.",
       "value 1": "-",
       "value 2": "500€",
-      "value 3": "2.50€",
+      "value 3": "2.500€",
     },
   ],
   [
@@ -369,8 +385,8 @@ export const horsePricingTableData = [
       Title: "Jahreshöchstentschädigung für Operationen",
       tooltip:
         "Es werden alle Einzelleistungen bis zur angegebenen Gesamtsumme pro Jahr erstattet, unabhängig von der Anzahl der Operationen.",
-      "value 1": "7.50€",
-      "value 2": "15.00€",
+      "value 1": "7.500€",
+      "value 2": "15.000€",
       "value 3": "unbegrenzt",
     },
     {
@@ -395,7 +411,7 @@ export const horsePricingTableData = [
       tooltip:
         "Erstattet werden die Kosten je Versicherungsjahr für das operative Entfernen von Gelenk-Chips sowie die anschließende Behandlung.",
       "value 1": "500€",
-      "value 2": "1.50€",
+      "value 2": "1.500€",
       "value 3": "TRUE",
     },
     {
@@ -403,16 +419,16 @@ export const horsePricingTableData = [
       tooltip:
         "Mitversichert sind die Kosten für Therapien, bei denen körpereigenen Zellen und Substanzen verwendet werden. Diese Behandlungen kommen besonders häufig bei akuten und chronischen Gelenkerkrankungen zum Einsatz.",
       "value 1": "-",
-      "value 2": "2€",
-      "value 3": "2.50€",
+      "value 2": "1.500€",
+      "value 3": "2.500€",
     },
     {
       Title: "Strahlentherapie nach Operationen",
       tooltip:
         "Übernahme der Tierarztkosten für die Strahlentherapie nach einer Operation bis zur vereinbarten Höhe, auch über den Nachbehandlungszeitraum hinaus.\n\nDie Erstattung erfolgt anteilig auf die Jahreshöchstentschädigung für Operationen.",
       "value 1": "-",
-      "value 2": "2€",
-      "value 3": "2.50€",
+      "value 2": "1.500€",
+      "value 3": "2.500€",
     },
   ],
   [
