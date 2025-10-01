@@ -5117,6 +5117,8 @@ function updateAddonPricing() {
     }
   }
 
+  let visibleOptionsCount = 0;
+
   document.querySelectorAll(".addon-option").forEach((label) => {
     const input = label.querySelector('input[name="addonCoverage"]');
     const textSpan = label.querySelector("span");
@@ -5127,8 +5129,14 @@ function updateAddonPricing() {
     const config = addonOptions[input.value];
     const isDisabled =
       !config || config.disabled || !Number.isFinite(config.price);
-    input.disabled = isDisabled;
-    label.classList.toggle("disabled", isDisabled);
+    
+    // Hide disabled options instead of just disabling them
+    if (isDisabled) {
+      label.style.display = "none";
+    } else {
+      label.style.display = "";
+      visibleOptionsCount++;
+    }
 
     if (config) {
       const baseText =
@@ -5137,6 +5145,17 @@ function updateAddonPricing() {
       textSpan.textContent = `${baseText}`;
     }
   });
+
+  // Hide the entire addon section if no options are available
+  const addonSection = document.getElementById("addonSection");
+  if (addonSection) {
+    if (visibleOptionsCount === 0) {
+      addonSection.hidden = true;
+    } else if (addonSection.hidden && selectedPlan) {
+      // Only show if a plan is selected and there are visible options
+      addonSection.hidden = false;
+    }
+  }
 
   const activeAddon = addonOptions[selectedValue] || null;
   const addonPrice =
