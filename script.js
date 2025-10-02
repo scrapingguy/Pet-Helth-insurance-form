@@ -135,9 +135,25 @@ function goBackToPricing() {
   showScreen("pricingScreen");
 }
 
+function requestConsultation() {
+  // Handle consultation request - could redirect to booking page or show modal
+  alert("Beratungstermin angefordert! Wir werden uns in Kürze bei Ihnen melden.");
+  // In a real implementation, this would:
+  // - Open a consultation booking modal
+  // - Redirect to a consultation booking page
+  // - Submit the current form data for consultation purposes
+}
+
+function startApplication() {
+  // Navigate to the application form
+  showScreen("successScreen");
+}
+
 window.showScreen = showScreen;
 window.goBackToForm = goBackToForm;
 window.goBackToPricing = goBackToPricing;
+window.requestConsultation = requestConsultation;
+window.startApplication = startApplication;
 
 function getPricingConfigForAnimal(animalKey) {
   return PRICING_DATA_MAP[animalKey] || PRICING_DATA_MAP.katze;
@@ -5539,9 +5555,39 @@ function loadSelectionData() {
 }
 
 function initializeFinalForm() {
-  // Initialize multi-step form for success screen
-  let currentSuccessStep = 1;
-  const totalSuccessSteps = 5;
+  // Initialize single-page application form
+  const form = document.getElementById('finalApplicationForm');
+  
+  if (!form) return;
+
+  // Show/hide cat housing question based on pet type selection
+  const petTypeRadios = document.querySelectorAll('input[name="petType"]');
+  const catHousingGroup = document.getElementById('catHousingGroup');
+  
+  petTypeRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      if (this.value === 'katze') {
+        if (catHousingGroup) {
+          catHousingGroup.style.display = 'block';
+          // Make cat housing required when visible
+          const catHousingRadios = document.querySelectorAll('input[name="catHousing"]');
+          catHousingRadios.forEach(catRadio => {
+            catRadio.required = true;
+          });
+        }
+      } else {
+        if (catHousingGroup) {
+          catHousingGroup.style.display = 'none';
+          // Remove requirement when hidden
+          const catHousingRadios = document.querySelectorAll('input[name="catHousing"]');
+          catHousingRadios.forEach(catRadio => {
+            catRadio.required = false;
+            catRadio.checked = false;
+          });
+        }
+      }
+    });
+  });
 
   // Pre-fill form data from previous steps
   const storedFormData = getFormPayloadFromStorage();
@@ -5553,20 +5599,34 @@ function initializeFinalForm() {
     }
   })();
 
-  // Pre-fill contact data
+  // Pre-fill contact data if available
   if (customerData.name) {
     const nameParts = customerData.name.split(' ');
     if (nameParts.length >= 2) {
-      document.getElementById('finalFirstName').value = nameParts[0];
-      document.getElementById('finalLastName').value = nameParts.slice(1).join(' ');
+      const firstNameField = document.getElementById('firstName');
+      const lastNameField = document.getElementById('lastName');
+      if (firstNameField) firstNameField.value = nameParts[0];
+      if (lastNameField) lastNameField.value = nameParts.slice(1).join(' ');
     }
   }
-  if (customerData.email) document.getElementById('finalEmail').value = customerData.email;
-  if (customerData.phone) document.getElementById('finalPhone').value = customerData.phone;
+  if (customerData.email) {
+    const emailField = document.getElementById('email');
+    if (emailField) emailField.value = customerData.email;
+  }
+  if (customerData.phone) {
+    const phoneField = document.getElementById('phone');
+    if (phoneField) phoneField.value = customerData.phone;
+  }
 
   // Pre-fill PLZ and City from form data
-  if (storedFormData?.nlf?.zip) document.getElementById('finalPlz').value = storedFormData.nlf.zip;
-  if (storedFormData?.nlf?.city) document.getElementById('finalCity').value = storedFormData.nlf.city;
+  if (storedFormData?.nlf?.zip) {
+    const zipField = document.getElementById('zipCode');
+    if (zipField) zipField.value = storedFormData.nlf.zip;
+  }
+  if (storedFormData?.nlf?.city) {
+    const cityField = document.getElementById('city');
+    if (cityField) cityField.value = storedFormData.nlf.city;
+  }
 
   // Set default insurance start date (tomorrow)
   const tomorrow = new Date();
@@ -5574,251 +5634,98 @@ function initializeFinalForm() {
   const startDay = String(tomorrow.getDate()).padStart(2, '0');
   const startMonth = String(tomorrow.getMonth() + 1).padStart(2, '0');
   const startYear = tomorrow.getFullYear();
-  document.getElementById('finalInsuranceStart').value = `${startDay}.${startMonth}.${startYear}`;
-
-  // Set account holder to match name if available
-  const firstName = document.getElementById('finalFirstName').value;
-  const lastName = document.getElementById('finalLastName').value;
-  if (firstName && lastName) {
-    document.getElementById('finalAccountHolder').value = `${firstName} ${lastName}`;
+  const insuranceStartField = document.getElementById('insuranceStart');
+  if (insuranceStartField) {
+    insuranceStartField.value = `${startDay}.${startMonth}.${startYear}`;
   }
 
-  function updateSuccessStepsUI() {
-    // Update form steps visibility
-    document.querySelectorAll('[data-success-step]').forEach((step, index) => {
-      const stepNum = index + 1;
-      step.classList.toggle('active', stepNum === currentSuccessStep);
-    });
-
-    // Update progress indicators
-    document.querySelectorAll('[data-success-step-indicator]').forEach((indicator, index) => {
-      const stepNum = index + 1;
-      indicator.classList.remove('completed', 'active');
-      if (stepNum < currentSuccessStep) {
-        indicator.classList.add('completed');
-      } else if (stepNum === currentSuccessStep) {
-        indicator.classList.add('active');
-      }
-    });
-
-    // Update progress lines
-    document.querySelectorAll('[data-success-step-line]').forEach((line, index) => {
-      const lineStep = index + 2;
-      line.classList.toggle('completed', currentSuccessStep >= lineStep);
-    });
-
-    // Update navigation buttons
-    const prevBtn = document.getElementById('successPrevStepBtn');
-    const nextBtn = document.getElementById('successNextStepBtn');
-    const backBtn = document.getElementById('backToPricingBtn');
-    const submitBtn = document.getElementById('finalSubmitButton');
-
-    if (prevBtn) prevBtn.style.display = currentSuccessStep === 1 ? 'none' : 'inline-block';
-    if (backBtn) backBtn.style.display = currentSuccessStep === 1 ? 'inline-block' : 'none';
-    if (nextBtn) nextBtn.style.display = currentSuccessStep === totalSuccessSteps ? 'none' : 'inline-block';
-    if (submitBtn) submitBtn.style.display = currentSuccessStep === totalSuccessSteps ? 'inline-block' : 'none';
-
-    scheduleIframeHeightUpdate();
-  }
-
-  function validateSuccessStep(stepNum) {
-    // Clear previous errors
-    document.querySelectorAll('[data-success-step="' + stepNum + '"] .error-box').forEach(box => {
-      box.classList.remove('show');
-    });
-
+  // Handle form submission
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    // Basic form validation
+    const requiredFields = form.querySelectorAll('[required]');
     let isValid = true;
+    
+    requiredFields.forEach(field => {
+      if (field.type === 'radio') {
+        // Radio buttons are handled separately
+        return;
+      }
+      if (!field.value.trim()) {
+        isValid = false;
+        field.style.borderColor = '#dc3545';
+      } else {
+        field.style.borderColor = '#e9ecef';
+      }
+    });
+    
+    // Check radio groups
+    const radioGroups = ['salutation', 'contractTerm', 'previousInsurance', 'petIdentification'];
+    radioGroups.forEach(groupName => {
+      const group = form.querySelector(`input[name="${groupName}"]:checked`);
+      if (!group) {
+        isValid = false;
+        const radios = form.querySelectorAll(`input[name="${groupName}"]`);
+        radios.forEach(radio => {
+          const radioOption = radio.closest('.radio-option');
+          if (radioOption) radioOption.style.borderColor = '#dc3545';
+        });
+      } else {
+        const radios = form.querySelectorAll(`input[name="${groupName}"]`);
+        radios.forEach(radio => {
+          const radioOption = radio.closest('.radio-option');
+          if (radioOption) radioOption.style.borderColor = 'transparent';
+        });
+      }
+    });
 
-    if (stepNum === 1) {
-      // Validate Kontaktdaten
-      const salutation = document.querySelector('input[name="finalSalutation"]:checked');
-      const firstName = document.getElementById('finalFirstName');
-      const lastName = document.getElementById('finalLastName');
-      const street = document.getElementById('finalStreet');
-      const houseNumber = document.getElementById('finalHouseNumber');
-      const birthDate = document.getElementById('finalBirthDate');
-      const phone = document.getElementById('finalPhone');
-      const email = document.getElementById('finalEmail');
-
-      if (!salutation) {
-        document.getElementById('finalSalutationError')?.classList.add('show');
+    // Check cat housing if cat is selected
+    const petTypeChecked = form.querySelector('input[name="petType"]:checked');
+    if (petTypeChecked && petTypeChecked.value === 'katze') {
+      const catHousingChecked = form.querySelector('input[name="catHousing"]:checked');
+      if (!catHousingChecked) {
         isValid = false;
-      }
-      if (!firstName?.value.trim()) {
-        document.getElementById('finalFirstNameError')?.classList.add('show');
-        isValid = false;
-      }
-      if (!lastName?.value.trim()) {
-        document.getElementById('finalLastNameError')?.classList.add('show');
-        isValid = false;
-      }
-      if (!street?.value.trim()) {
-        document.getElementById('finalStreetError')?.classList.add('show');
-        isValid = false;
-      }
-      if (!houseNumber?.value.trim()) {
-        document.getElementById('finalHouseNumberError')?.classList.add('show');
-        isValid = false;
-      }
-      if (!birthDate?.value.trim()) {
-        document.getElementById('finalBirthDateError')?.classList.add('show');
-        isValid = false;
-      }
-      if (!phone?.value.trim()) {
-        document.getElementById('finalPhoneError')?.classList.add('show');
-        isValid = false;
-      }
-      if (!email?.value.trim() || !isValidEmail(email.value)) {
-        document.getElementById('finalEmailError')?.classList.add('show');
-        isValid = false;
-      }
-    } else if (stepNum === 2) {
-      // Validate Versicherung
-      const insuranceStart = document.getElementById('finalInsuranceStart');
-      const previousInsurance = document.querySelector('input[name="finalPreviousInsurance"]:checked');
-
-      if (!insuranceStart?.value.trim()) {
-        document.getElementById('finalInsuranceStartError')?.classList.add('show');
-        isValid = false;
-      }
-      if (!previousInsurance) {
-        document.getElementById('finalPreviousInsuranceError')?.classList.add('show');
-        isValid = false;
-      }
-    } else if (stepNum === 3) {
-      // Validate Tier
-      const petName = document.getElementById('finalPetName');
-      const petIdentification = document.querySelector('input[name="finalPetIdentification"]:checked');
-
-      if (!petName?.value.trim()) {
-        document.getElementById('finalPetNameError')?.classList.add('show');
-        isValid = false;
-      }
-      if (!petIdentification) {
-        document.getElementById('finalPetIdentificationError')?.classList.add('show');
-        isValid = false;
-      }
-    } else if (stepNum === 4) {
-      // Validate Konto
-      const accountHolder = document.getElementById('finalAccountHolder');
-      const iban = document.getElementById('finalIBAN');
-      const sepaMandate = document.getElementById('finalSepaMandate');
-
-      if (!accountHolder?.value.trim()) {
-        document.getElementById('finalAccountHolderError')?.classList.add('show');
-        isValid = false;
-      }
-      if (!iban?.value.trim() || !sepaMandate?.checked) {
-        document.getElementById('finalIBANError')?.classList.add('show');
-        isValid = false;
-      }
-      if (!sepaMandate?.checked) {
-        document.getElementById('finalSepaMandateError')?.classList.add('show');
-        isValid = false;
-      }
-    } else if (stepNum === 5) {
-      // Validate Abschluss
-      const consultationWaiver = document.getElementById('finalConsultationWaiver');
-
-      if (!consultationWaiver?.checked) {
-        document.getElementById('finalConsultationWaiverError')?.classList.add('show');
-        isValid = false;
+        const catRadios = form.querySelectorAll('input[name="catHousing"]');
+        catRadios.forEach(radio => {
+          const radioOption = radio.closest('.radio-option');
+          if (radioOption) radioOption.style.borderColor = '#dc3545';
+        });
       }
     }
 
-    return isValid;
-  }
+    // Check consultation waiver
+    const consultationWaiver = document.getElementById('consultationWaiver');
+    if (consultationWaiver && !consultationWaiver.checked) {
+      isValid = false;
+      consultationWaiver.style.outline = '2px solid #dc3545';
+    } else if (consultationWaiver) {
+      consultationWaiver.style.outline = 'none';
+    }
 
-  // Navigation button handlers
-  const nextBtn = document.getElementById('successNextStepBtn');
-  const prevBtn = document.getElementById('successPrevStepBtn');
-  const finalForm = document.getElementById('finalApplicationForm');
+    if (isValid) {
+      // Collect form data
+      const formData = new FormData(form);
+      const applicationData = Object.fromEntries(formData.entries());
+      applicationData.timestamp = new Date().toISOString();
 
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      if (validateSuccessStep(currentSuccessStep)) {
-        if (currentSuccessStep < totalSuccessSteps) {
-          currentSuccessStep++;
-          // Update account holder when moving from step 1 to 2
-          if (currentSuccessStep === 2) {
-            const firstName = document.getElementById('finalFirstName').value;
-            const lastName = document.getElementById('finalLastName').value;
-            if (firstName && lastName) {
-              document.getElementById('finalAccountHolder').value = `${firstName} ${lastName}`;
-            }
-          }
-          updateSuccessStepsUI();
-        }
+      // Save to localStorage
+      try {
+        localStorage.setItem('finalApplicationData', JSON.stringify(applicationData));
+      } catch (error) {
+        console.warn('Could not save application data', error);
       }
-    });
-  }
 
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      if (currentSuccessStep > 1) {
-        currentSuccessStep--;
-        updateSuccessStepsUI();
-      }
-    });
-  }
-
-  if (finalForm) {
-    finalForm.addEventListener('submit', (e) => {
-      e.preventDefault();
+      // Show success message
+      alert('Vielen Dank für Ihren Antrag! Wir werden uns in Kürze bei Ihnen melden.');
       
-      if (validateSuccessStep(5)) {
-        // Collect all form data and submit
-        const finalFormData = {
-          // Kontaktdaten
-          salutation: document.querySelector('input[name="finalSalutation"]:checked')?.value,
-          firstName: document.getElementById('finalFirstName')?.value,
-          lastName: document.getElementById('finalLastName')?.value,
-          plz: document.getElementById('finalPlz')?.value,
-          city: document.getElementById('finalCity')?.value,
-          street: document.getElementById('finalStreet')?.value,
-          houseNumber: document.getElementById('finalHouseNumber')?.value,
-          birthDate: document.getElementById('finalBirthDate')?.value,
-          phone: document.getElementById('finalPhone')?.value,
-          email: document.getElementById('finalEmail')?.value,
-          marketingConsent: document.querySelector('input[name="finalMarketingConsent"]:checked')?.value === 'ja',
-          
-          // Versicherung
-          insuranceStart: document.getElementById('finalInsuranceStart')?.value,
-          contractTerm: document.querySelector('input[name="finalContractTerm"]:checked')?.value,
-          previousInsurance: document.querySelector('input[name="finalPreviousInsurance"]:checked')?.value === 'ja',
-          
-          // Tier
-          petName: document.getElementById('finalPetName')?.value,
-          petIdentification: document.querySelector('input[name="finalPetIdentification"]:checked')?.value,
-          
-          // Konto
-          accountHolder: document.getElementById('finalAccountHolder')?.value,
-          iban: document.getElementById('finalIBAN')?.value,
-          sepaMandate: document.getElementById('finalSepaMandate')?.checked,
-          
-          // Abschluss
-          consultationWaiver: document.getElementById('finalConsultationWaiver')?.checked,
-          
-          timestamp: new Date().toISOString()
-        };
+      // Here you would normally send the data to your backend
+      console.log('Application data:', applicationData);
+    } else {
+      alert('Bitte füllen Sie alle Pflichtfelder aus.');
+    }
+  });
 
-        // Save to localStorage
-        try {
-          localStorage.setItem('finalApplicationData', JSON.stringify(finalFormData));
-        } catch (error) {
-          console.warn('Could not save final application data', error);
-        }
-
-        // Show success message
-        alert('Vielen Dank für Ihren Antrag! Wir werden uns in Kürze bei Ihnen melden.');
-        
-        // Here you would normally send the data to your backend
-        console.log('Final application data:', finalFormData);
-      }
-    });
-  }
-
-  updateSuccessStepsUI();
   scheduleIframeHeightUpdate();
 }
 
