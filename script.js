@@ -725,7 +725,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // Only validate housing for cats
-      const selectedAnimal = tierKategorieSelect?.value || 'katze';
+      const tierKategorieSelectEl = document.getElementById("tierKategorie");
+      const selectedAnimal = tierKategorieSelectEl?.value || 'katze';
       if (selectedAnimal === 'katze' && !haltungSelected) {
         showError("haltungError", "haltung");
         valid = false;
@@ -804,19 +805,25 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleFormSubmit(event) {
     event.preventDefault();
 
-    const targetStepIndex = stepThreeEnabled ? 2 : 1;
-    if (!validateStep(targetStepIndex)) {
+    // Get the current step index to validate the right step
+    console.log("Form submission started - Current step:", currentStepIndex);
+    
+    // Validate the current step (the step user is on when clicking submit)
+    if (!validateStep(currentStepIndex)) {
+      console.log("Validation failed for step:", currentStepIndex);
       updateStepsUI();
       scheduleIframeHeightUpdate();
       return;
     }
 
     if (!validateFormWithErrors()) {
+      console.log("Form validation failed");
       updateStepsUI();
       scheduleIframeHeightUpdate();
       return;
     }
 
+    console.log("Validation passed, proceeding with API call");
     saveFormState();
 
     const jsonData = generateFormJSON();
@@ -920,6 +927,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (submitButton) {
     submitButton.addEventListener("click", scheduleIframeHeightUpdate);
+    
+    // Add direct click handler that calls the form submit logic directly
+    submitButton.addEventListener("click", function(event) {
+      event.preventDefault(); // Prevent default form submission
+      
+      // Call the form submit handler directly
+      handleFormSubmit(event);
+    });
   }
 
   if (form) {
@@ -3053,12 +3068,14 @@ document.addEventListener("DOMContentLoaded", function () {
     // Get current date as start date
     const today = new Date();
 
-    // Get form values
-    const zipCode = document.getElementById("plz").value;
+    // Get form values with null safety
+    const plzElement = document.getElementById("plz");
+    const zipCode = plzElement ? plzElement.value : "";
     const city = plzCityMap[zipCode] || "Unknown City";
 
     // Animal type - convert to uppercase
-    const tierKategorie = document.getElementById("tierKategorie").value;
+    const tierKategorieElement = document.getElementById("tierKategorie");
+    const tierKategorie = tierKategorieElement ? tierKategorieElement.value : "";
     let animal = "";
     if (tierKategorie === "katze") {
       animal = "CAT";
@@ -3069,7 +3086,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Sex - convert to uppercase
-    const geschlecht = document.getElementById("geschlecht").value;
+    const geschlechtElement = document.getElementById("geschlecht");
+    const geschlecht = geschlechtElement ? geschlechtElement.value : "";
     let sex = "";
     if (geschlecht === "maennlich") {
       sex = "MALE";
@@ -3079,10 +3097,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Breed - get the breed CODE (value) instead of label
     const rasseSelect = document.getElementById("rasse");
-    const breedCode = rasseSelect.value;
+    const breedCode = rasseSelect ? rasseSelect.value : "";
 
     // Birth date - already in DD.MM.YYYY format (German) from text input
-    const birthDateInput = document.getElementById("geburtsdatum").value;
+    const birthDateElement = document.getElementById("geburtsdatum");
+    const birthDateInput = birthDateElement ? birthDateElement.value : "";
     let birthDate = "";
     if (birthDateInput) {
       // Validate the German format DD.MM.YYYY
@@ -3105,27 +3124,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Environment - convert to uppercase for cats ONLY
-    const haltung = document.querySelector(
+    const haltungElement = document.querySelector(
       'input[name="haltung"]:checked'
-    ).value;
+    );
     let environment = "";
-    if (haltung === "wohnung") {
-      environment = "INDOOR";
-    } else if (haltung === "freigang") {
-      environment = "OUTDOOR";
+    
+    // Only process housing if an option is selected (cats only)
+    if (haltungElement) {
+      const haltung = haltungElement.value;
+      if (haltung === "wohnung") {
+        environment = "INDOOR";
+      } else if (haltung === "freigang") {
+        environment = "OUTDOOR";
+      }
     }
 
     // Sterilized/Neutered status
-    const kastriert = document.querySelector(
+    const kastriertElement = document.querySelector(
       'input[name="kastriert"]:checked'
-    ).value;
-    const sterilized = kastriert === "ja";
+    );
+    const sterilized = kastriertElement ? kastriertElement.value === "ja" : false;
 
     // Health problems status
-    const gesundheitsprobleme = document.querySelector(
+    const gesundheitsproblemeElement = document.querySelector(
       'input[name="gesundheitsprobleme"]:checked'
-    ).value;
-    const preExistingDiagnosis = gesundheitsprobleme === "ja";
+    );
+    const preExistingDiagnosis = gesundheitsproblemeElement ? gesundheitsproblemeElement.value === "ja" : false;
 
     // For now, set excludedExistingDiagnosis to false
     const excludedExistingDiagnosis = false;
@@ -3134,7 +3158,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let treatments = [];
     let surgeryAmount = 0;
 
-    if (gesundheitsprobleme === "ja") {
+    if (preExistingDiagnosis) {
       const heilbehandlung = document.getElementById("neue_heilbehandlung");
       const operation = document.getElementById("neue_operation");
       const keinBesuch = document.getElementById("neue_kein_besuch");
@@ -3671,9 +3695,17 @@ document.addEventListener("DOMContentLoaded", function () {
     // Check radio button fields
     const radioFields = [
       { name: "kastriert", label: "Kastration/Sterilisation" },
-      { name: "haltung", label: "Haltungsart" },
       { name: "gesundheitsprobleme", label: "Gesundheitsprobleme" },
     ];
+
+    // Get selected animal type to determine if housing is required
+    const tierKategorieSelect = document.getElementById("tierKategorie");
+    const selectedAnimal = tierKategorieSelect?.value || 'katze';
+
+    // Only add housing validation for cats
+    if (selectedAnimal === 'katze') {
+      radioFields.push({ name: "haltung", label: "Haltungsart" });
+    }
 
     radioFields.forEach((field) => {
       const checked = document.querySelector(
@@ -3748,16 +3780,25 @@ document.addEventListener("DOMContentLoaded", function () {
   function validateForm() {
     const geburtsdatum = document.getElementById("geburtsdatum");
     const kastriert = document.querySelector('input[name="kastriert"]:checked');
-    const haltung = document.querySelector('input[name="haltung"]:checked');
     const gesundheitsprobleme = document.querySelector(
       'input[name="gesundheitsprobleme"]:checked'
     );
+
+    // Get selected animal type to determine if housing is required
+    const tierKategorieSelect = document.getElementById("tierKategorie");
+    const selectedAnimal = tierKategorieSelect?.value || 'katze';
+    
+    let housingValid = true;
+    if (selectedAnimal === 'katze') {
+      const haltung = document.querySelector('input[name="haltung"]:checked');
+      housingValid = !!haltung;
+    }
 
     return (
       geburtsdatum &&
       geburtsdatum.value &&
       kastriert &&
-      haltung &&
+      housingValid &&
       gesundheitsprobleme
     );
   }
