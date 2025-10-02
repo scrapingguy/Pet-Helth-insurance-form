@@ -123,7 +123,7 @@ function showScreen(targetId) {
 
   if (targetId === "successScreen") {
     loadSelectionData();
-    initializeCalendly();
+    initializeFinalForm();
   }
 }
 
@@ -5365,7 +5365,10 @@ function validateCustomerForm() {
   }
 
   const emailValue = email?.value.trim() || "";
-  if (emailValue && !isValidEmail(emailValue)) {
+  if (!emailValue) {
+    if (email) email.classList.add("error");
+    isValid = false;
+  } else if (!isValidEmail(emailValue)) {
     if (email) email.classList.add("error");
     isValid = false;
     emailInvalid = true;
@@ -5384,7 +5387,7 @@ function validateCustomerForm() {
   if (!isValid) {
     if (emailInvalid) {
       alert(
-        "Bitte geben Sie eine gültige E-Mail-Adresse ein oder lassen Sie das Feld leer."
+        "Bitte geben Sie eine gültige E-Mail-Adresse ein."
       );
     } else {
       alert(
@@ -5494,58 +5497,287 @@ function loadSelectionData() {
   }
 }
 
-function initializeCalendly() {
-  const calendlyContainer = document.getElementById("calendly-embed");
-  if (!calendlyContainer) {
-    return;
-  }
+function initializeFinalForm() {
+  // Initialize multi-step form for success screen
+  let currentSuccessStep = 1;
+  const totalSuccessSteps = 5;
 
-  if (typeof Calendly === "undefined" || !Calendly.initInlineWidget) {
-    setTimeout(initializeCalendly, 300);
-    return;
-  }
-
+  // Pre-fill form data from previous steps
+  const storedFormData = getFormPayloadFromStorage();
   const customerData = (() => {
     try {
       return JSON.parse(localStorage.getItem("customerContactData") || "{}");
     } catch (error) {
-      console.warn("Konnte Kundendaten nicht laden", error);
       return {};
     }
   })();
 
-  const insuranceSelection = (() => {
-    try {
-      return JSON.parse(localStorage.getItem("insuranceSelection") || "{}");
-    } catch (error) {
-      console.warn("Konnte Auswahl für Calendly nicht laden", error);
-      return {};
+  // Pre-fill contact data
+  if (customerData.name) {
+    const nameParts = customerData.name.split(' ');
+    if (nameParts.length >= 2) {
+      document.getElementById('finalFirstName').value = nameParts[0];
+      document.getElementById('finalLastName').value = nameParts.slice(1).join(' ');
     }
-  })();
+  }
+  if (customerData.email) document.getElementById('finalEmail').value = customerData.email;
+  if (customerData.phone) document.getElementById('finalPhone').value = customerData.phone;
 
-  calendlyContainer.innerHTML = "";
+  // Pre-fill PLZ and City from form data
+  if (storedFormData?.nlf?.zip) document.getElementById('finalPlz').value = storedFormData.nlf.zip;
+  if (storedFormData?.nlf?.city) document.getElementById('finalCity').value = storedFormData.nlf.city;
 
-  Calendly.initInlineWidget({
-    url: "https://calendly.com/kaikossendey/rueckruf",
-    parentElement: calendlyContainer,
-    prefill: {
-      name: customerData.name || "",
-      email: customerData.email || "",
-      customAnswers: {
-        a1: customerData.phone || "",
-        a2:
-          insuranceSelection.planTitle ||
-          getPlanName(insuranceSelection.selectedPlan || selectedPlan || "smart"),
-      },
-    },
-    utm: {
-      utmCampaign: "Pet Insurance",
-      utmSource: "Website",
-      utmMedium: "Form",
-    },
-  });
+  // Set default insurance start date (tomorrow)
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const startDay = String(tomorrow.getDate()).padStart(2, '0');
+  const startMonth = String(tomorrow.getMonth() + 1).padStart(2, '0');
+  const startYear = tomorrow.getFullYear();
+  document.getElementById('finalInsuranceStart').value = `${startDay}.${startMonth}.${startYear}`;
 
-  calendlyInitialized = true;
+  // Set account holder to match name if available
+  const firstName = document.getElementById('finalFirstName').value;
+  const lastName = document.getElementById('finalLastName').value;
+  if (firstName && lastName) {
+    document.getElementById('finalAccountHolder').value = `${firstName} ${lastName}`;
+  }
+
+  function updateSuccessStepsUI() {
+    // Update form steps visibility
+    document.querySelectorAll('[data-success-step]').forEach((step, index) => {
+      const stepNum = index + 1;
+      step.classList.toggle('active', stepNum === currentSuccessStep);
+    });
+
+    // Update progress indicators
+    document.querySelectorAll('[data-success-step-indicator]').forEach((indicator, index) => {
+      const stepNum = index + 1;
+      indicator.classList.remove('completed', 'active');
+      if (stepNum < currentSuccessStep) {
+        indicator.classList.add('completed');
+      } else if (stepNum === currentSuccessStep) {
+        indicator.classList.add('active');
+      }
+    });
+
+    // Update progress lines
+    document.querySelectorAll('[data-success-step-line]').forEach((line, index) => {
+      const lineStep = index + 2;
+      line.classList.toggle('completed', currentSuccessStep >= lineStep);
+    });
+
+    // Update navigation buttons
+    const prevBtn = document.getElementById('successPrevStepBtn');
+    const nextBtn = document.getElementById('successNextStepBtn');
+    const backBtn = document.getElementById('backToPricingBtn');
+    const submitBtn = document.getElementById('finalSubmitButton');
+
+    if (prevBtn) prevBtn.style.display = currentSuccessStep === 1 ? 'none' : 'inline-block';
+    if (backBtn) backBtn.style.display = currentSuccessStep === 1 ? 'inline-block' : 'none';
+    if (nextBtn) nextBtn.style.display = currentSuccessStep === totalSuccessSteps ? 'none' : 'inline-block';
+    if (submitBtn) submitBtn.style.display = currentSuccessStep === totalSuccessSteps ? 'inline-block' : 'none';
+
+    scheduleIframeHeightUpdate();
+  }
+
+  function validateSuccessStep(stepNum) {
+    // Clear previous errors
+    document.querySelectorAll('[data-success-step="' + stepNum + '"] .error-box').forEach(box => {
+      box.classList.remove('show');
+    });
+
+    let isValid = true;
+
+    if (stepNum === 1) {
+      // Validate Kontaktdaten
+      const salutation = document.querySelector('input[name="finalSalutation"]:checked');
+      const firstName = document.getElementById('finalFirstName');
+      const lastName = document.getElementById('finalLastName');
+      const street = document.getElementById('finalStreet');
+      const houseNumber = document.getElementById('finalHouseNumber');
+      const birthDate = document.getElementById('finalBirthDate');
+      const phone = document.getElementById('finalPhone');
+      const email = document.getElementById('finalEmail');
+
+      if (!salutation) {
+        document.getElementById('finalSalutationError')?.classList.add('show');
+        isValid = false;
+      }
+      if (!firstName?.value.trim()) {
+        document.getElementById('finalFirstNameError')?.classList.add('show');
+        isValid = false;
+      }
+      if (!lastName?.value.trim()) {
+        document.getElementById('finalLastNameError')?.classList.add('show');
+        isValid = false;
+      }
+      if (!street?.value.trim()) {
+        document.getElementById('finalStreetError')?.classList.add('show');
+        isValid = false;
+      }
+      if (!houseNumber?.value.trim()) {
+        document.getElementById('finalHouseNumberError')?.classList.add('show');
+        isValid = false;
+      }
+      if (!birthDate?.value.trim()) {
+        document.getElementById('finalBirthDateError')?.classList.add('show');
+        isValid = false;
+      }
+      if (!phone?.value.trim()) {
+        document.getElementById('finalPhoneError')?.classList.add('show');
+        isValid = false;
+      }
+      if (!email?.value.trim() || !isValidEmail(email.value)) {
+        document.getElementById('finalEmailError')?.classList.add('show');
+        isValid = false;
+      }
+    } else if (stepNum === 2) {
+      // Validate Versicherung
+      const insuranceStart = document.getElementById('finalInsuranceStart');
+      const previousInsurance = document.querySelector('input[name="finalPreviousInsurance"]:checked');
+
+      if (!insuranceStart?.value.trim()) {
+        document.getElementById('finalInsuranceStartError')?.classList.add('show');
+        isValid = false;
+      }
+      if (!previousInsurance) {
+        document.getElementById('finalPreviousInsuranceError')?.classList.add('show');
+        isValid = false;
+      }
+    } else if (stepNum === 3) {
+      // Validate Tier
+      const petName = document.getElementById('finalPetName');
+      const petIdentification = document.querySelector('input[name="finalPetIdentification"]:checked');
+
+      if (!petName?.value.trim()) {
+        document.getElementById('finalPetNameError')?.classList.add('show');
+        isValid = false;
+      }
+      if (!petIdentification) {
+        document.getElementById('finalPetIdentificationError')?.classList.add('show');
+        isValid = false;
+      }
+    } else if (stepNum === 4) {
+      // Validate Konto
+      const accountHolder = document.getElementById('finalAccountHolder');
+      const iban = document.getElementById('finalIBAN');
+      const sepaMandate = document.getElementById('finalSepaMandate');
+
+      if (!accountHolder?.value.trim()) {
+        document.getElementById('finalAccountHolderError')?.classList.add('show');
+        isValid = false;
+      }
+      if (!iban?.value.trim() || !sepaMandate?.checked) {
+        document.getElementById('finalIBANError')?.classList.add('show');
+        isValid = false;
+      }
+      if (!sepaMandate?.checked) {
+        document.getElementById('finalSepaMandateError')?.classList.add('show');
+        isValid = false;
+      }
+    } else if (stepNum === 5) {
+      // Validate Abschluss
+      const consultationWaiver = document.getElementById('finalConsultationWaiver');
+
+      if (!consultationWaiver?.checked) {
+        document.getElementById('finalConsultationWaiverError')?.classList.add('show');
+        isValid = false;
+      }
+    }
+
+    return isValid;
+  }
+
+  // Navigation button handlers
+  const nextBtn = document.getElementById('successNextStepBtn');
+  const prevBtn = document.getElementById('successPrevStepBtn');
+  const finalForm = document.getElementById('finalApplicationForm');
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      if (validateSuccessStep(currentSuccessStep)) {
+        if (currentSuccessStep < totalSuccessSteps) {
+          currentSuccessStep++;
+          // Update account holder when moving from step 1 to 2
+          if (currentSuccessStep === 2) {
+            const firstName = document.getElementById('finalFirstName').value;
+            const lastName = document.getElementById('finalLastName').value;
+            if (firstName && lastName) {
+              document.getElementById('finalAccountHolder').value = `${firstName} ${lastName}`;
+            }
+          }
+          updateSuccessStepsUI();
+        }
+      }
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      if (currentSuccessStep > 1) {
+        currentSuccessStep--;
+        updateSuccessStepsUI();
+      }
+    });
+  }
+
+  if (finalForm) {
+    finalForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      if (validateSuccessStep(5)) {
+        // Collect all form data and submit
+        const finalFormData = {
+          // Kontaktdaten
+          salutation: document.querySelector('input[name="finalSalutation"]:checked')?.value,
+          firstName: document.getElementById('finalFirstName')?.value,
+          lastName: document.getElementById('finalLastName')?.value,
+          plz: document.getElementById('finalPlz')?.value,
+          city: document.getElementById('finalCity')?.value,
+          street: document.getElementById('finalStreet')?.value,
+          houseNumber: document.getElementById('finalHouseNumber')?.value,
+          birthDate: document.getElementById('finalBirthDate')?.value,
+          phone: document.getElementById('finalPhone')?.value,
+          email: document.getElementById('finalEmail')?.value,
+          marketingConsent: document.querySelector('input[name="finalMarketingConsent"]:checked')?.value === 'ja',
+          
+          // Versicherung
+          insuranceStart: document.getElementById('finalInsuranceStart')?.value,
+          contractTerm: document.querySelector('input[name="finalContractTerm"]:checked')?.value,
+          previousInsurance: document.querySelector('input[name="finalPreviousInsurance"]:checked')?.value === 'ja',
+          
+          // Tier
+          petName: document.getElementById('finalPetName')?.value,
+          petIdentification: document.querySelector('input[name="finalPetIdentification"]:checked')?.value,
+          
+          // Konto
+          accountHolder: document.getElementById('finalAccountHolder')?.value,
+          iban: document.getElementById('finalIBAN')?.value,
+          sepaMandate: document.getElementById('finalSepaMandate')?.checked,
+          
+          // Abschluss
+          consultationWaiver: document.getElementById('finalConsultationWaiver')?.checked,
+          
+          timestamp: new Date().toISOString()
+        };
+
+        // Save to localStorage
+        try {
+          localStorage.setItem('finalApplicationData', JSON.stringify(finalFormData));
+        } catch (error) {
+          console.warn('Could not save final application data', error);
+        }
+
+        // Show success message
+        alert('Vielen Dank für Ihren Antrag! Wir werden uns in Kürze bei Ihnen melden.');
+        
+        // Here you would normally send the data to your backend
+        console.log('Final application data:', finalFormData);
+      }
+    });
+  }
+
+  updateSuccessStepsUI();
   scheduleIframeHeightUpdate();
 }
 

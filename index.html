@@ -752,13 +752,14 @@
                   <div class="form-row">
                     <div class="form-group">
                       <label for="customerEmail"
-                        >E-Mail-Adresse (optional)</label
+                        >E-Mail-Adresse *</label
                       >
                       <input
                         type="email"
                         id="customerEmail"
                         name="customerEmail"
                         class="form-control"
+                        required
                         placeholder="max@example.com" />
                     </div>
                     <div class="form-group">
@@ -808,42 +809,367 @@
       <section data-iframe-size id="successScreen" class="app-screen" hidden>
         <section class="success-section full-width-section">
           <div class="success-card">
-            <div class="success-icon">✓</div>
-            <h1>Vielen Dank für Ihre Auswahl!</h1>
-            <p class="success-message">
-              Ihre Tarifauswahl wurde erfasst. Wählen Sie jetzt einen passenden
-              Termin für Ihre persönliche Beratung.
-            </p>
-
-            <div class="selection-summary">
-              <h3>Ihre Auswahl:</h3>
-              <div class="summary-details">
-                <div class="detail-item">
-                  <span class="label">Tarif:</span>
-                  <span class="value" id="selected-plan">--</span>
+            <div class="progress-container step-progress-container">
+              <div class="step-progress" id="successStepProgress">
+                <div class="step-progress-item active" data-success-step-indicator="1">
+                  <span class="step-number">1</span>
+                  <span class="step-label">Kontaktdaten</span>
                 </div>
-                <div class="detail-item">
-                  <span class="label">Monatlicher Beitrag:</span>
-                  <span class="value" id="monthly-premium">--</span>
+                <div class="step-progress-line" data-success-step-line="2"></div>
+                <div class="step-progress-item" data-success-step-indicator="2">
+                  <span class="step-number">2</span>
+                  <span class="step-label">Versicherung</span>
+                </div>
+                <div class="step-progress-line" data-success-step-line="3"></div>
+                <div class="step-progress-item" data-success-step-indicator="3">
+                  <span class="step-number">3</span>
+                  <span class="step-label">Tier</span>
+                </div>
+                <div class="step-progress-line" data-success-step-line="4"></div>
+                <div class="step-progress-item" data-success-step-indicator="4">
+                  <span class="step-number">4</span>
+                  <span class="step-label">Konto</span>
+                </div>
+                <div class="step-progress-line" data-success-step-line="5"></div>
+                <div class="step-progress-item" data-success-step-indicator="5">
+                  <span class="step-number">5</span>
+                  <span class="step-label">Abschluss</span>
                 </div>
               </div>
             </div>
 
-            <div class="calendly-container">
-              <div
-                class="calendly-inline-widget"
-                id="calendly-embed"
-                style="min-width: 320px; height: 630px"></div>
-            </div>
+            <h1>Schnell und einfach abschließen</h1>
+            <p class="success-message">
+              Ihr Antrag: Fast geschafft!<br>
+              Wir benötigen nur noch ein paar Angaben und Ihr Tier ist abgesichert
+            </p>
 
-            <div class="action-buttons">
-              <button
-                class="btn-back"
-                type="button"
-                onclick="goBackToPricing()">
-                ← Zurück zur Auswahl
-              </button>
-            </div>
+            <form id="finalApplicationForm">
+              <!-- Step 1: Kontaktdaten -->
+              <div class="form-step active" data-success-step="1">
+                <h2>Kontaktdaten</h2>
+                <p class="step-description">Alle Angaben sind Pflichtangaben, sofern sie nicht als optional gekennzeichnet sind.</p>
+                
+                <div class="form-question">
+                  <div class="question-header">
+                    <span class="question-title">Anrede</span>
+                  </div>
+                  <div class="radio-group">
+                    <label class="radio-option enhanced">
+                      <input type="radio" name="finalSalutation" value="frau" required />
+                      <span class="radio-custom"></span>
+                      <span class="radio-text">Frau</span>
+                    </label>
+                    <label class="radio-option enhanced">
+                      <input type="radio" name="finalSalutation" value="herr" required />
+                      <span class="radio-custom"></span>
+                      <span class="radio-text">Herr</span>
+                    </label>
+                  </div>
+                  <div class="error-box" id="finalSalutationError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte geben Sie ein Geschlecht an.</div>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <label class="form-label">Vorname *</label>
+                  <input type="text" id="finalFirstName" class="form-control" required />
+                  <div class="error-box" id="finalFirstNameError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte geben sie Ihren Vornamen ein.</div>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <label class="form-label">Nachname *</label>
+                  <input type="text" id="finalLastName" class="form-control" required />
+                  <div class="error-box" id="finalLastNameError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte geben Sie Ihren Nachnamen ein.</div>
+                  </div>
+                </div>
+
+                <div class="inline-form">
+                  <div class="form-line">
+                    <div class="form-question">
+                      <label class="form-label">Postleitzahl</label>
+                      <input type="text" id="finalPlz" class="form-control" maxlength="5" readonly />
+                    </div>
+                    <div class="form-question">
+                      <label class="form-label">Wohnort</label>
+                      <input type="text" id="finalCity" class="form-control" readonly />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="inline-form">
+                  <div class="form-line">
+                    <div class="form-question" style="flex: 2;">
+                      <label class="form-label">Straße *</label>
+                      <input type="text" id="finalStreet" class="form-control" required />
+                      <div class="error-box" id="finalStreetError">
+                        <div class="error-icon"></div>
+                        <div class="error-message">Bitte geben Sie eine Straße ein.</div>
+                      </div>
+                    </div>
+                    <div class="form-question" style="flex: 1;">
+                      <label class="form-label">Hausnummer *</label>
+                      <input type="text" id="finalHouseNumber" class="form-control" required />
+                      <div class="error-box" id="finalHouseNumberError">
+                        <div class="error-icon"></div>
+                        <div class="error-message">Bitte geben Sie eine Hausnummer ein.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <label class="form-label">Geburtsdatum *</label>
+                  <input type="text" id="finalBirthDate" class="form-control" placeholder="TT.MM.JJJJ" maxlength="10" required />
+                  <div class="error-box" id="finalBirthDateError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte geben Sie ein Geburtsdatum ein.</div>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <label class="form-label">Mobilfunknummer *</label>
+                  <input type="tel" id="finalPhone" class="form-control" required />
+                  <div class="error-box" id="finalPhoneError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte geben Sie eine Mobilfunknummer an.</div>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <label class="form-label">E-Mail *</label>
+                  <input type="email" id="finalEmail" class="form-control" required />
+                  <div class="error-box" id="finalEmailError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte geben Sie eine E-Mail Adresse an.</div>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <div class="question-help">
+                    <p>Ich möchte einmalig und unverbindlich eine E-Mail der Allianz Kunde und Markt GmbH erhalten. In dieser werde ich informiert, wie und zu welchen Angeboten des Informationsservices der Allianz ich künftig kontaktiert werden könnte.</p>
+                  </div>
+                  <div class="radio-group">
+                    <label class="radio-option enhanced">
+                      <input type="radio" name="finalMarketingConsent" value="ja" />
+                      <span class="radio-custom"></span>
+                      <span class="radio-text">Ja</span>
+                    </label>
+                    <label class="radio-option enhanced">
+                      <input type="radio" name="finalMarketingConsent" value="nein" />
+                      <span class="radio-custom"></span>
+                      <span class="radio-text">Nein</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 2: Angaben zur Versicherung -->
+              <div class="form-step" data-success-step="2">
+                <h2>Angaben zur Versicherung</h2>
+                <p class="step-description">Nennen Sie uns hier Ihre bisherige Versicherung und legen Sie den Beginn Ihrer Allianz Versicherung fest.</p>
+                
+                <div class="form-question">
+                  <label class="form-label">Gewünschter Versicherungsbeginn *</label>
+                  <input type="text" id="finalInsuranceStart" class="form-control" placeholder="TT.MM.JJJJ" maxlength="10" required />
+                  <div class="input-help">Versicherungsablauf wird automatisch berechnet</div>
+                  <div class="error-box" id="finalInsuranceStartError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte geben Sie ein gewünschtes Versicherungsbeginn ein.</div>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <div class="question-header">
+                    <span class="question-title">Laufzeit</span>
+                  </div>
+                  <div class="radio-group">
+                    <label class="radio-option enhanced">
+                      <input type="radio" name="finalContractTerm" value="1" checked />
+                      <span class="radio-custom"></span>
+                      <span class="radio-text">1 Jahr</span>
+                    </label>
+                    <label class="radio-option enhanced">
+                      <input type="radio" name="finalContractTerm" value="3" />
+                      <span class="radio-custom"></span>
+                      <span class="radio-text">3 Jahre</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <div class="question-header">
+                    <span class="question-title">Besteht oder bestand für Ihr Tier in den letzten 5 Jahren bereits eine Tierkrankenversicherung? *</span>
+                  </div>
+                  <div class="radio-group">
+                    <label class="radio-option enhanced">
+                      <input type="radio" name="finalPreviousInsurance" value="ja" required />
+                      <span class="radio-custom"></span>
+                      <span class="radio-text">Ja</span>
+                    </label>
+                    <label class="radio-option enhanced">
+                      <input type="radio" name="finalPreviousInsurance" value="nein" required />
+                      <span class="radio-custom"></span>
+                      <span class="radio-text">Nein</span>
+                    </label>
+                  </div>
+                  <div class="error-box" id="finalPreviousInsuranceError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte geben Sie an, ob eine Vorversicherung bei einem anderen Versicherer besteht oder bestanden hat.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 3: Angaben zu Ihrem Tier -->
+              <div class="form-step" data-success-step="3">
+                <h2>Angaben zu Ihrem Tier</h2>
+                <p class="step-description">Um Ihr Tier im Schadenfall identifizieren zu können, benötigen wir noch ein paar Informationen.</p>
+                
+                <div class="form-question">
+                  <label class="form-label">Name Ihres Tieres *</label>
+                  <input type="text" id="finalPetName" class="form-control" required />
+                  <div class="error-box" id="finalPetNameError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte geben Sie den Namen Ihres Tieres an.</div>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <div class="question-header">
+                    <span class="question-title">Art der Kennzeichnung *</span>
+                    <span class="info-icon" title="Die Kennzeichnung hilft bei der Identifikation Ihres Tieres">ⓘ</span>
+                  </div>
+                  <div class="radio-group">
+                    <label class="radio-option enhanced">
+                      <input type="radio" name="finalPetIdentification" value="chip" required />
+                      <span class="radio-custom"></span>
+                      <span class="radio-text">Transpondernummer (Chip)</span>
+                    </label>
+                    <label class="radio-option enhanced">
+                      <input type="radio" name="finalPetIdentification" value="tattoo" required />
+                      <span class="radio-custom"></span>
+                      <span class="radio-text">Tätowierung</span>
+                    </label>
+                    <label class="radio-option enhanced">
+                      <input type="radio" name="finalPetIdentification" value="none" required />
+                      <span class="radio-custom"></span>
+                      <span class="radio-text">Keine</span>
+                    </label>
+                  </div>
+                  <div class="error-box" id="finalPetIdentificationError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte geben Sie die Art der Kennzeichnung an.</div>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <div class="question-help">
+                    <h3>Hinweis zum Vertrag</h3>
+                    <h4>Änderung Ihres Versicherungsvertrages</h4>
+                    <p>Nach Vollendung des 3. Lebensjahres Ihres Tieres wird der Versicherungsbeitrag jährlich um bis zu 5 % erhöht. Die Leistungen bleiben unverändert. Hierüber informieren wir Sie rechtzeitig.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 4: Kontodaten -->
+              <div class="form-step" data-success-step="4">
+                <h2>Kontodaten</h2>
+                <p class="step-description">Wir buchen den Beitrag erst zum gewünschten Versicherungsbeginn ab.</p>
+                
+                <div class="form-question">
+                  <label class="form-label">Kontoinhaber:in *</label>
+                  <input type="text" id="finalAccountHolder" class="form-control" required />
+                  <div class="error-box" id="finalAccountHolderError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte geben Sie den/die Kontoinhaber:in an.</div>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <label class="form-label">IBAN *</label>
+                  <input type="text" id="finalIBAN" class="form-control" required />
+                  <div class="error-box" id="finalIBANError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte geben Sie eine IBAN ein und bestätigen Sie das SEPA-Lastschriftmandat.</div>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <label class="checkbox-option">
+                    <input type="checkbox" id="finalSepaMandate" required />
+                    <span class="checkbox-custom"></span>
+                    <span>SEPA-Lastschriftmandat erteilen *</span>
+                  </label>
+                  <div class="question-help">
+                    <p>Bitte erteilen Sie der Allianz Versicherungs-AG das SEPA-Lastschriftmandat. Zu Ihrer Sicherheit: Ihre Daten werden SSL-verschlüsselt</p>
+                  </div>
+                  <div class="error-box" id="finalSepaMandateError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte erteilen Sie das SEPA-Lastschriftmandat.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 5: Überprüfen und abschließen -->
+              <div class="form-step" data-success-step="5">
+                <h2>Überprüfen und abschließen</h2>
+                <p class="step-description">Sie können hier Ihre Daten überprüfen und bei Bedarf korrigieren. Bitte achten Sie darauf, dass Ihre Angaben richtig sind. Sollten Sie an einer Stelle unsicher sein, kommen Sie bitte einfach auf uns zu.</p>
+                
+                <div class="selection-summary">
+                  <h3>Ihre Auswahl:</h3>
+                  <div class="summary-details">
+                    <div class="detail-item">
+                      <span class="label">Tarif:</span>
+                      <span class="value" id="selected-plan">--</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="label">Monatlicher Beitrag:</span>
+                      <span class="value" id="monthly-premium">--</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-question">
+                  <h3>Beratung</h3>
+                  <h4>EU-Vorgabe Beratungspflicht</h4>
+                  <div class="question-help">
+                    <p>Auch bei Vertragsabschlüssen über das Internet gilt die EU-Vorgabe, dass wir Sie beraten und dies dokumentieren müssen. Sie können jedoch auch mit einem Beratungsverzicht schnell und einfach online abschließen. Dies kann sich nachteilig auf die Möglichkeit auswirken, Schadenersatzansprüche wegen Verletzung der Beratungs- und Dokumentationspflicht geltend zu machen.</p>
+                    <p><strong>Möchten Sie eine Beratung?</strong> Wir unterstützen Sie gerne dabei, die für Sie passende Versicherung zu finden. Bitte wählen Sie dazu eine der folgenden Kontaktmöglichkeiten.</p>
+                  </div>
+                  <label class="checkbox-option">
+                    <input type="checkbox" id="finalConsultationWaiver" required />
+                    <span class="checkbox-custom"></span>
+                    <span>Ich verzichte hiermit auf Beratung und Dokumentation der Beratung *</span>
+                  </label>
+                  <div class="error-box" id="finalConsultationWaiverError">
+                    <div class="error-icon"></div>
+                    <div class="error-message">Bitte bestätigen Sie den Beratungsverzicht oder wählen Sie eine Beratungsoption.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Navigation Buttons -->
+              <div class="form-navigation">
+                <button type="button" class="nav-button secondary" id="successPrevStepBtn" style="display: none;">
+                  Zurück
+                </button>
+                <button type="button" class="nav-button primary" id="successNextStepBtn">
+                  Weiter
+                </button>
+                <button type="button" class="nav-button secondary" onclick="goBackToPricing()" id="backToPricingBtn">
+                  ← Zurück zur Tarifauswahl
+                </button>
+                <button type="submit" class="nav-button primary final-submit" id="finalSubmitButton" style="display: none;">
+                  <span class="button-text">Antrag verbindlich absenden</span>
+                </button>
+              </div>
+            </form>
           </div>
         </section>
       </section>
