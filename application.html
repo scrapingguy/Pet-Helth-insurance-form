@@ -330,59 +330,129 @@
 
         <div class="form-container">
             <form id="applicationForm">
-                <!-- Personal Information -->
+                <!-- Step 1: Kontaktdaten (Contact Information) -->
                 <div class="form-section">
-                    <h3>1. Persönliche Angaben</h3>
+                    <h3>1 von 5</h3>
+                    <h2 style="color: #333; font-size: 1.8rem; margin-bottom: 0.5rem;">Kontaktdaten</h2>
+                    <p style="color: #666; margin-bottom: 1.5rem;">Alle Angaben sind Pflichtangaben, 
+                    sofern sie nicht als optional gekennzeichnet sind.</p>
                     
+                    <!-- Gender Selection -->
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="title">Anrede <span class="required">*</span></label>
-                            <select id="title" name="title" required>
-                                <option value="">Bitte wählen</option>
-                                <option value="herr">Herr</option>
-                                <option value="frau">Frau</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="firstName">Vorname <span class="required">*</span></label>
-                            <input type="text" id="firstName" name="firstName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastName">Nachname <span class="required">*</span></label>
-                            <input type="text" id="lastName" name="lastName" required>
+                        <div class="form-group full-width">
+                            <div class="radio-group" style="flex-direction: row; gap: 2rem; margin-bottom: 1rem;">
+                                <div class="radio-option">
+                                    <input type="radio" id="frau" name="gender" value="frau" required>
+                                    <label for="frau">Frau</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="herr" name="gender" value="herr" required>
+                                    <label for="herr">Herr</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- Name Fields -->
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="birthDate">Geburtsdatum <span class="required">*</span></label>
-                            <input type="date" id="birthDate" name="birthDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">E-Mail <span class="required">*</span></label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Telefon <span class="required">*</span></label>
-                            <input type="tel" id="phone" name="phone" required>
+                        <div class="form-group full-width">
+                            <label for="firstName" style="border-bottom: 1px solid #ddd; display: block; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">Vorname</label>
+                            <input type="text" id="firstName" name="firstName" required style="border: none; border-bottom: 1px solid #ddd; border-radius: 0; padding: 0.5rem 0;">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group full-width">
-                            <label for="address">Adresse <span class="required">*</span></label>
-                            <input type="text" id="address" name="address" placeholder="Straße und Hausnummer" required>
+                            <label for="lastName" style="border-bottom: 1px solid #ddd; display: block; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">Nachname</label>
+                            <input type="text" id="lastName" name="lastName" required style="border: none; border-bottom: 1px solid #ddd; border-radius: 0; padding: 0.5rem 0;">
                         </div>
                     </div>
 
+                    <!-- Address Fields -->
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="postalCode">PLZ <span class="required">*</span></label>
-                            <input type="text" id="postalCode" name="postalCode" pattern="[0-9]{5}" required>
+                            <label for="postalCode" style="color: #999; font-size: 0.9rem;">Postleitzahl</label>
+                            <input type="text" id="postalCode" name="postalCode" placeholder="01067" pattern="[0-9]{5}" required style="border: 1px solid #ddd; border-radius: 4px;">
                         </div>
                         <div class="form-group">
-                            <label for="city">Ort <span class="required">*</span></label>
-                            <input type="text" id="city" name="city" required>
+                            <label for="city" style="color: #999; font-size: 0.9rem;">Wohnort</label>
+                            <input type="text" id="city" name="city" placeholder="Dresden" required style="border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                    </div>
+
+                    <!-- Street with Dropdown -->
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="street" style="border-bottom: 1px solid #ddd; display: block; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">Straße</label>
+                            <div style="position: relative;">
+                                <input type="text" id="street" name="street" required style="border: none; border-bottom: 1px solid #ddd; border-radius: 0; padding: 0.5rem 0; width: 100%;">
+                                <div id="streetSuggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-top: none; max-height: 150px; overflow-y: auto; z-index: 100;">
+                                    <div class="street-option" style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #f0f0f0;">Adlergasse</div>
+                                    <div class="street-option" style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #f0f0f0;">Alfred-Althus-Straße</div>
+                                    <div class="street-option" style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #f0f0f0;">Altmarkt</div>
+                                    <div class="street-option" style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #f0f0f0;">Am Bramschkontor</div>
+                                    <div class="street-option" style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #f0f0f0;">Am Queckbrunnen</div>
+                                    <div class="street-option" style="padding: 0.5rem; cursor: pointer;">Am Schießhaus</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- House Number -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="houseNumber" style="border-bottom: 1px solid #ddd; display: block; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">Hausnummer</label>
+                            <input type="text" id="houseNumber" name="houseNumber" required style="border: none; border-bottom: 1px solid #ddd; border-radius: 0; padding: 0.5rem 0;">
+                        </div>
+                    </div>
+
+                    <!-- Birth Date -->
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="birthDate" style="border-bottom: 1px solid #ddd; display: block; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">Geburtsdatum</label>
+                            <input type="text" id="birthDate" name="birthDate" placeholder="TT.MM.JJJJ" required style="border: none; border-bottom: 1px solid #ddd; border-radius: 0; padding: 0.5rem 0;">
+                        </div>
+                    </div>
+
+                    <!-- Phone Number with Country Code -->
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="phone" style="border-bottom: 1px solid #ddd; display: block; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">Mobilfunknummer</label>
+                            <div style="display: flex; align-items: center;">
+                                <select id="countryCode" name="countryCode" style="width: 80px; border: 1px solid #ddd; border-radius: 4px; padding: 0.5rem; margin-right: 0.5rem;">
+                                    <option value="+49">+49</option>
+                                    <option value="+43">+43</option>
+                                    <option value="+41">+41</option>
+                                </select>
+                                <input type="tel" id="phone" name="phone" required style="flex: 1; border: none; border-bottom: 1px solid #ddd; border-radius: 0; padding: 0.5rem 0;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="email" style="border-bottom: 1px solid #ddd; display: block; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">📧 E-Mail</label>
+                            <input type="email" id="email" name="email" required style="border: none; border-bottom: 1px solid #ddd; border-radius: 0; padding: 0.5rem 0;">
+                        </div>
+                    </div>
+
+                    <!-- Email Consent -->
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <p style="font-size: 0.9rem; color: #666; margin: 1rem 0;">
+                                Ich möchte einmalig und unverbindlich eine E-Mail der Allianz Kunde und Markt GmbH erhalten. In dieser werde ich informiert, wie und zu welchen Angaben des Informationsservices der Allianz ich künftig kontaktiert werden könnte.
+                            </p>
+                            <div class="radio-group" style="flex-direction: row; gap: 2rem;">
+                                <div class="radio-option">
+                                    <input type="radio" id="emailConsentYes" name="emailConsent" value="ja" required>
+                                    <label for="emailConsentYes">Ja</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="emailConsentNo" name="emailConsent" value="nein" required>
+                                    <label for="emailConsentNo">Nein</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -599,16 +669,74 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('applicationForm');
             
+            // Street suggestions functionality
+            const streetInput = document.getElementById('street');
+            const streetSuggestions = document.getElementById('streetSuggestions');
+            const streetOptions = document.querySelectorAll('.street-option');
+
+            streetInput.addEventListener('focus', function() {
+                streetSuggestions.style.display = 'block';
+            });
+
+            streetInput.addEventListener('blur', function() {
+                // Delay hiding to allow clicking on suggestions
+                setTimeout(() => {
+                    streetSuggestions.style.display = 'none';
+                }, 200);
+            });
+
+            streetInput.addEventListener('input', function() {
+                const value = this.value.toLowerCase();
+                streetOptions.forEach(option => {
+                    if (option.textContent.toLowerCase().includes(value)) {
+                        option.style.display = 'block';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+                streetSuggestions.style.display = 'block';
+            });
+
+            streetOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    streetInput.value = this.textContent;
+                    streetSuggestions.style.display = 'none';
+                });
+
+                option.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f0f0f0';
+                });
+
+                option.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = 'white';
+                });
+            });
+
+            // Birth date formatting
+            const birthDateInput = document.getElementById('birthDate');
+            birthDateInput.addEventListener('input', function() {
+                let value = this.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '.' + value.substring(2);
+                }
+                if (value.length >= 5) {
+                    value = value.substring(0, 5) + '.' + value.substring(5, 9);
+                }
+                this.value = value;
+            });
+
             // Show/hide health details based on pre-existing conditions
             document.querySelectorAll('input[name="preExisting"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     const healthDetails = document.getElementById('healthDetails');
-                    if (this.value === 'ja') {
-                        healthDetails.style.display = 'block';
-                        document.getElementById('healthDescription').required = true;
-                    } else {
-                        healthDetails.style.display = 'none';
-                        document.getElementById('healthDescription').required = false;
+                    if (healthDetails) {
+                        if (this.value === 'ja') {
+                            healthDetails.style.display = 'block';
+                            document.getElementById('healthDescription').required = true;
+                        } else {
+                            healthDetails.style.display = 'none';
+                            document.getElementById('healthDescription').required = false;
+                        }
                     }
                 });
             });
@@ -624,10 +752,10 @@
                 if (petType) {
                     document.getElementById('summaryPetType').textContent = petType.value;
                 }
-                if (coverage.value) {
+                if (coverage && coverage.value) {
                     document.getElementById('summaryCoverage').textContent = coverage.options[coverage.selectedIndex].text;
                 }
-                if (deductible.value) {
+                if (deductible && deductible.value) {
                     document.getElementById('summaryDeductible').textContent = deductible.options[deductible.selectedIndex].text;
                 }
             }
@@ -681,7 +809,10 @@
             // Load pricing data if available
             const pricingData = JSON.parse(sessionStorage.getItem('pricingData') || '{}');
             if (pricingData.monthlyPrice) {
-                document.getElementById('summaryPrice').textContent = `${pricingData.monthlyPrice}€/Monat`;
+                const summaryPrice = document.getElementById('summaryPrice');
+                if (summaryPrice) {
+                    summaryPrice.textContent = `${pricingData.monthlyPrice}€/Monat`;
+                }
             }
         });
     </script>
