@@ -5623,3 +5623,34 @@ function getPlanName(plan) {
 function goBack() {
   goBackToForm();
 }
+
+// Navigation to application page
+function proceedToApplication() {
+  try {
+    // Store current selection data for the application form
+    const selectedData = {
+      selectedPlan: currentSelection.selectedPlan,
+      planTitle: currentSelection.planTitle,
+      planDetails: currentSelection.planDetails,
+      monthlyPrice: currentSelection.monthlyPrice,
+      tierart: formData.tierart,
+      geburtsdatum: formData.geburtsdatum,
+      kastriert: formData.kastriert,
+      haltung: formData.haltung,
+      addon: currentSelection.addon,
+      addonPrice: currentSelection.addonPrice,
+      totalPrice: currentSelection.totalPrice,
+      timestamp: new Date().toISOString()
+    };
+    
+    // Store in sessionStorage so application page can access it
+    sessionStorage.setItem('selectedInsurancePlan', JSON.stringify(selectedData));
+    
+    // Navigate to application page
+    window.location.href = 'application.html';
+    
+  } catch (error) {
+    console.error('Fehler beim Weiterleiten zur Antragstellung:', error);
+    alert('Es gab einen Fehler beim Weiterleiten. Bitte versuchen Sie es erneut.');
+  }
+}

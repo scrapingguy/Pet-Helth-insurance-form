@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tierkrankenversicherung Antrag | Allianz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #003976 0%, #0056b3 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .form-section h3 {
+            color: #003976;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #003976;
+            padding-bottom: 0.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group.full-width {
+            flex: 2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .required {
+            color: #d32f2f;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #003976;
+            box-shadow: 0 0 0 3px rgba(0, 57, 118, 0.1);
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .radio-option input[type="radio"] {
+            width: auto;
+        }
+
+        .checkbox-group {
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            width: auto;
+            margin-top: 0.2rem;
+        }
+
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            background: #f9f9f9;
+            transition: border-color 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #003976;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-btn {
+            background: #003976;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+
+        .file-upload-btn:hover {
+            background: #002855;
+        }
+
+        .summary-box {
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .summary-box h4 {
+            color: #003976;
+            margin-bottom: 1rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #003976;
+        }
+
+        .legal-notice {
+            background: #fff3e0;
+            border: 1px solid #ffcc02;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .legal-notice h4 {
+            color: #f57c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #ddd;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #003976;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #002855;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 4px;
+            border-radius: 2px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #003976;
+            height: 100%;
+            width: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.3rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+            }
+
+            .header {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-container {
+                padding: 1rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .radio-group {
+                flex-direction: column;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Tierkrankenversicherung Antrag</h1>
+            <p>Schützen Sie Ihr Haustier mit der Allianz Tierkrankenversicherung</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+
+        <div class="form-container">
+            <form id="applicationForm">
+                <!-- Personal Information -->
+                <div class="form-section">
+                    <h3>1. Persönliche Angaben</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="title">Anrede <span class="required">*</span></label>
+                            <select id="title" name="title" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="herr">Herr</option>
+                                <option value="frau">Frau</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName">Vorname <span class="required">*</span></label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Nachname <span class="required">*</span></label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="birthDate">Geburtsdatum <span class="required">*</span></label>
+                            <input type="date" id="birthDate" name="birthDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">E-Mail <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Telefon <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="address">Adresse <span class="required">*</span></label>
+                            <input type="text" id="address" name="address" placeholder="Straße und Hausnummer" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postalCode">PLZ <span class="required">*</span></label>
+                            <input type="text" id="postalCode" name="postalCode" pattern="[0-9]{5}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">Ort <span class="required">*</span></label>
+                            <input type="text" id="city" name="city" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pet Information -->
+                <div class="form-section">
+                    <h3>2. Angaben zum Tier</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tierart <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="dog" name="petType" value="hund" required>
+                                    <label for="dog">Hund</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="cat" name="petType" value="katze" required>
+                                    <label for="cat">Katze</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="petName">Name des Tieres <span class="required">*</span></label>
+                            <input type="text" id="petName" name="petName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petBreed">Rasse <span class="required">*</span></label>
+                            <input type="text" id="petBreed" name="petBreed" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="petBirthDate">Geburtsdatum <span class="required">*</span></label>
+                            <input type="date" id="petBirthDate" name="petBirthDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petGender">Geschlecht <span class="required">*</span></label>
+                            <select id="petGender" name="petGender" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="männlich">Männlich</option>
+                                <option value="weiblich">Weiblich</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="petWeight">Gewicht (kg) <span class="required">*</span></label>
+                            <input type="number" id="petWeight" name="petWeight" min="0.1" step="0.1" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ist das Tier kastriert? <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="neuteredYes" name="neutered" value="ja" required>
+                                    <label for="neuteredYes">Ja</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="neuteredNo" name="neutered" value="nein" required>
+                                    <label for="neuteredNo">Nein</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label>Vorerkrankungen <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="healthYes" name="preExisting" value="ja" required>
+                                    <label for="healthYes">Ja, Vorerkrankungen vorhanden</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="healthNo" name="preExisting" value="nein" required>
+                                    <label for="healthNo">Nein, keine Vorerkrankungen</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row" id="healthDetails" style="display: none;">
+                        <div class="form-group full-width">
+                            <label for="healthDescription">Beschreibung der Vorerkrankungen</label>
+                            <textarea id="healthDescription" name="healthDescription" placeholder="Bitte beschreiben Sie alle bekannten Vorerkrankungen, Operationen oder Behandlungen..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insurance Details -->
+                <div class="form-section">
+                    <h3>3. Versicherungsdetails</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="coverage">Gewünschte Deckung <span class="required">*</span></label>
+                            <select id="coverage" name="coverage" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="basis">Basis-Schutz</option>
+                                <option value="komfort">Komfort-Schutz</option>
+                                <option value="premium">Premium-Schutz</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="startDate">Gewünschter Versicherungsbeginn <span class="required">*</span></label>
+                            <input type="date" id="startDate" name="startDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="deductible">Selbstbeteiligung <span class="required">*</span></label>
+                            <select id="deductible" name="deductible" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="0">0€ (höhere Prämie)</option>
+                                <option value="100">100€ pro Jahr</option>
+                                <option value="200">200€ pro Jahr</option>
+                                <option value="500">500€ pro Jahr</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents -->
+                <div class="form-section">
+                    <h3>4. Dokumente</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label>Impfausweis hochladen <span class="required">*</span></label>
+                            <div class="file-upload">
+                                <p>📄 Impfausweis oder Gesundheitszeugnis</p>
+                                <p class="help-text">Unterstützte Formate: PDF, JPG, PNG (max. 5MB)</p>
+                                <input type="file" id="vaccineRecord" name="vaccineRecord" accept=".pdf,.jpg,.jpeg,.png" required>
+                                <button type="button" class="file-upload-btn" onclick="document.getElementById('vaccineRecord').click()">Datei auswählen</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label>Tierarztberichte (optional)</label>
+                            <div class="file-upload">
+                                <p>📋 Aktuelle Tierarztberichte</p>
+                                <p class="help-text">Falls vorhanden - unterstützt bei der Bearbeitung</p>
+                                <input type="file" id="vetReports" name="vetReports" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                                <button type="button" class="file-upload-btn" onclick="document.getElementById('vetReports').click()">Dateien auswählen</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="form-section">
+                    <h3>5. Zusammenfassung</h3>
+                    
+                    <div class="summary-box">
+                        <h4>Ihre Auswahl im Überblick</h4>
+                        <div id="summaryContent">
+                            <div class="summary-item">
+                                <span>Tierart:</span>
+                                <span id="summaryPetType">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Tarif:</span>
+                                <span id="summaryCoverage">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Selbstbeteiligung:</span>
+                                <span id="summaryDeductible">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Monatlicher Beitrag:</span>
+                                <span id="summaryPrice">wird berechnet</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legal -->
+                <div class="legal-notice">
+                    <h4>⚖️ Rechtliche Hinweise</h4>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">Ich habe die <a href="#" style="color: #003976;">Allgemeinen Versicherungsbedingungen (AVB)</a> gelesen und akzeptiere diese. <span class="required">*</span></label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="privacy" name="privacy" required>
+                            <label for="privacy">Ich stimme der <a href="#" style="color: #003976;">Datenschutzerklärung</a> zu. <span class="required">*</span></label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="marketing" name="marketing">
+                            <label for="marketing">Ich möchte über weitere Produkte und Services der Allianz informiert werden.</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">Zurück zum Rechner</button>
+                    <button type="submit" class="btn btn-primary">Antrag absenden</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('applicationForm');
+            
+            // Show/hide health details based on pre-existing conditions
+            document.querySelectorAll('input[name="preExisting"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const healthDetails = document.getElementById('healthDetails');
+                    if (this.value === 'ja') {
+                        healthDetails.style.display = 'block';
+                        document.getElementById('healthDescription').required = true;
+                    } else {
+                        healthDetails.style.display = 'none';
+                        document.getElementById('healthDescription').required = false;
+                    }
+                });
+            });
+
+            // Update summary when form changes
+            form.addEventListener('change', updateSummary);
+
+            function updateSummary() {
+                const petType = document.querySelector('input[name="petType"]:checked');
+                const coverage = document.getElementById('coverage');
+                const deductible = document.getElementById('deductible');
+
+                if (petType) {
+                    document.getElementById('summaryPetType').textContent = petType.value;
+                }
+                if (coverage.value) {
+                    document.getElementById('summaryCoverage').textContent = coverage.options[coverage.selectedIndex].text;
+                }
+                if (deductible.value) {
+                    document.getElementById('summaryDeductible').textContent = deductible.options[deductible.selectedIndex].text;
+                }
+            }
+
+            // Handle form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate required fields
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value && field.type !== 'radio' && field.type !== 'checkbox') {
+                        isValid = false;
+                        field.style.borderColor = '#d32f2f';
+                    } else if (field.type === 'radio') {
+                        const radioGroup = form.querySelectorAll(`input[name="${field.name}"]`);
+                        const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+                        if (!isChecked) {
+                            isValid = false;
+                        }
+                    } else if (field.type === 'checkbox' && field.hasAttribute('required') && !field.checked) {
+                        isValid = false;
+                    } else {
+                        field.style.borderColor = '#ddd';
+                    }
+                });
+
+                if (isValid) {
+                    // Collect form data
+                    const formData = new FormData(form);
+                    const data = Object.fromEntries(formData.entries());
+                    
+                    // Add pricing data from session storage if available
+                    const pricingData = JSON.parse(sessionStorage.getItem('pricingData') || '{}');
+                    const applicationData = { ...data, pricing: pricingData };
+                    
+                    // Store application data
+                    sessionStorage.setItem('applicationData', JSON.stringify(applicationData));
+                    
+                    alert('Vielen Dank für Ihren Antrag! Wir werden uns in Kürze bei Ihnen melden.');
+                    
+                    // In a real application, you would send this data to your server
+                    console.log('Application Data:', applicationData);
+                } else {
+                    alert('Bitte füllen Sie alle Pflichtfelder aus.');
+                }
+            });
+
+            // Load pricing data if available
+            const pricingData = JSON.parse(sessionStorage.getItem('pricingData') || '{}');
+            if (pricingData.monthlyPrice) {
+                document.getElementById('summaryPrice').textContent = `${pricingData.monthlyPrice}€/Monat`;
+            }
+        });
+    </script>
+</body>
+</html>
