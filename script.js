@@ -91,7 +91,7 @@ const scheduleIframeHeightUpdate = () => {
   window.requestAnimationFrame(postIframeHeight);
 };
 
-const APP_SCREEN_IDS = ["formScreen", "pricingScreen", "successScreen"];
+const APP_SCREEN_IDS = ["formScreen", "pricingScreen", "successScreen", "applicationScreen"];
 let currentScreenId = "formScreen";
 
 function showScreen(targetId) {
@@ -4856,24 +4856,8 @@ function setupPricingEventListeners() {
 
   const continueBtn = document.getElementById("continueBtn");
   if (continueBtn) {
-    continueBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-
-      if (!selectedPlan) {
-        alert("Bitte wählen Sie zuerst einen Tarif aus.");
-        return;
-      }
-
-      const contactForm = document.getElementById("customerContactForm");
-      if (contactForm && contactForm.offsetParent !== null) {
-        if (validateCustomerForm()) {
-          storeCustomerData();
-          continueToApplication();
-        }
-      } else {
-        continueToApplication();
-      }
-    });
+    // Button is now enabled by default and works via onclick="proceedToApplication()"
+    // No additional validation needed
   }
 }
 
@@ -5344,78 +5328,6 @@ function updateConfirmationSection() {
   scheduleIframeHeightUpdate();
 }
 
-function validateCustomerForm() {
-  const name = document.getElementById("customerName");
-  const email = document.getElementById("customerEmail");
-  const phone = document.getElementById("customerPhone");
-  const privacy = document.getElementById("privacyConsent");
-
-  let isValid = true;
-  let emailInvalid = false;
-
-  [name, email, phone].forEach((field) => {
-    if (field) {
-      field.classList.remove("error");
-    }
-  });
-
-  if (!name || !name.value.trim()) {
-    if (name) name.classList.add("error");
-    isValid = false;
-  }
-
-  const emailValue = email?.value.trim() || "";
-  if (emailValue && !isValidEmail(emailValue)) {
-    if (email) email.classList.add("error");
-    isValid = false;
-    emailInvalid = true;
-  }
-
-  if (!phone || !phone.value.trim()) {
-    if (phone) phone.classList.add("error");
-    isValid = false;
-  }
-
-  if (!privacy || !privacy.checked) {
-    if (privacy) privacy.classList.add("error");
-    isValid = false;
-  }
-
-  if (!isValid) {
-    if (emailInvalid) {
-      alert(
-        "Bitte geben Sie eine gültige E-Mail-Adresse ein oder lassen Sie das Feld leer."
-      );
-    } else {
-      alert(
-        "Bitte füllen Sie alle Pflichtfelder aus und stimmen Sie der Datenverarbeitung zu."
-      );
-    }
-  }
-
-  return isValid;
-}
-
-function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
-function storeCustomerData() {
-  const customerData = {
-    name: document.getElementById("customerName")?.value || "",
-    email: document.getElementById("customerEmail")?.value || "",
-    phone: document.getElementById("customerPhone")?.value || "",
-    timestamp: new Date().toISOString(),
-  };
-
-  try {
-    localStorage.setItem("customerContactData", JSON.stringify(customerData));
-  } catch (error) {
-    console.warn("Konnte Kundendaten nicht speichern", error);
-  }
-}
-
 function continueToApplication() {
   const addonOptionValue = document.querySelector(
     'input[name="addonCoverage"]:checked'
@@ -5624,33 +5536,331 @@ function goBack() {
   goBackToForm();
 }
 
+// Global showApiError function
+function showApiError(errorMessage = "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.") {
+  const pricingScreen = document.getElementById("pricingScreen");
+  if (!pricingScreen) {
+    console.error("Pricing screen container not found");
+    return;
+  }
+
+  let errorBanner = document.getElementById("pricingErrorBanner");
+  if (!errorBanner) {
+    errorBanner = document.createElement("div");
+    errorBanner.id = "pricingErrorBanner";
+    errorBanner.setAttribute("role", "alert");
+    errorBanner.style.cssText = `
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      color: #856404;
+      font-weight: 500;
+    `;
+
+    const insertionTarget = pricingScreen.querySelector(".plans-title-section") || pricingScreen.firstElementChild;
+    if (insertionTarget) {
+      insertionTarget.insertAdjacentElement("afterend", errorBanner);
+    } else {
+      pricingScreen.prepend(errorBanner);
+    }
+  }
+
+  errorBanner.textContent = errorMessage;
+  errorBanner.style.display = "block";
+  scheduleIframeHeightUpdate();
+}
+
+// Make showApiError globally accessible
+window.showApiError = showApiError;
+
 // Navigation to application page
 function proceedToApplication() {
   try {
+    // Check if a plan is selected
+    if (!selectedPlan) {
+      alert('Bitte wählen Sie zuerst einen Tarif aus.');
+      return;
+    }
+
+    // Get the addon selection
+    const addonOptionValue = document.querySelector(
+      'input[name="addonCoverage"]:checked'
+    )?.value;
+
+    const planDetails = getSelectedPlanPricingDetails();
+    const planPriceValue = planDetails?.price ?? getCurrentPrice(selectedPlan || "komfort");
+
+    // Get addon price if selected
+    const addonPrice = addonSelected ? getSelectedAddonPrice() : 0;
+
+    // Calculate total price (plan + addon if selected)
+    const totalPrice = planPriceValue + addonPrice;
+
     // Store current selection data for the application form
     const selectedData = {
-      selectedPlan: currentSelection.selectedPlan,
-      planTitle: currentSelection.planTitle,
-      planDetails: currentSelection.planDetails,
-      monthlyPrice: currentSelection.monthlyPrice,
-      tierart: formData.tierart,
-      geburtsdatum: formData.geburtsdatum,
-      kastriert: formData.kastriert,
-      haltung: formData.haltung,
-      addon: currentSelection.addon,
-      addonPrice: currentSelection.addonPrice,
-      totalPrice: currentSelection.totalPrice,
+      selectedPlan: selectedPlan,
+      planIdent: planDetails?.ident || null,
+      planTitle: planDetails?.description || getPlanName(selectedPlan) || selectedPlan,
+      planPrice: planPriceValue,
+      monthlyPrice: planPriceValue,
+      deductible: document.getElementById("deductible")?.value || "20",
+      paymentFrequency: document.getElementById("paymentFrequency")?.value || "monthly",
+      addonSelected: addonSelected,
+      addonOption: addonSelected ? addonOptionValue || "2000" : null,
+      addonPrice: addonPrice,
+      totalPrice: totalPrice,
       timestamp: new Date().toISOString()
     };
     
-    // Store in sessionStorage so application page can access it
+    // Store in sessionStorage so application form can access it
     sessionStorage.setItem('selectedInsurancePlan', JSON.stringify(selectedData));
     
-    // Navigate to application page
-    window.location.href = 'application.html';
+    // Show application screen
+    showScreen('applicationScreen');
+    
+    // Scroll to top
+    window.scrollTo(0, 0);
+    
+    // Populate the application form with the selected plan data
+    populateApplicationForm(selectedData);
     
   } catch (error) {
     console.error('Fehler beim Weiterleiten zur Antragstellung:', error);
     alert('Es gab einen Fehler beim Weiterleiten. Bitte versuchen Sie es erneut.');
   }
 }
+
+// Make function globally accessible
+window.proceedToApplication = proceedToApplication;
+
+// Populate application form with selected plan data
+function populateApplicationForm(selectedData) {
+  // Set today's date as default insurance start date
+  const today = new Date();
+  const formattedDate = `${String(today.getDate()).padStart(2, '0')}.${String(today.getMonth() + 1).padStart(2, '0')}.${today.getFullYear()}`;
+  
+  const insuranceStartInput = document.getElementById('appInsuranceStartDate');
+  if (insuranceStartInput) {
+    insuranceStartInput.value = formattedDate;
+  }
+  
+  // Display the total price in summary
+  const summaryTotalPrice = document.getElementById('summaryTotalPrice');
+  if (summaryTotalPrice && selectedData.totalPrice) {
+    summaryTotalPrice.textContent = `${selectedData.totalPrice}€ pro Monat`;
+  }
+}
+
+// Application Form Logic
+document.addEventListener('DOMContentLoaded', function() {
+  const applicationForm = document.getElementById('applicationForm');
+  
+  if (!applicationForm) return;
+  
+  // Birth date formatting for application form
+  const birthDateInput = document.getElementById('appBirthDate');
+  if (birthDateInput) {
+    birthDateInput.addEventListener('input', function() {
+      let value = this.value.replace(/\D/g, '');
+      if (value.length >= 2) {
+        value = value.substring(0, 2) + '.' + value.substring(2);
+      }
+      if (value.length >= 5) {
+        value = value.substring(0, 5) + '.' + value.substring(5, 9);
+      }
+      this.value = value;
+    });
+  }
+
+  // Insurance start date formatting
+  const insuranceStartInput = document.getElementById('appInsuranceStartDate');
+  if (insuranceStartInput) {
+    insuranceStartInput.addEventListener('input', function() {
+      let value = this.value.replace(/\D/g, '');
+      if (value.length >= 2) {
+        value = value.substring(0, 2) + '.' + value.substring(2);
+      }
+      if (value.length >= 5) {
+        value = value.substring(0, 5) + '.' + value.substring(5, 9);
+      }
+      this.value = value;
+    });
+  }
+
+  // IBAN formatting and validation
+  const ibanInput = document.getElementById('appIban');
+  if (ibanInput) {
+    ibanInput.addEventListener('input', function() {
+      let value = this.value.replace(/\s/g, '').toUpperCase();
+      
+      // Clean value - first 2 letters, then 20 digits
+      let cleanValue = '';
+      
+      if (value.length >= 1) {
+        cleanValue += value[0].match(/[A-Z]/) ? value[0] : '';
+      }
+      if (value.length >= 2) {
+        cleanValue += value[1].match(/[A-Z]/) ? value[1] : '';
+      }
+      
+      if (value.length > 2) {
+        const digits = value.substring(2).replace(/\D/g, '');
+        cleanValue += digits.substring(0, 20);
+      }
+      
+      // Format like: DE95 2022 0800 0052 2738 94
+      let formattedValue = '';
+      for (let i = 0; i < cleanValue.length; i++) {
+        if (i > 0 && i % 4 === 0) {
+          formattedValue += ' ';
+        }
+        formattedValue += cleanValue[i];
+      }
+      
+      this.value = formattedValue;
+      
+      // Validation styling
+      if (cleanValue.length >= 22 && /^[A-Z]{2}[0-9]{20}$/.test(cleanValue)) {
+        this.style.borderColor = '#28a745';
+      } else if (cleanValue.length > 0) {
+        this.style.borderColor = '#ddd';
+      }
+    });
+
+    ibanInput.addEventListener('blur', function() {
+      const cleanIban = this.value.replace(/\s/g, '');
+      if (cleanIban.length > 0 && (cleanIban.length !== 22 || !/^[A-Z]{2}[0-9]{20}$/.test(cleanIban))) {
+        this.style.borderColor = '#d32f2f';
+      }
+    });
+  }
+
+  // Update summary when form changes
+  applicationForm.addEventListener('change', updateApplicationSummary);
+  applicationForm.addEventListener('input', updateApplicationSummary);
+
+  function updateApplicationSummary() {
+    // Personal Data
+    const gender = document.querySelector('input[name="gender"]:checked');
+    const firstName = document.getElementById('appFirstName')?.value || '';
+    const lastName = document.getElementById('appLastName')?.value || '';
+    const birthDate = document.getElementById('appBirthDate')?.value || '';
+    const email = document.getElementById('appEmail')?.value || '';
+    const countryCode = document.getElementById('appCountryCode')?.value || '';
+    const phone = document.getElementById('appPhone')?.value || '';
+    const street = document.getElementById('appStreet')?.value || '';
+    const houseNumber = document.getElementById('appHouseNumber')?.value || '';
+    const postalCode = document.getElementById('appPostalCode')?.value || '';
+    const city = document.getElementById('appCity')?.value || '';
+
+    // Insurance Information
+    const insuranceStartDate = document.getElementById('appInsuranceStartDate')?.value || '';
+    const duration = document.querySelector('input[name="duration"]:checked');
+    const previousInsurance = document.querySelector('input[name="previousInsurance"]:checked');
+
+    // Account Data
+    const accountHolder = document.getElementById('appAccountHolder')?.value || '';
+    const iban = document.getElementById('appIban')?.value || '';
+
+    // Update Personal Data Summary
+    if (gender) {
+      const summaryGender = document.getElementById('summaryGender');
+      if (summaryGender) summaryGender.textContent = gender.value === 'frau' ? 'Frau' : 'Herr';
+    }
+    if (firstName || lastName) {
+      const summaryName = document.getElementById('summaryName');
+      if (summaryName) summaryName.textContent = `${firstName} ${lastName}`.trim() || '-';
+    }
+    if (birthDate) {
+      const summaryBirthDate = document.getElementById('summaryBirthDate');
+      if (summaryBirthDate) summaryBirthDate.textContent = birthDate;
+    }
+    if (email) {
+      const summaryEmail = document.getElementById('summaryEmail');
+      if (summaryEmail) summaryEmail.textContent = email;
+    }
+    if (countryCode && phone) {
+      const summaryPhone = document.getElementById('summaryPhone');
+      if (summaryPhone) summaryPhone.textContent = `${countryCode} ${phone}`;
+    }
+    if (street && houseNumber && postalCode && city) {
+      const summaryAddress = document.getElementById('summaryAddress');
+      if (summaryAddress) summaryAddress.textContent = `${street} ${houseNumber}, ${postalCode} ${city}`;
+    }
+
+    // Update Insurance Information Summary
+    if (insuranceStartDate) {
+      const summaryInsuranceStart = document.getElementById('summaryInsuranceStart');
+      if (summaryInsuranceStart) summaryInsuranceStart.textContent = insuranceStartDate;
+    }
+    if (duration) {
+      const summaryDuration = document.getElementById('summaryDuration');
+      if (summaryDuration) summaryDuration.textContent = duration.value === '1' ? '1 Jahr' : '3 Jahre';
+    }
+    if (previousInsurance) {
+      const summaryPreviousInsurance = document.getElementById('summaryPreviousInsurance');
+      if (summaryPreviousInsurance) summaryPreviousInsurance.textContent = previousInsurance.value === 'ja' ? 'Ja' : 'Nein';
+    }
+
+    // Update Account Data Summary
+    if (accountHolder) {
+      const summaryAccountHolder = document.getElementById('summaryAccountHolder');
+      if (summaryAccountHolder) summaryAccountHolder.textContent = accountHolder;
+    }
+    if (iban) {
+      const summaryIban = document.getElementById('summaryIban');
+      if (summaryIban) summaryIban.textContent = iban;
+    }
+  }
+
+  // Handle form submission
+  applicationForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Validate required fields
+    const requiredFields = applicationForm.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+      if (!field.value && field.type !== 'radio' && field.type !== 'checkbox') {
+        isValid = false;
+        field.style.borderColor = '#d32f2f';
+      } else if (field.type === 'radio') {
+        const radioGroup = applicationForm.querySelectorAll(`input[name="${field.name}"]`);
+        const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+        if (!isChecked) {
+          isValid = false;
+        }
+      } else if (field.type === 'checkbox' && field.hasAttribute('required') && !field.checked) {
+        isValid = false;
+      } else {
+        field.style.borderColor = '#ddd';
+      }
+    });
+
+    if (isValid) {
+      // Collect form data
+      const formData = new FormData(applicationForm);
+      const data = Object.fromEntries(formData.entries());
+      
+      // Add pricing data from session storage
+      const pricingData = JSON.parse(sessionStorage.getItem('selectedInsurancePlan') || '{}');
+      const applicationData = { ...data, pricing: pricingData };
+      
+      // Store application data
+      sessionStorage.setItem('applicationData', JSON.stringify(applicationData));
+      
+      alert('Vielen Dank für Ihren Antrag! Wir werden uns in Kürze bei Ihnen melden.');
+      
+      console.log('Application Data:', applicationData);
+      
+      // Optionally redirect or show success message
+      // You could show the success screen here
+      // showScreen('successScreen');
+    } else {
+      alert('Bitte füllen Sie alle Pflichtfelder aus.');
+    }
+  });
+});

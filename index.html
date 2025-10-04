@@ -125,6 +125,234 @@
           font-size: 16px;
         }
       }
+
+      /* Application Form Styles */
+      .application-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+      }
+
+      .application-header {
+        background: linear-gradient(135deg, #003976 0%, #0056b3 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+      }
+
+      .application-header h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .application-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .application-progress-bar {
+        background: #e0e0e0;
+        height: 4px;
+        border-radius: 2px;
+        margin: 1rem 0;
+        overflow: hidden;
+      }
+
+      .application-progress-fill {
+        background: #003976;
+        height: 100%;
+        width: 100%;
+        transition: width 0.3s ease;
+      }
+
+      .application-form-container {
+        padding: 2rem;
+      }
+
+      .application-form-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background: #fafafa;
+      }
+
+      .application-form-section h3 {
+        color: #003976;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .application-form-section h2 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 1.8rem;
+        border-bottom: 2px solid #003976;
+        padding-bottom: 0.5rem;
+      }
+
+      .section-description {
+        color: #666;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .form-group {
+        flex: 1;
+      }
+
+      .form-group.full-width {
+        flex: 100%;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #333;
+        font-size: 0.95rem;
+      }
+
+      .required {
+        color: #d32f2f;
+      }
+
+      .form-group input[type="text"],
+      .form-group input[type="email"],
+      .form-group input[type="tel"],
+      .form-group select {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #003976;
+        box-shadow: 0 0 0 3px rgba(0, 57, 118, 0.1);
+      }
+
+      .radio-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.5rem;
+      }
+
+      .radio-group.horizontal {
+        flex-direction: row;
+        gap: 2rem;
+      }
+
+      .summary-card {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .summary-card h4 {
+        color: #003976;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 0.5rem;
+      }
+
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .summary-item:last-child {
+        border-bottom: none;
+      }
+
+      .summary-total {
+        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+        border: 2px solid #003976;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-top: 2rem;
+        text-align: center;
+      }
+
+      .summary-total .summary-item {
+        border: none;
+        justify-content: center;
+        gap: 2rem;
+      }
+
+      .summary-total h3 {
+        color: #003976;
+        font-size: 1.5rem;
+      }
+
+      .legal-notice {
+        background: #fff3e0;
+        border: 1px solid #ffcc02;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-size: 0.9rem;
+      }
+
+      .legal-notice h4 {
+        color: #f57c00;
+        margin-bottom: 0.5rem;
+      }
+
+      .checkbox-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        cursor: pointer;
+      }
+
+      .checkbox-option input[type="checkbox"] {
+        margin-top: 0.2rem;
+      }
+
+      @media (max-width: 768px) {
+        .application-container {
+          margin: 0;
+        }
+
+        .application-header {
+          padding: 1.5rem 1rem;
+        }
+
+        .application-header h1 {
+          font-size: 1.5rem;
+        }
+
+        .application-form-container {
+          padding: 1rem;
+        }
+
+        .form-row {
+          flex-direction: column;
+          gap: 0;
+        }
+
+        .radio-group {
+          flex-direction: column;
+        }
+      }
     </style>
   </head>
   <body class="embedded-full">
@@ -727,76 +955,12 @@
                   <span>pro Monat</span>
                 </div>
               </div>
-
-              <div class="customer-contact-section">
-                <h3>Kontaktdaten für Beratungstermin</h3>
-                <p>
-                  Damit wir Sie für einen Beratungstermin kontaktieren können,
-                  benötigen wir noch Ihre Kontaktdaten:
-                </p>
-
-                <form id="customerContactForm" class="contact-form">
-                  <div class="form-row">
-                    <div class="form-group">
-                      <label for="customerName">Vor- und Nachname *</label>
-                      <input
-                        type="text"
-                        id="customerName"
-                        name="customerName"
-                        class="form-control"
-                        required
-                        placeholder="Max Mustermann" />
-                    </div>
-                  </div>
-
-                  <div class="form-row">
-                    <div class="form-group">
-                      <label for="customerEmail"
-                        >E-Mail-Adresse (optional)</label
-                      >
-                      <input
-                        type="email"
-                        id="customerEmail"
-                        name="customerEmail"
-                        class="form-control"
-                        placeholder="max@example.com" />
-                    </div>
-                    <div class="form-group">
-                      <label for="customerPhone">Telefonnummer *</label>
-                      <input
-                        type="tel"
-                        id="customerPhone"
-                        name="customerPhone"
-                        class="form-control"
-                        required
-                        placeholder="+49 123 456789" />
-                    </div>
-                  </div>
-
-                  <div class="form-row">
-                    <div class="form-group checkbox-group">
-                      <label class="checkbox-option">
-                        <input
-                          type="checkbox"
-                          id="privacyConsent"
-                          name="privacyConsent"
-                          required />
-                        <span class="checkbox-custom"></span>
-                        <span
-                          >Ich stimme der Verarbeitung meiner Daten für die
-                          Kontaktaufnahme zu. *</span
-                        >
-                      </label>
-                    </div>
-                  </div>
-                </form>
-              </div>
             </div>
             <div class="action-buttons">
               <button class="btn-back" type="button" onclick="goBackToForm()">
                 ← Zurück
               </button>
-              <button class="btn-continue" id="continueBtn" disabled onclick="proceedToApplication()">
+              <button class="btn-continue" id="continueBtn" onclick="proceedToApplication()">
                 Zur Antragstellung →
               </button>
             </div>
@@ -846,6 +1010,298 @@
             </div>
           </div>
         </section>
+      </section>
+
+      <!-- Application Form Screen -->
+      <section data-iframe-size id="applicationScreen" class="app-screen" hidden>
+        <div class="application-container">
+          <div class="application-header">
+            <h1>Tierkrankenversicherung Antrag</h1>
+            <p>Schützen Sie Ihr Haustier mit der Allianz Tierkrankenversicherung</p>
+          </div>
+
+          <div class="application-progress-bar">
+            <div class="application-progress-fill" id="applicationProgressFill"></div>
+          </div>
+
+          <div class="application-form-container">
+            <form id="applicationForm">
+              <!-- Step 1: Contact Information -->
+              <div class="application-form-section">
+                <h3>1 von 4</h3>
+                <h2>Kontaktdaten</h2>
+                <p class="section-description">Alle Angaben sind Pflichtangaben, sofern sie nicht als optional gekennzeichnet sind.</p>
+                
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <div class="radio-group horizontal">
+                      <label class="radio-option">
+                        <input type="radio" name="gender" value="frau" required>
+                        <span class="radio-custom"></span>
+                        <span>Frau</span>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="gender" value="herr" required>
+                        <span class="radio-custom"></span>
+                        <span>Herr</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label for="appFirstName">Vorname <span class="required">*</span></label>
+                    <input type="text" id="appFirstName" name="firstName" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label for="appLastName">Nachname <span class="required">*</span></label>
+                    <input type="text" id="appLastName" name="lastName" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="appPostalCode">Postleitzahl <span class="required">*</span></label>
+                    <input type="text" id="appPostalCode" name="postalCode" pattern="[0-9]{5}" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="appCity">Wohnort <span class="required">*</span></label>
+                    <input type="text" id="appCity" name="city" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label for="appStreet">Straße <span class="required">*</span></label>
+                    <input type="text" id="appStreet" name="street" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="appHouseNumber">Hausnummer <span class="required">*</span></label>
+                    <input type="text" id="appHouseNumber" name="houseNumber" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label for="appBirthDate">Geburtsdatum <span class="required">*</span></label>
+                    <input type="text" id="appBirthDate" name="birthDate" placeholder="TT.MM.JJJJ" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label for="appPhone">Mobilfunknummer <span class="required">*</span></label>
+                    <div style="display: flex; gap: 0.5rem;">
+                      <select id="appCountryCode" name="countryCode" style="width: 100px;">
+                        <option value="+49">+49</option>
+                        <option value="+43">+43</option>
+                        <option value="+41">+41</option>
+                      </select>
+                      <input type="tel" id="appPhone" name="phone" style="flex: 1;" required>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label for="appEmail">📧 E-Mail <span class="required">*</span></label>
+                    <input type="email" id="appEmail" name="email" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <p style="font-size: 0.9rem; color: #666; margin: 1rem 0;">
+                      Ich möchte einmalig und unverbindlich eine E-Mail der Allianz Kunde und Markt GmbH erhalten.
+                    </p>
+                    <div class="radio-group horizontal">
+                      <label class="radio-option">
+                        <input type="radio" name="emailConsent" value="ja" required>
+                        <span class="radio-custom"></span>
+                        <span>Ja</span>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="emailConsent" value="nein" required>
+                        <span class="radio-custom"></span>
+                        <span>Nein</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 2: Insurance Information -->
+              <div class="application-form-section">
+                <h3>2 von 4</h3>
+                <h2>Angaben zur Versicherung</h2>
+                <p class="section-description">Nennen Sie uns hier Ihre bisherige Versicherung und legen Sie den Beginn Ihrer Allianz Versicherung fest.</p>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="appInsuranceStartDate">Gewünschter Versicherungsbeginn <span class="required">*</span></label>
+                    <input type="text" id="appInsuranceStartDate" name="insuranceStartDate" placeholder="TT.MM.JJJJ" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Laufzeit <span class="required">*</span></label>
+                    <div class="radio-group horizontal">
+                      <label class="radio-option">
+                        <input type="radio" name="duration" value="1" checked required>
+                        <span class="radio-custom"></span>
+                        <span>1 Jahr</span>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="duration" value="3" required>
+                        <span class="radio-custom"></span>
+                        <span>3 Jahre</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label>Bestand bereits eine Tierkrankenversicherung? <span class="required">*</span></label>
+                    <div class="radio-group horizontal">
+                      <label class="radio-option">
+                        <input type="radio" name="previousInsurance" value="ja" required>
+                        <span class="radio-custom"></span>
+                        <span>Ja</span>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="previousInsurance" value="nein" required>
+                        <span class="radio-custom"></span>
+                        <span>Nein</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 3: Account Data -->
+              <div class="application-form-section">
+                <h3>3 von 4</h3>
+                <h2 style="text-align: center;">Kontodaten</h2>
+                <p class="section-description" style="text-align: center;">Wir buchen den Beitrag erst zum gewünschten Versicherungsbeginn ab.</p>
+                
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label for="appAccountHolder">Kontoinhaber <span class="required">*</span></label>
+                    <input type="text" id="appAccountHolder" name="accountHolder" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label for="appIban">IBAN <span class="required">*</span></label>
+                    <input type="text" id="appIban" name="iban" placeholder="DE95 2022 0800 0052 2738 94" maxlength="27" required>
+                    <small style="color: #666; font-size: 0.85rem;">Format: DE + 20 Ziffern</small>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label class="checkbox-option">
+                      <input type="checkbox" id="appSepaMandate" name="sepaMandate" required>
+                      <span class="checkbox-custom"></span>
+                      <span>Ich erteile hiermit das SEPA-Lastschriftmandat <span class="required">*</span></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 4: Summary -->
+              <div class="application-form-section">
+                <h3>4 von 4</h3>
+                <h2 style="text-align: center;">Zusammenfassung</h2>
+                <p class="section-description" style="text-align: center;">Bitte überprüfen Sie Ihre Angaben vor dem Absenden.</p>
+                
+                <div class="summary-card">
+                  <h4>Persönliche Daten</h4>
+                  <div class="summary-item">
+                    <span>Anrede:</span>
+                    <span id="summaryGender">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Name:</span>
+                    <span id="summaryName">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Geburtsdatum:</span>
+                    <span id="summaryBirthDate">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>E-Mail:</span>
+                    <span id="summaryEmail">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Telefon:</span>
+                    <span id="summaryPhone">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Adresse:</span>
+                    <span id="summaryAddress">-</span>
+                  </div>
+                </div>
+
+                <div class="summary-card">
+                  <h4>Versicherungsinformationen</h4>
+                  <div class="summary-item">
+                    <span>Versicherungsbeginn:</span>
+                    <span id="summaryInsuranceStart">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Laufzeit:</span>
+                    <span id="summaryDuration">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Vorversicherung:</span>
+                    <span id="summaryPreviousInsurance">-</span>
+                  </div>
+                </div>
+
+                <div class="summary-card">
+                  <h4>Kontodaten</h4>
+                  <div class="summary-item">
+                    <span>Kontoinhaber:</span>
+                    <span id="summaryAccountHolder">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>IBAN:</span>
+                    <span id="summaryIban">-</span>
+                  </div>
+                </div>
+
+                <div class="summary-total">
+                  <div class="summary-item">
+                    <h3>Ihr Gesamtbeitrag</h3>
+                    <h3 id="summaryTotalPrice">-</h3>
+                  </div>
+                </div>
+              </div>
+
+              <div class="legal-notice">
+                <h4>⚖️ Rechtliche Hinweise</h4>
+                <label class="checkbox-option">
+                  <input type="checkbox" id="appPrivacyConsent" name="privacyConsent" required>
+                  <span class="checkbox-custom"></span>
+                  <span>Ich habe die Datenschutzerklärung gelesen und stimme zu <span class="required">*</span></span>
+                </label>
+              </div>
+
+              <div class="action-buttons">
+                <button type="button" class="btn-back" onclick="goBackToPricing()">← Zurück</button>
+                <button type="submit" class="btn-continue">Antrag absenden</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </section>
     </main>
     <script
