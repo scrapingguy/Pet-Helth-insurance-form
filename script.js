@@ -6309,8 +6309,10 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     console.error('Submit button not found!');
   }
+});
 
-  // ===== Insurance Section Logic =====
+// ===== Insurance Section Logic =====
+document.addEventListener('DOMContentLoaded', function() {
   let insuranceCounter = 0;
 
   // Handle insurance start date and end date calculation
@@ -6330,23 +6332,38 @@ document.addEventListener('DOMContentLoaded', function() {
         value = value.substring(0, 5) + '.' + value.substring(5, 9);
       }
       this.value = value;
+      
+      // Calculate expiration date immediately as user types
+      // Only if we have a complete date (10 characters: DD.MM.YYYY)
+      if (value.length === 10) {
+        calculateEndDate();
+      }
     });
 
     appInsuranceStartDate.addEventListener('blur', calculateEndDate);
   }
 
   function calculateEndDate() {
-    if (!appInsuranceStartDate || !insuranceExpirationDisplay) return;
+    const startDateInput = document.getElementById('appInsuranceStartDate');
+    const expirationDisplay = document.getElementById('insuranceExpirationDisplay');
     
-    const dateValue = appInsuranceStartDate.value;
+    if (!startDateInput || !expirationDisplay) {
+      console.log('Required elements not found');
+      return;
+    }
+    
+    const dateValue = startDateInput.value;
     if (!dateValue || dateValue.length < 10) {
-      insuranceExpirationDisplay.querySelector('.expiration-date').textContent = '--';
+      expirationDisplay.querySelector('.expiration-date').textContent = '--';
       return;
     }
 
     // Parse DD.MM.YYYY format
     const parts = dateValue.split('.');
-    if (parts.length !== 3) return;
+    if (parts.length !== 3) {
+      expirationDisplay.querySelector('.expiration-date').textContent = '--';
+      return;
+    }
     
     const day = parseInt(parts[0], 10);
     const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
@@ -6354,20 +6371,29 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const startDate = new Date(year, month, day);
     if (isNaN(startDate.getTime())) {
-      insuranceExpirationDisplay.querySelector('.expiration-date').textContent = '--';
+      expirationDisplay.querySelector('.expiration-date').textContent = '--';
       return;
     }
 
-    const duration = duration1?.checked ? 1 : 3;
+    // Always default to 1 year
+    let duration = 1;
+    const duration3Radio = document.getElementById('duration3');
+    if (duration3Radio?.checked) {
+      duration = 3;
+    }
+    
     const endDate = new Date(startDate);
     endDate.setFullYear(endDate.getFullYear() + duration);
     
-    // Format date as "Month Day, Year" (e.g., "October 6, 2026")
+    // Format date as "Month Day, Year"
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 
                     'July', 'August', 'September', 'October', 'November', 'December'];
     const formattedEndDate = `${months[endDate.getMonth()]} ${endDate.getDate()}, ${endDate.getFullYear()}`;
     
-    insuranceExpirationDisplay.querySelector('.expiration-date').textContent = formattedEndDate;
+    const expirationElement = expirationDisplay.querySelector('.expiration-date');
+    if (expirationElement) {
+      expirationElement.textContent = formattedEndDate;
+    }
   }
 
   if (duration1) {
@@ -6377,6 +6403,16 @@ document.addEventListener('DOMContentLoaded', function() {
   if (duration3) {
     duration3.addEventListener('change', calculateEndDate);
   }
+
+  // Calculate initial expiration date if start date is already filled
+  if (appInsuranceStartDate && appInsuranceStartDate.value) {
+    calculateEndDate();
+  }
+
+  // Force calculation after DOM is fully ready
+  setTimeout(() => {
+    calculateEndDate();
+  }, 100);
 
   // Handle previous insurance toggle
   const prevInsYes = document.getElementById('prevInsYes');
@@ -6656,12 +6692,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const insuranceEntry = document.createElement('div');
     insuranceEntry.className = 'insurance-entry';
     insuranceEntry.id = `insurance-entry-${insuranceCounter}`;
-    insuranceEntry.innerHTML = `
-      <div class="insurance-entry-header">
-        <span class="insurance-entry-title">${insuranceCounter}. Vorversicherung</span>
+    
+    // Only show remove button for additional entries (not the first one)
+    const removeButtonHtml = insuranceCounter > 1 ? `
         <button type="button" class="remove-insurance-btn" onclick="removeInsuranceEntry(${insuranceCounter})">
           Entfernen
-        </button>
+        </button>` : '';
+    
+    insuranceEntry.innerHTML = `
+      <div class="insurance-entry-header">
+        <span class="insurance-entry-title">${insuranceCounter}. Vorversicherung</span>${removeButtonHtml}
       </div>
       <div class="form-row">
         <div class="form-group full-width">
@@ -6717,6 +6757,34 @@ document.addEventListener('DOMContentLoaded', function() {
         const title = entry.querySelector('.insurance-entry-title');
         if (title) {
           title.textContent = `${insuranceCounter}. Vorversicherung`;
+        }
+        
+        // Update the entry ID
+        entry.id = `insurance-entry-${insuranceCounter}`;
+        
+        // Handle remove button visibility: first entry should not have remove button
+        const removeBtn = entry.querySelector('.remove-insurance-btn');
+        if (insuranceCounter === 1) {
+          // First entry - remove the button if it exists
+          if (removeBtn) {
+            removeBtn.remove();
+          }
+        } else {
+          // Additional entries - ensure remove button exists
+          if (!removeBtn) {
+            const header = entry.querySelector('.insurance-entry-header');
+            if (header) {
+              const newRemoveBtn = document.createElement('button');
+              newRemoveBtn.type = 'button';
+              newRemoveBtn.className = 'remove-insurance-btn';
+              newRemoveBtn.onclick = () => removeInsuranceEntry(insuranceCounter);
+              newRemoveBtn.textContent = 'Entfernen';
+              header.appendChild(newRemoveBtn);
+            }
+          } else {
+            // Update the onclick handler with the new counter
+            removeBtn.onclick = () => removeInsuranceEntry(insuranceCounter);
+          }
         }
       });
     }
