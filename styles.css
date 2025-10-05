@@ -92,8 +92,8 @@
 
         /* Footer Styles */
         .site-footer {
-            background: #ffffff;
-            border-top: 1px solid #e9ecef;
+            background: var(--primary-blue);
+            border-top: 1px solid var(--primary-blue-hover);
             margin-top: 0;
             padding: 1rem;
             width: 100%;
@@ -111,7 +111,7 @@
         }
 
         .footer-container p {
-            color: #9ca3af;
+            color: #ffffff;
             margin: 0;
             font-size: 0.9rem;
             font-weight: 400;
@@ -124,7 +124,7 @@
         }
 
         .footer-links a {
-            color: #e91e63;
+            color: #ffffff;
             text-decoration: underline;
             font-weight: 600;
             font-size: 0.9rem;
@@ -132,7 +132,7 @@
         }
 
         .footer-links a:hover {
-            color: #c2185b;
+            color: rgba(255, 255, 255, 0.8);
         }
 
         @media (max-width: 768px) {
