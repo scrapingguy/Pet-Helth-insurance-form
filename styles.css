@@ -152,6 +152,9 @@
             border-radius: var(--radius-lg);
             box-shadow: 0 12px 32px rgba(255, 140, 66, 0.25);
             text-align: center;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
 
         .section-banner h1 {
@@ -166,6 +169,19 @@
             color: rgba(255, 255, 255, 0.9);
             margin: 0 auto;
             max-width: 720px;
+        }
+
+        .section-banner img {
+            max-width: 100%;
+            height: auto;
+            margin-top: var(--spacing-md);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            max-height: 300px;
+            object-fit: contain;
+            position: relative;
+            z-index: 2;
         }
 
         /* CSS Reset & Base Styles */
@@ -215,6 +231,14 @@
         @media (max-width: 768px) {
             .full-screen-scroll {
                 padding: var(--spacing-sm);
+                padding-top: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .full-screen-scroll {
+                padding: var(--spacing-sm);
+                padding-top: 85px;
             }
         }
 
@@ -273,6 +297,8 @@
             padding: var(--card-padding);
             margin: 0 auto;
             width: min(100%, var(--layout-max-width));
+            position: relative;
+            z-index: 10;
         }
 
         .embedded-full .form-card {
@@ -1656,8 +1682,11 @@
                 border-radius: var(--radius-sm);
             }
 
-            .section-banner {
-                margin: 0 0 var(--spacing-lg);
+            .section-banner {   
+                margin-top: 0;
+                margin-bottom: var(--spacing-lg);
+                margin-left: 0;
+                margin-right: 0;
                 padding: var(--spacing-lg) var(--spacing-md);
                 border-radius: var(--radius-md);
             }
@@ -1668,6 +1697,11 @@
 
             .section-banner p {
                 font-size: 0.9rem;
+            }
+
+            .section-banner img {
+                max-height: 200px;
+                margin-top: var(--spacing-sm);
             }
 
             .step-progress {
