@@ -375,31 +375,31 @@
               </div>
             </div>
 
-            <div class="form-navigation">
-              <button
-                type="button"
-                class="nav-button secondary"
-                id="prevStepBtn">
-                Zurück
-              </button>
-              <button type="button" class="nav-button primary" id="nextStepBtn">
-                Weiter
-              </button>
-
-              <button
-                type="submit"
-                class="nav-button primary final-submit finalSubmitContainer"
-                id="berechnenButton">
-                <!-- <span class="button-icon">🚀</span> -->
-                <span class="button-text">Jetzt Tarif berechnen</span>
-                <!-- <span class="button-subtext"
-                  >Nur wenige Sekunden bis zu Ihrem Angebot!</span
-                > -->
-              </button>
-            </div>
-
             <!-- Submit Button -->
           </form>
+        </div>
+        <div class="form-navigation">
+          <button
+            type="button"
+            class="nav-button secondary"
+            id="prevStepBtn">
+            Zurück
+          </button>
+          <button type="button" class="nav-button primary" id="nextStepBtn">
+            Weiter
+          </button>
+
+          <button
+            type="submit"
+            class="nav-button primary final-submit finalSubmitContainer"
+            id="berechnenButton"
+            form="insuranceForm">
+            <!-- <span class="button-icon">🚀</span> -->
+            <span class="button-text">Jetzt Tarif berechnen</span>
+            <!-- <span class="button-subtext"
+              >Nur wenige Sekunden bis zu Ihrem Angebot!</span
+            > -->
+          </button>
         </div>
       </section>
       <section data-iframe-size id="pricingScreen" class="app-screen" hidden>
@@ -631,14 +631,14 @@
                 </div>
               </div>
             </div>
-            <div class="action-buttons">
-              <button class="btn-back" type="button" onclick="goBackToForm()">
-                ← Zurück
-              </button>
-              <button class="btn-continue" id="continueBtn" onclick="proceedToApplication()">
-                Zur Antragstellung →
-              </button>
-            </div>
+          </div>
+          <div class="action-buttons">
+            <button class="btn-back" type="button" onclick="goBackToForm()">
+              ← Zurück
+            </button>
+            <button class="btn-continue" id="continueBtn" onclick="proceedToApplication()">
+              Zur Antragstellung →
+            </button>
           </div>
         </section>
 
@@ -699,15 +699,14 @@
                 </div>
               </div>
             </div>
-
-            <div class="action-buttons">
-              <button class="btn-primary" type="button" onclick="window.print()">
-                📄 Seite drucken
-              </button>
-              <button class="btn-secondary" type="button" onclick="goBackToForm()">
-                🏠 Zur Startseite
-              </button>
-            </div>
+          </div>
+          <div class="action-buttons">
+            <button class="btn-primary" type="button" onclick="window.print()">
+              📄 Seite drucken
+            </button>
+            <button class="btn-secondary" type="button" onclick="goBackToForm()">
+              🏠 Zur Startseite
+            </button>
           </div>
         </section>
       </section>
@@ -806,14 +805,7 @@
                 <div class="form-row">
                   <div class="form-group full-width">
                     <label for="appPhone">Mobilfunknummer</label>
-                    <div class="phone-input-group">
-                      <select id="appCountryCode" name="countryCode" class="form-select country-code-select">
-                        <option value="+49">+49</option>
-                        <option value="+43">+43</option>
-                        <option value="+41">+41</option>
-                      </select>
-                      <input type="tel" id="appPhone" name="phone" class="form-input phone-number-input" required>
-                    </div>
+                    <input type="tel" id="appPhone" name="phone" class="form-input" placeholder="+49 123 456 7890" required>
                   </div>
                 </div>
 
@@ -1126,13 +1118,11 @@
                   <span>Ich habe die Datenschutzerklärung gelesen und stimme zu</span>
                 </label>
               </div>
-
-              <div class="action-buttons">
-                <button type="button" class="btn-back" onclick="goBackToPricing()">← Zurück</button>
-                <button type="submit" class="btn-continue">Antrag absenden</button>
-              </div>
             </form>
-         
+        </div>
+        <div class="action-buttons">
+          <button type="button" class="btn-back" onclick="goBackToPricing()">← Zurück</button>
+          <button type="submit" class="btn-continue" form="applicationForm">Antrag absenden</button>
         </div>
       </section>
     </main>

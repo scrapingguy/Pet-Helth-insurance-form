@@ -380,11 +380,13 @@
                 }
 
                 .form-navigation {
+                    max-width: 700px;
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                     gap: var(--spacing-md);
-                    margin-top: var(--spacing-xl);
+                    margin: var(--spacing-xl) auto var(--spacing-2xl) auto;
+                    padding: 0 var(--layout-gutter);
                 }
 
                 .nav-button {
@@ -2197,6 +2199,7 @@ body {
 .comparison-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 .pricing-section-header-row {
     background: var(--background-secondary);
@@ -2409,6 +2412,7 @@ body {
 .plan-col {
     width: 20%;
     text-align: center;
+    vertical-align: top;
 }
 
 
@@ -2946,7 +2950,8 @@ body {
     align-items: center;
     gap: 20px;
     width: min(520px, 100%);
-    margin: 0 auto;
+    margin: 30px auto 40px auto;
+    padding: 0 var(--layout-gutter);
 }
 
 .btn-back,
@@ -3632,22 +3637,6 @@ select:focus {
         flex: 100%;
       }
 
-            .phone-input-group {
-                display: flex;
-                align-items: center;
-                gap: var(--spacing-sm);
-            }
-
-            .phone-input-group .country-code-select {
-                flex: 0 0 110px;
-                max-width: 140px;
-            }
-
-            .phone-input-group .phone-number-input {
-                flex: 1 1 auto;
-                min-width: 0;
-            }
-
       .form-group label {
         display: block;
         margin-bottom: var(--spacing-sm);
@@ -3995,22 +3984,6 @@ select:focus {
         .radio-group {
           flex-direction: column;
         }
-
-                .phone-input-group {
-                    flex-direction: column;
-                    align-items: stretch;
-                    gap: var(--spacing-sm);
-                }
-
-                .phone-input-group .country-code-select {
-                    flex: 1 1 auto;
-                    width: 100%;
-                    max-width: none;
-                }
-
-                .phone-input-group .phone-number-input {
-                    width: 100%;
-                }
 
                 /* Mobile styles for summary toggle */
                 .summary-toggle-btn {
