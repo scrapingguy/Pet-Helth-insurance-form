@@ -3105,14 +3105,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Environment - convert to uppercase for cats ONLY
-    const haltung = document.querySelector(
+    const haltungElement = document.querySelector(
       'input[name="haltung"]:checked'
-    ).value;
+    );
     let environment = "";
-    if (haltung === "wohnung") {
-      environment = "INDOOR";
-    } else if (haltung === "freigang") {
-      environment = "OUTDOOR";
+    if (haltungElement) {
+      const haltung = haltungElement.value;
+      if (haltung === "wohnung") {
+        environment = "INDOOR";
+      } else if (haltung === "freigang") {
+        environment = "OUTDOOR";
+      }
     }
 
     // Sterilized/Neutered status
@@ -3671,9 +3674,14 @@ document.addEventListener("DOMContentLoaded", function () {
     // Check radio button fields
     const radioFields = [
       { name: "kastriert", label: "Kastration/Sterilisation" },
-      { name: "haltung", label: "Haltungsart" },
       { name: "gesundheitsprobleme", label: "Gesundheitsprobleme" },
     ];
+
+    // Only validate housing for cats
+    const selectedAnimal = tierKategorieSelect?.value || 'katze';
+    if (selectedAnimal === 'katze') {
+      radioFields.push({ name: "haltung", label: "Haltungsart" });
+    }
 
     radioFields.forEach((field) => {
       const checked = document.querySelector(
@@ -6278,100 +6286,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (addInsuranceBtn) {
     addInsuranceBtn.addEventListener('click', addInsuranceEntry);
-  }
-
-  // ===== Pet Identification Section Logic =====
-  const petIdChip = document.getElementById('petIdChip');
-  const petIdTattoo = document.getElementById('petIdTattoo');
-  const petIdNone = document.getElementById('petIdNone');
-  const chipNumberContainer = document.getElementById('chipNumberContainer');
-  const tattooNumberContainer = document.getElementById('tattooNumberContainer');
-  const appPetName = document.getElementById('appPetName');
-  const petNameError = document.getElementById('petNameError');
-  const appChipNumber = document.getElementById('appChipNumber');
-  const chipNumberError = document.getElementById('chipNumberError');
-
-  // Toggle chip/tattoo number fields based on identification type
-  function handleIdentificationChange() {
-    if (!chipNumberContainer || !tattooNumberContainer) return;
-    
-    if (petIdChip?.checked) {
-      chipNumberContainer.style.display = 'flex';
-      tattooNumberContainer.style.display = 'none';
-      appChipNumber.setAttribute('required', 'required');
-      document.getElementById('appTattooNumber')?.removeAttribute('required');
-    } else if (petIdTattoo?.checked) {
-      chipNumberContainer.style.display = 'none';
-      tattooNumberContainer.style.display = 'flex';
-      appChipNumber?.removeAttribute('required');
-      document.getElementById('appTattooNumber')?.setAttribute('required', 'required');
-    } else {
-      chipNumberContainer.style.display = 'none';
-      tattooNumberContainer.style.display = 'none';
-      appChipNumber?.removeAttribute('required');
-      document.getElementById('appTattooNumber')?.removeAttribute('required');
-    }
-  }
-
-  if (petIdChip) {
-    petIdChip.addEventListener('change', handleIdentificationChange);
-  }
-  if (petIdTattoo) {
-    petIdTattoo.addEventListener('change', handleIdentificationChange);
-  }
-  if (petIdNone) {
-    petIdNone.addEventListener('change', handleIdentificationChange);
-  }
-
-  // Validate pet name
-  if (appPetName) {
-    appPetName.addEventListener('blur', function() {
-      if (!this.value.trim()) {
-        this.classList.add('error');
-        if (petNameError) {
-          petNameError.style.display = 'flex';
-        }
-      } else {
-        this.classList.remove('error');
-        if (petNameError) {
-          petNameError.style.display = 'none';
-        }
-      }
-    });
-
-    appPetName.addEventListener('input', function() {
-      if (this.value.trim()) {
-        this.classList.remove('error');
-        if (petNameError) {
-          petNameError.style.display = 'none';
-        }
-      }
-    });
-  }
-
-  // Validate chip number
-  if (appChipNumber) {
-    appChipNumber.addEventListener('blur', function() {
-      if (petIdChip?.checked && !this.value.trim()) {
-        this.classList.add('error');
-        if (chipNumberError) {
-          chipNumberError.style.display = 'flex';
-        }
-      } else {
-        this.classList.remove('error');
-        if (chipNumberError) {
-          chipNumberError.style.display = 'none';
-        }
-      }
-    });
-
-    appChipNumber.addEventListener('input', function() {
-      if (this.value.trim()) {
-        this.classList.remove('error');
-        if (chipNumberError) {
-          chipNumberError.style.display = 'none';
-        }
-      }
-    });
   }
 });
