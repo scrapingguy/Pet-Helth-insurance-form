@@ -1114,6 +1114,40 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // Helper function to add backspace handling for date inputs
+  function addDateInputBackspaceHandler(input) {
+    if (input) {
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Backspace") {
+          const cursorPosition = this.selectionStart;
+          const value = this.value;
+          
+          // If the character before cursor is a dot, remove it along with the preceding number
+          if (cursorPosition > 0 && value[cursorPosition - 1] === ".") {
+            e.preventDefault();
+            let newValue;
+            
+            // Remove the dot and the character before it (if it exists)
+            if (cursorPosition > 1) {
+              newValue = value.substring(0, cursorPosition - 2) + value.substring(cursorPosition);
+            } else {
+              newValue = value.substring(cursorPosition);
+            }
+            
+            this.value = newValue;
+            this.setSelectionRange(Math.max(0, cursorPosition - 2), Math.max(0, cursorPosition - 2));
+            
+            // Don't call validateDateInput here as it would add dots back
+            // Just trigger completion check if needed
+            if (this.id === "geburtsdatum") {
+              checkFormCompletion();
+            }
+          }
+        }
+      });
+    }
+  }
+
   // Function to check form completion and update progress
   function checkFormCompletion() {
     let completedSteps = 0;
@@ -2952,6 +2986,9 @@ document.addEventListener("DOMContentLoaded", function () {
       validateDateInput(this);
       checkFormCompletion();
     });
+
+    // Add backspace handling for date input
+    addDateInputBackspaceHandler(birthDateInput);
   }
 
   // Neutering radio buttons
@@ -5739,30 +5776,22 @@ document.addEventListener('DOMContentLoaded', function() {
   const birthDateInput = document.getElementById('appBirthDate');
   if (birthDateInput) {
     birthDateInput.addEventListener('input', function() {
-      let value = this.value.replace(/\D/g, '');
-      if (value.length >= 2) {
-        value = value.substring(0, 2) + '.' + value.substring(2);
-      }
-      if (value.length >= 5) {
-        value = value.substring(0, 5) + '.' + value.substring(5, 9);
-      }
-      this.value = value;
+      validateDateInput(this);
     });
+    
+    // Add backspace handling for date input
+    addDateInputBackspaceHandler(birthDateInput);
   }
 
   // Insurance start date formatting
   const insuranceStartInput = document.getElementById('appInsuranceStartDate');
   if (insuranceStartInput) {
     insuranceStartInput.addEventListener('input', function() {
-      let value = this.value.replace(/\D/g, '');
-      if (value.length >= 2) {
-        value = value.substring(0, 2) + '.' + value.substring(2);
-      }
-      if (value.length >= 5) {
-        value = value.substring(0, 5) + '.' + value.substring(5, 9);
-      }
-      this.value = value;
+      validateDateInput(this);
     });
+    
+    // Add backspace handling for date input
+    addDateInputBackspaceHandler(insuranceStartInput);
   }
 
   // IBAN formatting and validation
