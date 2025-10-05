@@ -125,6 +125,13 @@ function showScreen(targetId) {
     loadSelectionData();
     initializeCalendly();
   }
+
+  if (targetId === "applicationScreen") {
+    // Auto-fill location data when switching to application screen
+    setTimeout(() => {
+      autoFillApplicationData();
+    }, 100);
+  }
 }
 
 function goBackToForm() {
@@ -138,6 +145,95 @@ function goBackToPricing() {
 window.showScreen = showScreen;
 window.goBackToForm = goBackToForm;
 window.goBackToPricing = goBackToPricing;
+
+// Global postal code to city mapping
+window.plzCityMap = {
+  // Major cities
+  "01067": "Dresden",
+  10115: "Berlin",
+  20095: "Hamburg",
+  80331: "München",
+  50667: "Köln",
+  60311: "Frankfurt am Main",
+  70173: "Stuttgart",
+  40213: "Düsseldorf",
+  30159: "Hannover",
+  90403: "Nürnberg",
+  "04109": "Leipzig",
+  "06108": "Halle (Saale)",
+  18055: "Rostock",
+  24103: "Kiel",
+  28195: "Bremen",
+  36037: "Fulda",
+  45127: "Essen",
+  47051: "Duisburg",
+  48143: "Münster",
+  49074: "Osnabrück",
+  52062: "Aachen",
+  53111: "Bonn",
+  55116: "Mainz",
+  56068: "Koblenz",
+  57072: "Siegen",
+  58095: "Hagen",
+  63065: "Offenbach am Main",
+  64283: "Darmstadt",
+  65183: "Wiesbaden",
+  66111: "Saarbrücken",
+  67059: "Ludwigshafen am Rhein",
+  68159: "Mannheim",
+  69115: "Heidelberg",
+  72070: "Tübingen",
+  76133: "Karlsruhe",
+  79098: "Freiburg im Breisgau",
+  81667: "München",
+  86150: "Augsburg",
+  89073: "Ulm",
+  93047: "Regensburg",
+  95444: "Bayreuth",
+  97070: "Würzburg",
+  98527: "Suhl",
+  99084: "Erfurt",
+};
+
+// Global function to auto-fill application form data from main form
+window.autoFillApplicationData = function() {
+  const mainFormPostalCode = document.getElementById('plz');
+  const appPostalCodeInput = document.getElementById('appPostalCode');
+  const appCityInput = document.getElementById('appCity');
+  
+  if (mainFormPostalCode && mainFormPostalCode.value && appPostalCodeInput) {
+    const postalCode = mainFormPostalCode.value;
+    
+    // Auto-fill postal code
+    appPostalCodeInput.value = postalCode;
+    
+    // Auto-fill city using the global plzCityMap
+    if (appCityInput && window.plzCityMap && window.plzCityMap[postalCode]) {
+      appCityInput.value = window.plzCityMap[postalCode];
+      
+      // Add visual feedback for city auto-fill
+      appCityInput.style.background = '#e8f5e8';
+      appCityInput.style.transition = 'background-color 0.3s ease';
+      
+      setTimeout(() => {
+        appCityInput.style.background = '';
+      }, 1500);
+    }
+    
+    // Add visual feedback that the postal code field was auto-filled
+    appPostalCodeInput.style.background = '#e8f5e8';
+    appPostalCodeInput.style.transition = 'background-color 0.3s ease';
+    
+    setTimeout(() => {
+      appPostalCodeInput.style.background = '';
+    }, 1500);
+    
+    console.log('Auto-filled postal code:', postalCode);
+    if (window.plzCityMap && window.plzCityMap[postalCode]) {
+      console.log('Auto-filled city:', window.plzCityMap[postalCode]);
+    }
+  }
+};
 
 function getPricingConfigForAnimal(animalKey) {
   return PRICING_DATA_MAP[animalKey] || PRICING_DATA_MAP.katze;
@@ -1074,54 +1170,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   }
-
-  // German postal code to city mapping (expanded dataset)
-  const plzCityMap = {
-    // Major cities
-    "01067": "Dresden",
-    10115: "Berlin",
-    20095: "Hamburg",
-    80331: "München",
-    50667: "Köln",
-    60311: "Frankfurt am Main",
-    70173: "Stuttgart",
-    40213: "Düsseldorf",
-    30159: "Hannover",
-    90403: "Nürnberg",
-    "04109": "Leipzig",
-    "06108": "Halle (Saale)",
-    18055: "Rostock",
-    24103: "Kiel",
-    28195: "Bremen",
-    36037: "Fulda",
-    45127: "Essen",
-    47051: "Duisburg",
-    48143: "Münster",
-    49074: "Osnabrück",
-    52062: "Aachen",
-    53111: "Bonn",
-    55116: "Mainz",
-    56068: "Koblenz",
-    57072: "Siegen",
-    58095: "Hagen",
-    63065: "Offenbach am Main",
-    64283: "Darmstadt",
-    65183: "Wiesbaden",
-    66111: "Saarbrücken",
-    67059: "Ludwigshafen am Rhein",
-    68159: "Mannheim",
-    69115: "Heidelberg",
-    72070: "Tübingen",
-    76133: "Karlsruhe",
-    79098: "Freiburg im Breisgau",
-    81667: "München",
-    86150: "Augsburg",
-    89073: "Ulm",
-    93047: "Regensburg",
-    95444: "Bayreuth",
-    97070: "Würzburg",
-    99084: "Erfurt",
-  };
 
   // Breed data for different animal types
   const breedData = {
@@ -3055,7 +3103,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Get form values
     const zipCode = document.getElementById("plz").value;
-    const city = plzCityMap[zipCode] || "Unknown City";
+    const city = window.plzCityMap[zipCode] || "Unknown City";
 
     // Animal type - convert to uppercase
     const tierKategorie = document.getElementById("tierKategorie").value;
@@ -5665,7 +5713,27 @@ function populateApplicationForm(selectedData) {
 document.addEventListener('DOMContentLoaded', function() {
   const applicationForm = document.getElementById('applicationForm');
   
-  if (!applicationForm) return;
+  console.log('Application form found:', applicationForm);
+  if (!applicationForm) {
+    console.error('Application form not found!');
+    return;
+  }
+
+  // Auto-fill when application form loads
+  autoFillApplicationData();
+
+  // Also auto-fill if user changes postal code in main form while on application
+  const mainFormPostalCode = document.getElementById('plz');
+  if (mainFormPostalCode) {
+    mainFormPostalCode.addEventListener('input', function() {
+      // Delay to allow for proper input processing
+      setTimeout(() => {
+        if (currentScreenId === 'applicationScreen') {
+          autoFillApplicationData();
+        }
+      }, 100);
+    });
+  }
   
   // Birth date formatting for application form
   const birthDateInput = document.getElementById('appBirthDate');
@@ -5741,6 +5809,111 @@ document.addEventListener('DOMContentLoaded', function() {
       const cleanIban = this.value.replace(/\s/g, '');
       if (cleanIban.length > 0 && (cleanIban.length !== 22 || !/^[A-Z]{2}[0-9]{20}$/.test(cleanIban))) {
         this.style.borderColor = '#d32f2f';
+      }
+    });
+  }
+
+  // Pet identification radio button logic
+  const petIdRadios = document.querySelectorAll('input[name="petIdentification"]');
+  const chipNumberContainer = document.getElementById('chipNumberContainer');
+  const tattooNumberContainer = document.getElementById('tattooNumberContainer');
+  const chipNumberInput = document.getElementById('appChipNumber');
+  const tattooNumberInput = document.getElementById('appTattooNumber');
+
+  petIdRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      // Hide all containers first
+      if (chipNumberContainer) chipNumberContainer.style.display = 'none';
+      if (tattooNumberContainer) tattooNumberContainer.style.display = 'none';
+      
+      // Clear inputs when hiding
+      if (chipNumberInput) chipNumberInput.value = '';
+      if (tattooNumberInput) tattooNumberInput.value = '';
+      
+      // Show relevant container based on selection
+      if (this.value === 'chip' && chipNumberContainer) {
+        chipNumberContainer.style.display = 'block';
+        if (chipNumberInput) chipNumberInput.setAttribute('required', '');
+      } else if (this.value === 'tattoo' && tattooNumberContainer) {
+        tattooNumberContainer.style.display = 'block';
+        if (tattooNumberInput) tattooNumberInput.setAttribute('required', '');
+      } else {
+        // Remove required attribute when "none" is selected
+        if (chipNumberInput) chipNumberInput.removeAttribute('required');
+        if (tattooNumberInput) tattooNumberInput.removeAttribute('required');
+      }
+    });
+  });
+
+  // Chip number validation - should be 15 digits
+  if (chipNumberInput) {
+    chipNumberInput.addEventListener('input', function() {
+      // Only allow numbers
+      this.value = this.value.replace(/\D/g, '');
+      
+      // Limit to 15 digits
+      if (this.value.length > 15) {
+        this.value = this.value.substring(0, 15);
+      }
+      
+      // Validation styling
+      const chipError = document.getElementById('chipNumberError');
+      if (this.value.length === 15) {
+        this.style.borderColor = '#28a745';
+        if (chipError) chipError.style.display = 'none';
+      } else if (this.value.length > 0) {
+        this.style.borderColor = '#ddd';
+        if (chipError) chipError.style.display = 'none';
+      }
+    });
+
+    chipNumberInput.addEventListener('blur', function() {
+      const chipError = document.getElementById('chipNumberError');
+      if (this.hasAttribute('required') && this.value.length > 0 && this.value.length !== 15) {
+        this.style.borderColor = '#d32f2f';
+        if (chipError) {
+          chipError.style.display = 'block';
+          chipError.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align: middle; margin-right: 4px;">
+              <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm1 12H7V7h2v5zm0-6H7V4h2v2z" fill="#E20000"/>
+            </svg>
+            Chipnummer muss genau 15 Ziffern haben.
+          `;
+        }
+      } else if (this.hasAttribute('required') && this.value.length === 0) {
+        this.style.borderColor = '#d32f2f';
+        if (chipError) chipError.style.display = 'block';
+      } else {
+        if (chipError) chipError.style.display = 'none';
+      }
+    });
+  }
+
+  // Summary toggle functionality
+  const summaryToggleBtn = document.getElementById('summaryToggleBtn');
+  const summaryContent = document.getElementById('summaryContent');
+  
+  if (summaryToggleBtn && summaryContent) {
+    summaryToggleBtn.addEventListener('click', function() {
+      const isExpanded = summaryContent.classList.contains('show');
+      const toggleText = this.querySelector('.toggle-text');
+      const toggleArrow = this.querySelector('.toggle-arrow');
+      
+      if (isExpanded) {
+        // Hide summary
+        summaryContent.classList.remove('show');
+        summaryContent.style.display = 'none';
+        this.classList.remove('expanded');
+        if (toggleText) toggleText.textContent = 'Zusammenfassung anzeigen';
+      } else {
+        // Show summary
+        summaryContent.classList.add('show');
+        summaryContent.style.display = 'block';
+        this.classList.add('expanded');
+        if (toggleText) toggleText.textContent = 'Zusammenfassung ausblenden';
+        
+        // Update summary content when showing
+        updateApplicationSummary();
       }
     });
   }
@@ -5824,29 +5997,40 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Handle form submission
+  console.log('Adding form submission event listener');
   applicationForm.addEventListener('submit', function(e) {
+    console.log('Form submitted!');
     e.preventDefault();
     
     // Validate required fields
     const requiredFields = applicationForm.querySelectorAll('[required]');
     let isValid = true;
     
+    console.log('Found required fields:', requiredFields.length);
+    
     requiredFields.forEach(field => {
+      console.log('Checking field:', field.name, 'value:', field.value, 'type:', field.type);
       if (!field.value && field.type !== 'radio' && field.type !== 'checkbox') {
+        console.log('Field invalid:', field.name);
         isValid = false;
         field.style.borderColor = '#d32f2f';
       } else if (field.type === 'radio') {
         const radioGroup = applicationForm.querySelectorAll(`input[name="${field.name}"]`);
         const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+        console.log('Radio group', field.name, 'checked:', isChecked);
         if (!isChecked) {
+          console.log('Radio group invalid:', field.name);
           isValid = false;
         }
       } else if (field.type === 'checkbox' && field.hasAttribute('required') && !field.checked) {
+        console.log('Checkbox invalid:', field.name);
         isValid = false;
       } else {
         field.style.borderColor = '#ddd';
       }
     });
+
+    console.log('Form validation result:', isValid);
 
     if (isValid) {
       // Collect form data
@@ -5860,17 +6044,46 @@ document.addEventListener('DOMContentLoaded', function() {
       // Store application data
       sessionStorage.setItem('applicationData', JSON.stringify(applicationData));
       
-      alert('Vielen Dank für Ihren Antrag! Wir werden uns in Kürze bei Ihnen melden.');
-      
-      console.log('Application Data:', applicationData);
-      
-      // Optionally redirect or show success message
-      // You could show the success screen here
-      // showScreen('successScreen');
+      // Show loading state
+      const submitButton = applicationForm.querySelector('button[type="submit"]');
+      if (submitButton) {
+        const originalText = submitButton.innerHTML;
+        submitButton.innerHTML = '⏳ Antrag wird übermittelt...';
+        submitButton.disabled = true;
+        
+        // Simulate form submission delay
+        setTimeout(() => {
+          console.log('Application Data:', applicationData);
+          
+          // Reset button
+          submitButton.innerHTML = originalText;
+          submitButton.disabled = false;
+          
+          // Redirect to thank you page
+          showScreen('successScreen');
+        }, 2000);
+      } else {
+        // Fallback if no submit button found
+        console.log('Application Data:', applicationData);
+        showScreen('successScreen');
+      }
     } else {
       alert('Bitte füllen Sie alle Pflichtfelder aus.');
     }
   });
+
+  // Backup: Direct click handler for submit button
+  const submitButton = applicationForm.querySelector('button[type="submit"], .btn-continue');
+  if (submitButton) {
+    console.log('Submit button found, adding click handler');
+    submitButton.addEventListener('click', function(e) {
+      console.log('Submit button clicked');
+      // The form submission handler above should handle this
+      // This is just for debugging
+    });
+  } else {
+    console.error('Submit button not found!');
+  }
 
   // ===== Insurance Section Logic =====
   let insuranceCounter = 0;
