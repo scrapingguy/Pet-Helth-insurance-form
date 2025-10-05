@@ -15,61 +15,61 @@
       }
 
       .success-section {
-        background: #f8f9fa;
+        background: var(--background-secondary);
       }
 
       .success-card {
-        background: white;
-        border-radius: 12px;
-        padding: 40px;
+        background: var(--background-primary);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-2xl);
         max-width: 900px;
         margin: 0 auto;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 20px var(--shadow-medium);
         text-align: center;
       }
 
       .success-icon {
         width: 80px;
         height: 80px;
-        background: #28a745;
-        color: white;
+        background: var(--accent-green);
+        color: var(--background-primary);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 40px;
+        font-size: var(--font-size-3xl);
         font-weight: bold;
-        margin: 0 auto 30px;
+        margin: 0 auto var(--spacing-xl);
       }
 
       .success-card h1 {
-        font-size: 32px;
-        color: #ff8c42;
-        margin-bottom: 20px;
+        font-size: var(--font-size-2xl);
+        color: var(--primary-blue);
+        margin-bottom: var(--spacing-lg);
       }
 
       .success-message {
-        font-size: 18px;
-        color: #666;
-        margin-bottom: 40px;
+        font-size: var(--font-size-lg);
+        color: var(--text-secondary);
+        margin-bottom: var(--spacing-2xl);
         line-height: 1.6;
       }
 
       .selection-summary {
-        margin-bottom: 40px;
+        margin-bottom: var(--spacing-2xl);
         text-align: left;
       }
 
       .selection-summary h3 {
-        color: #ff8c42;
-        margin-bottom: 20px;
+        color: var(--primary-blue);
+        margin-bottom: var(--spacing-lg);
         text-align: center;
       }
 
       .summary-details {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 8px;
+        background: var(--background-secondary);
+        padding: var(--spacing-lg);
+        border-radius: var(--radius-md);
         display: flex;
         justify-content: space-around;
       }
@@ -78,51 +78,51 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 5px;
+        gap: var(--spacing-xs);
       }
 
       .detail-item .label {
         font-weight: 600;
-        color: #333;
-        font-size: 14px;
+        color: var(--text-primary);
+        font-size: var(--font-size-sm);
       }
 
       .detail-item .value {
-        color: #666;
-        font-size: 16px;
+        color: var(--text-secondary);
+        font-size: var(--font-size-base);
       }
 
       .calendly-container {
-        margin: 30px 0;
-        border-radius: 8px;
+        margin: var(--spacing-xl) 0;
+        border-radius: var(--radius-md);
         overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 10px var(--shadow-medium);
       }
 
       .action-buttons {
         display: flex;
-        gap: 20px;
+        gap: var(--spacing-lg);
         justify-content: center;
-        margin-top: 30px;
+        margin-top: var(--spacing-xl);
       }
 
       @media (max-width: 768px) {
         .success-card {
-          margin: 20px;
-          padding: 30px 20px;
+          margin: var(--spacing-lg);
+          padding: var(--spacing-xl) var(--spacing-lg);
         }
 
         .action-buttons {
           flex-direction: column;
-          gap: 10px;
+          gap: var(--spacing-md);
         }
 
         .success-card h1 {
-          font-size: 24px;
+          font-size: var(--font-size-xl);
         }
 
         .success-message {
-          font-size: 16px;
+          font-size: var(--font-size-base);
         }
       }
 
@@ -130,78 +130,78 @@
       .application-container {
         max-width: 800px;
         margin: 0 auto;
-        background: white;
+        background: var(--background-primary);
       }
 
       .application-header {
-        background: linear-gradient(135deg, #003976 0%, #0056b3 100%);
-        color: white;
-        padding: 2rem;
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-hover) 100%);
+        color: var(--background-primary);
+        padding: var(--spacing-xl);
         text-align: center;
       }
 
       .application-header h1 {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--spacing-sm);
       }
 
       .application-header p {
-        font-size: 1.1rem;
+        font-size: var(--font-size-lg);
         opacity: 0.9;
       }
 
       .application-progress-bar {
-        background: #e0e0e0;
+        background: var(--border-light);
         height: 4px;
-        border-radius: 2px;
-        margin: 1rem 0;
+        border-radius: var(--radius-sm);
+        margin: var(--spacing-md) 0;
         overflow: hidden;
       }
 
       .application-progress-fill {
-        background: #003976;
+        background: var(--primary-blue);
         height: 100%;
         width: 100%;
         transition: width 0.3s ease;
       }
 
       .application-form-container {
-        padding: 2rem;
+        padding: var(--spacing-xl);
       }
 
       .application-form-section {
-        margin-bottom: 2rem;
-        padding: 1.5rem;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        background: #fafafa;
+        margin-bottom: var(--spacing-xl);
+        padding: var(--spacing-lg);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        background: var(--background-secondary);
       }
 
       .application-form-section h3 {
-        color: #003976;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
+        color: var(--primary-blue);
+        margin-bottom: var(--spacing-sm);
+        font-size: var(--font-size-sm);
         font-weight: 600;
       }
 
       .application-form-section h2 {
-        color: #333;
-        margin-bottom: 0.5rem;
-        font-size: 1.8rem;
-        border-bottom: 2px solid #003976;
-        padding-bottom: 0.5rem;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-sm);
+        font-size: var(--font-size-xl);
+        border-bottom: 2px solid var(--primary-blue);
+        padding-bottom: var(--spacing-sm);
       }
 
       .section-description {
-        color: #666;
-        margin-bottom: 1.5rem;
-        font-size: 0.95rem;
+        color: var(--text-secondary);
+        margin-bottom: var(--spacing-lg);
+        font-size: var(--font-size-sm);
       }
 
       .form-row {
         display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
       }
 
       .form-group {
@@ -214,14 +214,14 @@
 
       .form-group label {
         display: block;
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--spacing-sm);
         font-weight: 600;
-        color: #333;
-        font-size: 0.95rem;
+        color: var(--text-primary);
+        font-size: var(--font-size-sm);
       }
 
       .required {
-        color: #d32f2f;
+        color: var(--accent-red);
       }
 
       .form-group input[type="text"],
@@ -229,53 +229,53 @@
       .form-group input[type="tel"],
       .form-group select {
         width: 100%;
-        padding: 0.8rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 1rem;
+        padding: var(--spacing-sm);
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius-sm);
+        font-size: var(--font-size-base);
         transition: border-color 0.3s ease;
       }
 
       .form-group input:focus,
       .form-group select:focus {
         outline: none;
-        border-color: #003976;
-        box-shadow: 0 0 0 3px rgba(0, 57, 118, 0.1);
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px var(--primary-blue-light);
       }
 
       .radio-group {
         display: flex;
-        gap: 1rem;
-        margin-top: 0.5rem;
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-sm);
       }
 
       .radio-group.horizontal {
         flex-direction: row;
-        gap: 2rem;
+        gap: var(--spacing-xl);
       }
 
       .summary-card {
-        background: white;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
+        background: var(--background-primary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
       }
 
       .summary-card h4 {
-        color: #003976;
-        margin-bottom: 1rem;
-        font-size: 1.2rem;
-        border-bottom: 1px solid #e0e0e0;
-        padding-bottom: 0.5rem;
+        color: var(--primary-blue);
+        margin-bottom: var(--spacing-md);
+        font-size: var(--font-size-lg);
+        border-bottom: 1px solid var(--border-light);
+        padding-bottom: var(--spacing-sm);
       }
 
       .summary-item {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 0.5rem;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #f0f0f0;
+        margin-bottom: var(--spacing-sm);
+        padding: var(--spacing-sm) 0;
+        border-bottom: 1px solid var(--border-light);
       }
 
       .summary-item:last-child {
@@ -283,48 +283,48 @@
       }
 
       .summary-total {
-        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-        border: 2px solid #003976;
-        border-radius: 12px;
-        padding: 2rem;
-        margin-top: 2rem;
+        background: linear-gradient(135deg, var(--background-secondary), var(--background-light));
+        border: 2px solid var(--primary-blue);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        margin-top: var(--spacing-xl);
         text-align: center;
       }
 
       .summary-total .summary-item {
         border: none;
         justify-content: center;
-        gap: 2rem;
+        gap: var(--spacing-xl);
       }
 
       .summary-total h3 {
-        color: #003976;
-        font-size: 1.5rem;
+        color: var(--primary-blue);
+        font-size: var(--font-size-xl);
       }
 
       .legal-notice {
         background: #fff3e0;
         border: 1px solid #ffcc02;
-        border-radius: 8px;
-        padding: 1rem;
-        margin: 1rem 0;
-        font-size: 0.9rem;
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+        margin: var(--spacing-md) 0;
+        font-size: var(--font-size-sm);
       }
 
       .legal-notice h4 {
         color: #f57c00;
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--spacing-sm);
       }
 
       .checkbox-option {
         display: flex;
         align-items: flex-start;
-        gap: 0.5rem;
+        gap: var(--spacing-sm);
         cursor: pointer;
       }
 
       .checkbox-option input[type="checkbox"] {
-        margin-top: 0.2rem;
+        margin-top: var(--spacing-xs);
       }
 
       @media (max-width: 768px) {
@@ -333,15 +333,15 @@
         }
 
         .application-header {
-          padding: 1.5rem 1rem;
+          padding: var(--spacing-lg) var(--spacing-md);
         }
 
         .application-header h1 {
-          font-size: 1.5rem;
+          font-size: var(--font-size-xl);
         }
 
         .application-form-container {
-          padding: 1rem;
+          padding: var(--spacing-md);
         }
 
         .form-row {
@@ -1052,46 +1052,47 @@
                 <div class="form-row">
                   <div class="form-group full-width">
                     <label for="appFirstName">Vorname <span class="required">*</span></label>
-                    <input type="text" id="appFirstName" name="firstName" required>
+                    <input type="text" id="appFirstName" name="firstName" class="form-input" required>
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group full-width">
                     <label for="appLastName">Nachname <span class="required">*</span></label>
-                    <input type="text" id="appLastName" name="lastName" required>
+                    <input type="text" id="appLastName" name="lastName" class="form-input" required>
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group">
                     <label for="appPostalCode">Postleitzahl <span class="required">*</span></label>
-                    <input type="text" id="appPostalCode" name="postalCode" pattern="[0-9]{5}" required>
+                    <input type="text" id="appPostalCode" name="postalCode" class="form-input plz-input" pattern="[0-9]{5}" maxlength="5" required>
                   </div>
                   <div class="form-group">
                     <label for="appCity">Wohnort <span class="required">*</span></label>
-                    <input type="text" id="appCity" name="city" required>
+                    <input type="text" id="appCity" name="city" class="form-input" required>
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group full-width">
                     <label for="appStreet">Straße <span class="required">*</span></label>
-                    <input type="text" id="appStreet" name="street" required>
+                    <input type="text" id="appStreet" name="street" class="form-input" required>
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group">
                     <label for="appHouseNumber">Hausnummer <span class="required">*</span></label>
-                    <input type="text" id="appHouseNumber" name="houseNumber" required>
+                    <input type="text" id="appHouseNumber" name="houseNumber" class="form-input" required>
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group full-width">
                     <label for="appBirthDate">Geburtsdatum <span class="required">*</span></label>
-                    <input type="text" id="appBirthDate" name="birthDate" placeholder="TT.MM.JJJJ" required>
+                    <input type="text" id="appBirthDate" name="birthDate" class="date-input" placeholder="TT.MM.JJJJ" required>
+                    <div class="input-help">💡 Format: TT.MM.JJJJ</div>
                   </div>
                 </div>
 
@@ -1099,12 +1100,12 @@
                   <div class="form-group full-width">
                     <label for="appPhone">Mobilfunknummer <span class="required">*</span></label>
                     <div style="display: flex; gap: 0.5rem;">
-                      <select id="appCountryCode" name="countryCode" style="width: 100px;">
+                      <select id="appCountryCode" name="countryCode" class="form-select" style="width: 100px;">
                         <option value="+49">+49</option>
                         <option value="+43">+43</option>
                         <option value="+41">+41</option>
                       </select>
-                      <input type="tel" id="appPhone" name="phone" style="flex: 1;" required>
+                      <input type="tel" id="appPhone" name="phone" class="form-input" style="flex: 1;" required>
                     </div>
                   </div>
                 </div>
@@ -1112,13 +1113,13 @@
                 <div class="form-row">
                   <div class="form-group full-width">
                     <label for="appEmail">📧 E-Mail <span class="required">*</span></label>
-                    <input type="email" id="appEmail" name="email" required>
+                    <input type="email" id="appEmail" name="email" class="form-input" required>
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group full-width">
-                    <p style="font-size: 0.9rem; color: #666; margin: 1rem 0;">
+                    <p class="info-text">
                       Ich möchte einmalig und unverbindlich eine E-Mail der Allianz Kunde und Markt GmbH erhalten.
                     </p>
                     <div class="radio-group horizontal">
@@ -1139,27 +1140,51 @@
 
               <!-- Step 2: Insurance Information -->
               <div class="application-form-section">
-                <h3>2 von 4</h3>
+                <h3>2 von 5</h3>
                 <h2>Angaben zur Versicherung</h2>
                 <p class="section-description">Nennen Sie uns hier Ihre bisherige Versicherung und legen Sie den Beginn Ihrer Allianz Versicherung fest.</p>
                 
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="appInsuranceStartDate">Gewünschter Versicherungsbeginn <span class="required">*</span></label>
-                    <input type="text" id="appInsuranceStartDate" name="insuranceStartDate" placeholder="TT.MM.JJJJ" required>
+                    <label for="appInsuranceStartDate">Desired start date of insurance <span class="required">*</span></label>
+                    <div class="date-input-wrapper">
+                      <input 
+                        type="text" 
+                        id="appInsuranceStartDate" 
+                        name="insuranceStartDate" 
+                        class="date-input" 
+                        placeholder="DD.MM.YYYY"
+                        maxlength="10"
+                        pattern="^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d$"
+                        required>
+                      <span class="calendar-icon">📅</span>
+                    </div>
+                    <div class="input-help" style="font-size: 11px; color: #666;">DD.MM.YYYY</div>
                   </div>
                   <div class="form-group">
-                    <label>Laufzeit <span class="required">*</span></label>
+                    <label for="appInsuranceEndDate">
+                      Insurance expiration: 
+                      <span class="info-icon" title="Das Versicherungsende wird automatisch basierend auf der gewählten Laufzeit berechnet">ⓘ</span>
+                    </label>
+                    <div class="insurance-expiration-display" id="insuranceExpirationDisplay">
+                      <span class="expiration-date">--</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label>Duration: <span class="required">*</span></label>
                     <div class="radio-group horizontal">
                       <label class="radio-option">
-                        <input type="radio" name="duration" value="1" checked required>
+                        <input type="radio" name="duration" value="1" id="duration1" checked required>
                         <span class="radio-custom"></span>
-                        <span>1 Jahr</span>
+                        <span>1 year</span>
                       </label>
                       <label class="radio-option">
-                        <input type="radio" name="duration" value="3" required>
+                        <input type="radio" name="duration" value="3" id="duration3" required>
                         <span class="radio-custom"></span>
-                        <span>3 Jahre</span>
+                        <span>3 years</span>
                       </label>
                     </div>
                   </div>
@@ -1167,41 +1192,129 @@
 
                 <div class="form-row">
                   <div class="form-group full-width">
-                    <label>Bestand bereits eine Tierkrankenversicherung? <span class="required">*</span></label>
+                    <label>Besteht oder bestand für Ihr Tier in den letzten 5 Jahren bereits eine Tierkrankenversicherung? <span class="required">*</span></label>
                     <div class="radio-group horizontal">
                       <label class="radio-option">
-                        <input type="radio" name="previousInsurance" value="ja" required>
+                        <input type="radio" name="previousInsurance" value="ja" id="prevInsYes" required>
                         <span class="radio-custom"></span>
                         <span>Ja</span>
                       </label>
                       <label class="radio-option">
-                        <input type="radio" name="previousInsurance" value="nein" required>
+                        <input type="radio" name="previousInsurance" value="nein" id="prevInsNo" required>
                         <span class="radio-custom"></span>
                         <span>Nein</span>
                       </label>
                     </div>
                   </div>
                 </div>
+
+                <!-- Previous Insurance Details Container -->
+                <div id="previousInsuranceContainer" style="display: none;">
+                  <div class="previous-insurance-list" id="previousInsuranceList">
+                    <!-- Insurance entries will be added here -->
+                  </div>
+                  <button type="button" class="add-insurance-btn" id="addInsuranceBtn">
+                    <span>+</span> Weitere Vorversicherung hinzufügen
+                  </button>
+                </div>
               </div>
 
-              <!-- Step 3: Account Data -->
+              <!-- Step 3: Pet Information -->
               <div class="application-form-section">
-                <h3>3 von 4</h3>
-                <h2 style="text-align: center;">Kontodaten</h2>
-                <p class="section-description" style="text-align: center;">Wir buchen den Beitrag erst zum gewünschten Versicherungsbeginn ab.</p>
+                <h3>3 von 5</h3>
+                <h2>Angaben zu Ihrem Tier</h2>
+                <p class="section-description">Um Ihr Tier im Schadenfall identifizieren zu können, benötigen wir noch ein paar Informationen.</p>
+                
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label for="appPetName">Name Ihres Tieres <span class="required">*</span></label>
+                    <input type="text" id="appPetName" name="petName" class="form-input" required>
+                    <div class="validation-error" id="petNameError" style="display: none;">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align: middle; margin-right: 4px;">
+                        <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm1 12H7V7h2v5zm0-6H7V4h2v2z" fill="#E20000"/>
+                      </svg>
+                      Bitte geben Sie den Namen Ihres Tieres an.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label>
+                      Art der Kennzeichnung 
+                      <span class="info-icon" title="Wählen Sie die Art der Kennzeichnung Ihres Tieres">ⓘ</span>
+                    </label>
+                    <div class="radio-group vertical">
+                      <label class="radio-option">
+                        <input type="radio" name="petIdentification" value="chip" id="petIdChip" required>
+                        <span class="radio-custom"></span>
+                        <span>Transpondernummer (Chip)</span>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="petIdentification" value="tattoo" id="petIdTattoo" required>
+                        <span class="radio-custom"></span>
+                        <span>Tätowierung</span>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="petIdentification" value="none" id="petIdNone" required>
+                        <span class="radio-custom"></span>
+                        <span>Keine</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Chip Number Field (shown when Chip is selected) -->
+                <div class="form-row" id="chipNumberContainer" style="display: none;">
+                  <div class="form-group full-width">
+                    <label for="appChipNumber">Chipnummer</label>
+                    <input type="text" id="appChipNumber" name="chipNumber" class="form-input" placeholder="15-stellige Chipnummer">
+                    <div class="validation-error" id="chipNumberError" style="display: none;">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align: middle; margin-right: 4px;">
+                        <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm1 12H7V7h2v5zm0-6H7V4h2v2z" fill="#E20000"/>
+                      </svg>
+                      Bitte geben Sie eine Chipnummer ein.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tattoo Number Field (shown when Tattoo is selected) -->
+                <div class="form-row" id="tattooNumberContainer" style="display: none;">
+                  <div class="form-group full-width">
+                    <label for="appTattooNumber">Tätowierungsnummer</label>
+                    <input type="text" id="appTattooNumber" name="tattooNumber" class="form-input" placeholder="Tätowierungsnummer">
+                  </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 20px;">
+                  <strong>Hinweis zum Vertrag</strong>
+                  <p style="margin: 8px 0 0 0; font-size: 13px; line-height: 1.5;">
+                    Änderung Ihres Versicherungsvertrages<br>
+                    Noch Vollendung des 3. Lebensjahres Ihres Tieres wird der Versicherungsbeitrag 
+                    <strong>jährlich um bis zu 5 % erhöht</strong>. Die Leistungen bleiben unverändert. Hier 
+                    über informieren wir Sie rechtzeitig.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Step 4: Account Data -->
+              <div class="application-form-section">
+                <h3>4 von 5</h3>
+                <h2 class="section-title">Kontodaten</h2>
+                <p class="section-description">Wir buchen den Beitrag erst zum gewünschten Versicherungsbeginn ab.</p>
                 
                 <div class="form-row">
                   <div class="form-group full-width">
                     <label for="appAccountHolder">Kontoinhaber <span class="required">*</span></label>
-                    <input type="text" id="appAccountHolder" name="accountHolder" required>
+                    <input type="text" id="appAccountHolder" name="accountHolder" class="form-input" required>
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group full-width">
                     <label for="appIban">IBAN <span class="required">*</span></label>
-                    <input type="text" id="appIban" name="iban" placeholder="DE95 2022 0800 0052 2738 94" maxlength="27" required>
-                    <small style="color: #666; font-size: 0.85rem;">Format: DE + 20 Ziffern</small>
+                    <input type="text" id="appIban" name="iban" class="form-input" placeholder="DE95 2022 0800 0052 2738 94" maxlength="27" required>
+                    <div class="input-help">Format: DE + 20 Ziffern</div>
                   </div>
                 </div>
 
@@ -1216,11 +1329,11 @@
                 </div>
               </div>
 
-              <!-- Step 4: Summary -->
+              <!-- Step 5: Summary -->
               <div class="application-form-section">
-                <h3>4 von 4</h3>
-                <h2 style="text-align: center;">Zusammenfassung</h2>
-                <p class="section-description" style="text-align: center;">Bitte überprüfen Sie Ihre Angaben vor dem Absenden.</p>
+                <h3>5 von 5</h3>
+                <h2 class="section-title">Zusammenfassung</h2>
+                <p class="section-description">Bitte überprüfen Sie Ihre Angaben vor dem Absenden.</p>
                 
                 <div class="summary-card">
                   <h4>Persönliche Daten</h4>

@@ -5863,4 +5863,515 @@ document.addEventListener('DOMContentLoaded', function() {
       alert('Bitte füllen Sie alle Pflichtfelder aus.');
     }
   });
+
+  // ===== Insurance Section Logic =====
+  let insuranceCounter = 0;
+
+  // Handle insurance start date and end date calculation
+  const appInsuranceStartDate = document.getElementById('appInsuranceStartDate');
+  const insuranceExpirationDisplay = document.getElementById('insuranceExpirationDisplay');
+  const duration1 = document.getElementById('duration1');
+  const duration3 = document.getElementById('duration3');
+
+  // Format date input as DD.MM.YYYY
+  if (appInsuranceStartDate) {
+    appInsuranceStartDate.addEventListener('input', function() {
+      let value = this.value.replace(/\D/g, '');
+      if (value.length >= 2) {
+        value = value.substring(0, 2) + '.' + value.substring(2);
+      }
+      if (value.length >= 5) {
+        value = value.substring(0, 5) + '.' + value.substring(5, 9);
+      }
+      this.value = value;
+    });
+
+    appInsuranceStartDate.addEventListener('blur', calculateEndDate);
+  }
+
+  function calculateEndDate() {
+    if (!appInsuranceStartDate || !insuranceExpirationDisplay) return;
+    
+    const dateValue = appInsuranceStartDate.value;
+    if (!dateValue || dateValue.length < 10) {
+      insuranceExpirationDisplay.querySelector('.expiration-date').textContent = '--';
+      return;
+    }
+
+    // Parse DD.MM.YYYY format
+    const parts = dateValue.split('.');
+    if (parts.length !== 3) return;
+    
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+    const year = parseInt(parts[2], 10);
+    
+    const startDate = new Date(year, month, day);
+    if (isNaN(startDate.getTime())) {
+      insuranceExpirationDisplay.querySelector('.expiration-date').textContent = '--';
+      return;
+    }
+
+    const duration = duration1?.checked ? 1 : 3;
+    const endDate = new Date(startDate);
+    endDate.setFullYear(endDate.getFullYear() + duration);
+    
+    // Format date as "Month Day, Year" (e.g., "October 6, 2026")
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+    const formattedEndDate = `${months[endDate.getMonth()]} ${endDate.getDate()}, ${endDate.getFullYear()}`;
+    
+    insuranceExpirationDisplay.querySelector('.expiration-date').textContent = formattedEndDate;
+  }
+
+  if (duration1) {
+    duration1.addEventListener('change', calculateEndDate);
+  }
+
+  if (duration3) {
+    duration3.addEventListener('change', calculateEndDate);
+  }
+
+  // Handle previous insurance toggle
+  const prevInsYes = document.getElementById('prevInsYes');
+  const prevInsNo = document.getElementById('prevInsNo');
+  const previousInsuranceContainer = document.getElementById('previousInsuranceContainer');
+
+  function togglePreviousInsurance() {
+    if (!previousInsuranceContainer) return;
+    
+    if (prevInsYes?.checked) {
+      previousInsuranceContainer.style.display = 'block';
+      // Add first insurance entry if none exists
+      if (insuranceCounter === 0) {
+        addInsuranceEntry();
+      }
+    } else {
+      previousInsuranceContainer.style.display = 'none';
+    }
+  }
+
+  if (prevInsYes) {
+    prevInsYes.addEventListener('change', togglePreviousInsurance);
+  }
+
+  if (prevInsNo) {
+    prevInsNo.addEventListener('change', togglePreviousInsurance);
+  }
+
+  // Add insurance entry
+  const addInsuranceBtn = document.getElementById('addInsuranceBtn');
+  const previousInsuranceList = document.getElementById('previousInsuranceList');
+
+  // Insurance companies list for autocomplete
+  const insuranceCompanies = [
+    "A.b.a.c.u.s. Neuenkirchen, 21640 Neuenkirchen",
+    "AachenMünchener Lebensversicherung AG, 52064 Aachen",
+    "AachenMünchener Versicherung AG, 52064 Aachen",
+    "ACE Europe Life Limited Zweigniederlassung Frankfurt, 60439 Frankfurt am Main",
+    "ACE European Group Limited, Direktion für Deutschland, 60439 Frankfurt am Main",
+    "ADAC Autoversicherung AG, 80686 München",
+    "ADAC-Rechtsschutz Versicherungs-Aktiengesellschaft, 80686 München",
+    "ADAC-Schutzbrief Versicherung, 80686 München",
+    "ADLER Versicherung AG, 44139 Dortmund",
+    "AdvoCard Rechtsschutzversicherung, 20097 Hamburg",
+    "AEGIDIUS Rückversicherung Aktiengesellschaft, 30159 Hannover",
+    "AGA INTERNATIONAL S.A. Niederlassung für Deutschland, 85609 Aschheim",
+    "AGCS, 80802 München",
+    "AGILA Haustierversicherung AG, 30159 Hannover",
+    "AGILA Haustierversicherung Aktiengesellschaft, 30159 Hannover",
+    "AIG Europe Direktion für Deutschland, 74076 Heilbronn",
+    "AIG Europe Limited, 20095 Hamburg",
+    "AIG Europe Limited Direktion für Deutschland, 60327 Frankfurt am Main",
+    "Allianz Versicherungs-AG, 80802 München",
+    "Allianz Lebensversicherungs-AG, 70178 Stuttgart",
+    "Allcura Versicherungs-Aktiengesellschaft, 20095 Hamburg",
+    "Allgemeine Rentenanstalt Pensionskasse AG, 70176 Stuttgart",
+    "ALTE LEIPZIGER Lebensversicherung auf Gegenseitigkeit, 61440 Oberursel Taunus",
+    "ALTE LEIPZIGER Pensionsfonds AG, 61440 Oberursel Taunus",
+    "ALTE LEIPZIGER Pensionskasse AG, 61440 Oberursel Taunus",
+    "Alte Leipziger Versicherung, 61440 Oberursel Taunus",
+    "ALTE OLDENBURGER Krankenversicherung AG, 49377 Vechta",
+    "ARAG Allgemeine Versicherungs-Aktiengesellschaft, 40472 Düsseldorf",
+    "ARAG Krankenversicherungs-Aktiengesellschaft, 81829 München",
+    "ARAG Lebensversicherungs-Aktiengesellschaft, 81829 München",
+    "ARAG SE, 40472 Düsseldorf",
+    "Asstel Lebensversicherung Aktiengesellschaft, 51063 Köln",
+    "ASSTEL Sachversicherung AG, 50969 Köln",
+    "AXA Krankenversicherung Aktiengesellschaft, 51067 Köln",
+    "AXA Lebensversicherung Aktiengesellschaft, 51067 Köln",
+    "AXA Versicherung, 51067 Köln",
+    "Barmenia Allgemeine Versicherungs-Aktiengesellschaft, 42119 Wuppertal",
+    "Barmenia Krankenversicherung a.G., 42119 Wuppertal",
+    "Barmenia Lebensversicherung a.G., 42119 Wuppertal",
+    "BAVARIA Versicherungsverein a.G., 81829 München",
+    "Bayerische Beamten Lebensversicherung a.G., 81737 München",
+    "Bayerische Beamten Versicherung Aktiengesellschaft, 81737 München",
+    "Bayerische Beamtenkrankenkasse Aktiengesellschaft, 80538 München",
+    "Continentale Krankenversicherung a.G., 44139 Dortmund",
+    "Continentale Lebensversicherung AG, 81379 München",
+    "Continentale Sachversicherung Aktiengesellschaft, 44139 Dortmund",
+    "COSMOS Lebensversicherungs-Aktiengesellschaft, 66121 Saarbrücken",
+    "Cosmos Versicherung Aktiengesellschaft, 66121 Saarbrücken",
+    "Debeka Allgemeine Versicherung Aktiengesellschaft, 56073 Koblenz",
+    "Debeka Krankenversicherungsverein auf Gegenseitigkeit, 56073 Koblenz",
+    "Debeka Lebensversicherungsverein auf Gegenseitigkeit, 56058 Koblenz",
+    "Deutsche Ärzteversicherung Aktiengesellschaft, 50667 Köln",
+    "DFV Deutsche Familienversicherung AG, 60320 Frankfurt am Main",
+    "Dialog Versicherung AG, 81737 München",
+    "Die Bayerische, 81737 München",
+    "DKV Deutsche Krankenversicherung Aktiengesellschaft, 50933 Köln",
+    "ERGO Direkt Krankenversicherung Aktiengesellschaft, 90762 Fürth",
+    "ERGO Direkt Lebensversicherung Aktiengesellschaft, 90762 Fürth",
+    "ERGO Lebensversicherung Aktiengesellschaft, 22297 Hamburg",
+    "ERGO Versicherung Aktiengesellschaft, 40477 Düsseldorf",
+    "EUROPA Lebensversicherung Aktiengesellschaft, 50931 Köln",
+    "EUROPA Versicherung Aktiengesellschaft, 50931 Köln",
+    "Generali Deutschland Lebensversicherung Aktiengesellschaft, 81737 München",
+    "Generali Versicherung Aktiengesellschaft, 81737 München",
+    "Gothaer Allgemeine Versicherung AG, 50969 Köln",
+    "Gothaer Krankenversicherung Aktiengesellschaft, 50969 Köln",
+    "Gothaer Lebensversicherung Aktiengesellschaft, 50969 Köln",
+    "Hallesche Krankenversicherung auf Gegenseitigkeit, 70178 Stuttgart",
+    "HanseMerkur Allgemeine Versicherung, 20354 Hamburg",
+    "HanseMerkur Krankenversicherung AG, 20354 Hamburg",
+    "HanseMerkur Lebensversicherung AG, 20352 Hamburg",
+    "HanseMerkur Reiseversicherung AG, 20354 Hamburg",
+    "HDI Lebensversicherung AG, 50679 Köln",
+    "HDI Versicherung AG, 30659 Hannover",
+    "Helvetia Schweizerische Versicherungsgesellschaft AG, 60311 Frankfurt am Main",
+    "HUK-COBURG Haftpflicht-Unterstützungs-Kasse, 96450 Coburg",
+    "HUK-COBURG Krankenversicherung AG, 96444 Coburg",
+    "HUK-COBURG Lebensversicherung AG, 96450 Coburg",
+    "HUK-COBURG-Allgemeine Versicherung AG, 96450 Coburg",
+    "INTER Allgemeine Versicherung Aktiengesellschaft, 68165 Mannheim",
+    "INTER Krankenversicherung aG, 68165 Mannheim",
+    "INTER Lebensversicherung AG, 68165 Mannheim",
+    "Itzehoer Lebensversicherungs-Aktiengesellschaft, 25521 Itzehoe",
+    "Itzehoer Versicherung Brandgilde von 1691 VVaG, 25521 Itzehoe",
+    "Janitos Versicherung AG, 69126 Heidelberg",
+    "LVM Krankenversicherungs-AG, 48151 Münster",
+    "LVM Landwirtschaftlicher Versicherungsverein Münster a.G., 48151 Münster",
+    "LVM Lebensversicherungs-AG, 48126 Münster",
+    "Mecklenburgische Krankenversicherungs-Aktiengesellschaft, 30625 Hannover",
+    "Mecklenburgische Lebensversicherungs-Aktiengesellschaft, 30625 Hannover",
+    "Mecklenburgische Versicherung, 30625 Hannover",
+    "MÜNCHENER VEREIN Allgemeine Versicherungs-AG, 80336 München",
+    "MÜNCHENER VEREIN Krankenversicherung a.G., 80336 München",
+    "MÜNCHENER VEREIN Lebensversicherung a.G., 80336 München",
+    "myLife Lebensversicherung AG, 37085 Göttingen",
+    "NÜRNBERGER Allgemeine Versicherung, 90482 Nürnberg",
+    "NÜRNBERGER Krankenversicherung Aktiengesellschaft, 90482 Nürnberg",
+    "NÜRNBERGER Lebensversicherung Aktiengesellschaft, 90482 Nürnberg",
+    "Öffentliche Lebensversicherung Berlin Brandenburg AG, 10785 Berlin",
+    "Öffentliche Versicherung Braunschweig, 38096 Braunschweig",
+    "Provinzial Krankenversicherung Hannover AG, 30159 Hannover",
+    "Provinzial Lebensversicherung Hannover, 30159 Hannover",
+    "Provinzial NordWest Lebensversicherung AG, 24114 Kiel",
+    "Provinzial Rheinland Lebensversicherung AG, 40591 Düsseldorf",
+    "Provinzial Rheinland Versicherung, 40591 Düsseldorf",
+    "R+V Allgemeine Versicherung AG, 65189 Wiesbaden",
+    "R+V Krankenversicherung AG, 65189 Wiesbaden",
+    "R+V Lebensversicherung a.G., 65193 Wiesbaden",
+    "R+V Versicherung, 65189 Wiesbaden",
+    "SDK Süddeutsche Krankenversicherung a.G., 70736 Fellbach",
+    "SIGNAL IDUNA Allgemeine Versicherung, 44139 Dortmund",
+    "SIGNAL Krankenversicherung a.G., 44139 Dortmund",
+    "SIGNAL Unfallversicherung a.G., 44139 Dortmund",
+    "Stuttgarter Lebensversicherung a.G., 70197 Stuttgart",
+    "Stuttgarter Versicherung Aktiengesellschaft, 70197 Stuttgart",
+    "Süddeutsche Allgemeine Versicherung a.G., 70736 Fellbach",
+    "Süddeutsche Krankenversicherung a.G., 70736 Fellbach",
+    "Süddeutsche Lebensversicherung a.G., 70736 Fellbach",
+    "SV SparkassenVersicherung Lebensversicherung AG, 70376 Stuttgart",
+    "Swiss Life AG, 85748 Garching b. München",
+    "Uelzener Allgemeine Versicherungs-Gesellschaft a.G., 29525 Uelzen",
+    "Uelzener Lebensversicherungs-Aktiengesellschaft, 29525 Uelzen",
+    "UNION KRANKENVERSICHERUNG AG, 66123 Saarbrücken",
+    "uniVersa Allgemeine Versicherung AG, 90489 Nürnberg",
+    "uniVersa Krankenversicherung a.G., 90489 Nürnberg",
+    "uniVersa Lebensversicherung a.G., 90489 Nürnberg",
+    "VEREINIGTE TIERVERSICHERUNG GESELLSCHAFT a.G., 65189 Wiesbaden",
+    "Versicherungskammer Bayern, 80538 München",
+    "VGH Versicherungen, 30177 Hannover",
+    "VHV Allgemeine Versicherung AG, 30177 Hannover",
+    "VHV Lebensversicherung AG, 30177 Hannover",
+    "Victoria Lebensversicherung Aktiengesellschaft, 40477 Düsseldorf",
+    "Volkswohl-Bund Lebensversicherung a.G., 44137 Dortmund",
+    "VOLKSWOHL-BUND SACHVERSICHERUNG AG, 44137 Dortmund",
+    "VPV Allgemeine Versicherungs-AG, 50969 Köln",
+    "VPV Lebensversicherungs-Aktiengesellschaft, 70499 Stuttgart",
+    "WGV-Lebensversicherung Aktiengesellschaft, 70178 Stuttgart",
+    "WGV-Versicherung, 70178 Stuttgart",
+    "Württembergische Gemeinde-Versicherung auf Gegenseitigkeit, 70178 Stuttgart",
+    "Württembergische Krankenversicherung Aktiengesellschaft, 70176 Stuttgart",
+    "Württembergische Lebensversicherung Aktiengesellschaft, 70176 Stuttgart",
+    "Württembergische Versicherung Aktiengesellschaft, 70176 Stuttgart",
+    "WWK Allgemeine Versicherung, 80335 München",
+    "WWK Lebensversicherung auf Gegenseitigkeit, 80335 München",
+    "ZURICH Insurance plc Niederlassung für Deutschland, 50668 Köln",
+    "Zurich Deutscher Herold Lebensversicherung AG, 53115 Bonn"
+  ];
+
+  function setupAutocomplete(inputElement) {
+    if (!inputElement) return;
+
+    // Create autocomplete container
+    const autocompleteContainer = document.createElement('div');
+    autocompleteContainer.className = 'autocomplete-dropdown';
+    inputElement.parentNode.style.position = 'relative';
+    inputElement.parentNode.appendChild(autocompleteContainer);
+
+    inputElement.addEventListener('input', function() {
+      const value = this.value.toLowerCase();
+      autocompleteContainer.innerHTML = '';
+      
+      if (value.length < 2) {
+        autocompleteContainer.style.display = 'none';
+        return;
+      }
+
+      const filtered = insuranceCompanies.filter(company => 
+        company.toLowerCase().includes(value)
+      );
+
+      if (filtered.length === 0) {
+        autocompleteContainer.style.display = 'none';
+        return;
+      }
+
+      filtered.slice(0, 10).forEach(company => {
+        const item = document.createElement('div');
+        item.className = 'autocomplete-item';
+        
+        // Highlight matching text
+        const matchIndex = company.toLowerCase().indexOf(value);
+        const beforeMatch = company.substring(0, matchIndex);
+        const match = company.substring(matchIndex, matchIndex + value.length);
+        const afterMatch = company.substring(matchIndex + value.length);
+        
+        item.innerHTML = `${beforeMatch}<strong>${match}</strong>${afterMatch}`;
+        
+        item.addEventListener('click', function() {
+          inputElement.value = company;
+          autocompleteContainer.style.display = 'none';
+        });
+        
+        autocompleteContainer.appendChild(item);
+      });
+
+      autocompleteContainer.style.display = 'block';
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (e.target !== inputElement) {
+        autocompleteContainer.style.display = 'none';
+      }
+    });
+
+    // Navigate with keyboard
+    inputElement.addEventListener('keydown', function(e) {
+      const items = autocompleteContainer.querySelectorAll('.autocomplete-item');
+      let currentFocus = -1;
+      
+      if (e.key === 'ArrowDown') {
+        currentFocus++;
+        addActive(items, currentFocus);
+      } else if (e.key === 'ArrowUp') {
+        currentFocus--;
+        addActive(items, currentFocus);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (currentFocus > -1 && items[currentFocus]) {
+          items[currentFocus].click();
+        }
+      }
+    });
+
+    function addActive(items, index) {
+      if (!items || items.length === 0) return;
+      removeActive(items);
+      if (index >= items.length) index = 0;
+      if (index < 0) index = items.length - 1;
+      items[index]?.classList.add('autocomplete-active');
+    }
+
+    function removeActive(items) {
+      items.forEach(item => item.classList.remove('autocomplete-active'));
+    }
+  }
+
+  function addInsuranceEntry() {
+    if (!previousInsuranceList) return;
+    
+    insuranceCounter++;
+    
+    const insuranceEntry = document.createElement('div');
+    insuranceEntry.className = 'insurance-entry';
+    insuranceEntry.id = `insurance-entry-${insuranceCounter}`;
+    insuranceEntry.innerHTML = `
+      <div class="insurance-entry-header">
+        <span class="insurance-entry-title">${insuranceCounter}. Vorversicherung</span>
+        <button type="button" class="remove-insurance-btn" onclick="removeInsuranceEntry(${insuranceCounter})">
+          Entfernen
+        </button>
+      </div>
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label for="insurance-company-${insuranceCounter}">
+            Versicherungsgesellschaft <span class="required">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="insurance-company-${insuranceCounter}" 
+            name="insuranceCompany[]" 
+            class="form-input" 
+            placeholder="z.B. Dresdner Pensionskasse VVaG, 95326 Kulmbach"
+            required
+          />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label for="insurance-number-${insuranceCounter}">
+            Ihre Versicherungsnummer <span class="required">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="insurance-number-${insuranceCounter}" 
+            name="insuranceNumber[]" 
+            class="form-input" 
+            placeholder="sad"
+            required
+          />
+        </div>
+      </div>
+    `;
+    
+    previousInsuranceList.appendChild(insuranceEntry);
+    
+    // Setup autocomplete for the newly added input
+    const companyInput = document.getElementById(`insurance-company-${insuranceCounter}`);
+    if (companyInput) {
+      setupAutocomplete(companyInput);
+    }
+  }
+
+  // Remove insurance entry function (make it global)
+  window.removeInsuranceEntry = function(id) {
+    const entry = document.getElementById(`insurance-entry-${id}`);
+    if (entry) {
+      entry.remove();
+      // Renumber remaining entries
+      const remainingEntries = previousInsuranceList.querySelectorAll('.insurance-entry');
+      insuranceCounter = 0;
+      remainingEntries.forEach((entry, index) => {
+        insuranceCounter++;
+        const title = entry.querySelector('.insurance-entry-title');
+        if (title) {
+          title.textContent = `${insuranceCounter}. Vorversicherung`;
+        }
+      });
+    }
+  };
+
+  if (addInsuranceBtn) {
+    addInsuranceBtn.addEventListener('click', addInsuranceEntry);
+  }
+
+  // ===== Pet Identification Section Logic =====
+  const petIdChip = document.getElementById('petIdChip');
+  const petIdTattoo = document.getElementById('petIdTattoo');
+  const petIdNone = document.getElementById('petIdNone');
+  const chipNumberContainer = document.getElementById('chipNumberContainer');
+  const tattooNumberContainer = document.getElementById('tattooNumberContainer');
+  const appPetName = document.getElementById('appPetName');
+  const petNameError = document.getElementById('petNameError');
+  const appChipNumber = document.getElementById('appChipNumber');
+  const chipNumberError = document.getElementById('chipNumberError');
+
+  // Toggle chip/tattoo number fields based on identification type
+  function handleIdentificationChange() {
+    if (!chipNumberContainer || !tattooNumberContainer) return;
+    
+    if (petIdChip?.checked) {
+      chipNumberContainer.style.display = 'flex';
+      tattooNumberContainer.style.display = 'none';
+      appChipNumber.setAttribute('required', 'required');
+      document.getElementById('appTattooNumber')?.removeAttribute('required');
+    } else if (petIdTattoo?.checked) {
+      chipNumberContainer.style.display = 'none';
+      tattooNumberContainer.style.display = 'flex';
+      appChipNumber?.removeAttribute('required');
+      document.getElementById('appTattooNumber')?.setAttribute('required', 'required');
+    } else {
+      chipNumberContainer.style.display = 'none';
+      tattooNumberContainer.style.display = 'none';
+      appChipNumber?.removeAttribute('required');
+      document.getElementById('appTattooNumber')?.removeAttribute('required');
+    }
+  }
+
+  if (petIdChip) {
+    petIdChip.addEventListener('change', handleIdentificationChange);
+  }
+  if (petIdTattoo) {
+    petIdTattoo.addEventListener('change', handleIdentificationChange);
+  }
+  if (petIdNone) {
+    petIdNone.addEventListener('change', handleIdentificationChange);
+  }
+
+  // Validate pet name
+  if (appPetName) {
+    appPetName.addEventListener('blur', function() {
+      if (!this.value.trim()) {
+        this.classList.add('error');
+        if (petNameError) {
+          petNameError.style.display = 'flex';
+        }
+      } else {
+        this.classList.remove('error');
+        if (petNameError) {
+          petNameError.style.display = 'none';
+        }
+      }
+    });
+
+    appPetName.addEventListener('input', function() {
+      if (this.value.trim()) {
+        this.classList.remove('error');
+        if (petNameError) {
+          petNameError.style.display = 'none';
+        }
+      }
+    });
+  }
+
+  // Validate chip number
+  if (appChipNumber) {
+    appChipNumber.addEventListener('blur', function() {
+      if (petIdChip?.checked && !this.value.trim()) {
+        this.classList.add('error');
+        if (chipNumberError) {
+          chipNumberError.style.display = 'flex';
+        }
+      } else {
+        this.classList.remove('error');
+        if (chipNumberError) {
+          chipNumberError.style.display = 'none';
+        }
+      }
+    });
+
+    appChipNumber.addEventListener('input', function() {
+      if (this.value.trim()) {
+        this.classList.remove('error');
+        if (chipNumberError) {
+          chipNumberError.style.display = 'none';
+        }
+      }
+    });
+  }
 });
