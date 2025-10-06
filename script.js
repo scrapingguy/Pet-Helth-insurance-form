@@ -763,6 +763,81 @@ document.addEventListener("DOMContentLoaded", function () {
     updateStepsUI();
   }
 
+  // Function to show disease alert when "Ja" is selected
+  function showDiseaseAlert() {
+    // Remove any existing alert
+    const existingAlert = document.getElementById('diseaseAlert');
+    if (existingAlert) {
+      existingAlert.remove();
+    }
+
+    // Find the radio group container
+    const radioGroup = document.querySelector('#krankheitenListe .radio-group');
+    if (!radioGroup) return;
+
+    // Create inline alert
+    const alertBox = document.createElement('div');
+    alertBox.id = 'diseaseAlert';
+    alertBox.style.cssText = `
+      background: #fff3cd;
+      border: 2px solid #ffeaa7;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 15px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      animation: slideDown 0.3s ease-out;
+    `;
+
+    // Create alert content
+    alertBox.innerHTML = `
+      <div style="display: flex; align-items: flex-start; gap: 15px;">
+        <div style="color: #856404; font-size: 24px; font-weight: bold; margin-top: 5px; min-width: 30px;">!</div>
+        <div style="flex: 1;">
+          <div style="color: #856404; font-weight: bold; margin-bottom: 10px; font-size: 16px;">Entschuldigung:</div>
+          <div style="color: #856404; line-height: 1.5; font-size: 14px;">
+            Leider können wir Ihr Tier mit der angegebenen Vorerkrankung nicht versichern. Es ist sehr wahrscheinlich, dass ein Großteil der künftigen Arztbesuche in Zusammenhang mit dieser Krankheit steht. Hierfür können wir keinen ausreichenden Versicherungsschutz gewährleisten, da nur neu auftretende Krankheiten abgesichert sind.
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Add CSS animation
+    if (!document.getElementById('alertAnimationStyle')) {
+      const style = document.createElement('style');
+      style.id = 'alertAnimationStyle';
+      style.textContent = `
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            max-height: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            max-height: 300px;
+            transform: translateY(0);
+          }
+        }
+        @keyframes slideUp {
+          from {
+            opacity: 1;
+            max-height: 300px;
+            transform: translateY(0);
+          }
+          to {
+            opacity: 0;
+            max-height: 0;
+            transform: translateY(-10px);
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Insert alert after the radio group
+    radioGroup.parentNode.insertBefore(alertBox, radioGroup.nextSibling);
+  }
+
   function validateStep(stepIndex) {
     clearAllErrors();
     let valid = true;
@@ -831,6 +906,24 @@ document.addEventListener("DOMContentLoaded", function () {
         showError("gesundheitsproblemeError", "gesundheitsprobleme");
         valid = false;
       }
+      
+
+      // Check if disease question is visible and answered with "Ja" - prevent progression
+      const krankheitenListe = document.getElementById("krankheitenListe");
+      const isKrankheitenVisible = krankheitenListe && 
+        (krankheitenListe.style.display === "block" || 
+         getComputedStyle(krankheitenListe).display !== "none");
+      
+      if (isKrankheitenVisible) {
+        const diseaseSelected = document.querySelector('input[name="spezielle_krankheiten"]:checked');
+        if (diseaseSelected && diseaseSelected.value === "ja") {
+          // Show the alert and prevent form progression
+          showDiseaseAlert();
+          console.log("Disease validation: Blocking progression - Ja selected");
+          valid = false;
+        }
+      }
+
     }
 
     return valid;
@@ -848,6 +941,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (currentStepIndex === 1) {
+          // Additional check: Block progression if disease question shows "Ja"
+      const krankheitenListe = document.getElementById("krankheitenListe");
+      const isKrankheitenVisible = krankheitenListe && 
+        (krankheitenListe.style.display === "block" || 
+         getComputedStyle(krankheitenListe).display !== "none");
+      
+      if (isKrankheitenVisible) {
+        const diseaseSelected = document.querySelector('input[name="spezielle_krankheiten"]:checked');
+        if (diseaseSelected && diseaseSelected.value === "ja") {
+          console.log("GoToNextStep: Blocking due to disease Ja selection");
+          showDiseaseAlert();
+          return false;
+        }
+      }
       if (stepThreeEnabled) {
         currentStepIndex = 2;
         updateStepsUI();
@@ -3036,6 +3143,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // Also show the disease list
         if (krankheitenListe) {
           krankheitenListe.style.display = "block";
+          // Add event listeners to disease radio buttons when they become visible
+          addDiseaseRadioListeners();
         }
       } else if (behandlungsFrage) {
         behandlungsFrage.style.display = "none";
@@ -3067,6 +3176,95 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       checkFormCompletion();
       updateStepThreeAvailability();
+    });
+  });
+
+  // Function to add event listeners to disease radio buttons
+  function addDiseaseRadioListeners() {
+    const diseaseRadios = document.querySelectorAll('input[name="spezielle_krankheiten"]');
+    diseaseRadios.forEach((radio) => {
+      // Remove existing listeners to avoid duplicates
+      radio.removeEventListener("change", handleDiseaseRadioChange);
+      // Add new listener
+      radio.addEventListener("change", handleDiseaseRadioChange);
+    });
+  }
+
+  // Disease radio change handler function
+  function handleDiseaseRadioChange() {
+    const nextBtn = document.getElementById('nextStepBtn');
+    const berechnenBtn = document.getElementById('berechnenButton');
+    
+    if (this.value === "ja") {
+      // Show alert inline below the buttons
+      showDiseaseAlert();
+      // Disable next button to make it clear user cannot proceed
+      if (nextBtn) {
+        nextBtn.style.opacity = '0.5';
+        nextBtn.style.cursor = 'not-allowed';
+        nextBtn.title = 'Sie können nicht fortfahren, da Ihr Tier eine Vorerkrankung hat';
+      }
+      // Disable "Jetzt Tarif berechnen" button
+      if (berechnenBtn) {
+        berechnenBtn.disabled = true;
+        berechnenBtn.style.opacity = '0.5';
+        berechnenBtn.style.cursor = 'not-allowed';
+        berechnenBtn.title = 'Tarif kann nicht berechnet werden - Ihr Tier hat eine Vorerkrankung';
+      }
+    } else if (this.value === "nein") {
+      // Hide alert when "Nein" is selected
+      const existingAlert = document.getElementById('diseaseAlert');
+      if (existingAlert) {
+        existingAlert.style.animation = 'slideUp 0.3s ease-out';
+        setTimeout(() => existingAlert.remove(), 300);
+      }
+      // Re-enable next button
+      if (nextBtn) {
+        nextBtn.style.opacity = '1';
+        nextBtn.style.cursor = 'pointer';
+        nextBtn.title = '';
+      }
+      // Re-enable "Jetzt Tarif berechnen" button
+      if (berechnenBtn) {
+        berechnenBtn.disabled = false;
+        berechnenBtn.style.opacity = '1';
+        berechnenBtn.style.cursor = 'pointer';
+        berechnenBtn.title = '';
+      }
+    }
+    checkFormCompletion();
+  }
+
+  // Handle disease list radio button change
+  const diseaseRadios = document.querySelectorAll('input[name="spezielle_krankheiten"]');
+  diseaseRadios.forEach((radio) => {
+    radio.addEventListener("change", function () {
+      const nextBtn = document.getElementById('nextStepBtn');
+      
+      if (this.value === "ja") {
+        // Show alert inline below the buttons
+        showDiseaseAlert();
+        // Disable next button to make it clear user cannot proceed
+        if (nextBtn) {
+          nextBtn.style.opacity = '0.5';
+          nextBtn.style.cursor = 'not-allowed';
+          nextBtn.title = 'Sie können nicht fortfahren, da Ihr Tier eine Vorerkrankung hat';
+        }
+      } else if (this.value === "nein") {
+        // Hide alert when "Nein" is selected
+        const existingAlert = document.getElementById('diseaseAlert');
+        if (existingAlert) {
+          existingAlert.style.animation = 'slideUp 0.3s ease-out';
+          setTimeout(() => existingAlert.remove(), 300);
+        }
+        // Re-enable next button
+        if (nextBtn) {
+          nextBtn.style.opacity = '1';
+          nextBtn.style.cursor = 'pointer';
+          nextBtn.title = '';
+        }
+      }
+      checkFormCompletion();
     });
   });
 
