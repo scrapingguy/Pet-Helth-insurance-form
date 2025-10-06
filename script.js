@@ -9,9 +9,7 @@ import {
   horsePricingTableData,
   horsePricingTableHeader,
 } from "./pricingtable.js";
-import {
-  catDisease,dogDisease,horseDisease
-} from "./diseases.js";
+import { catDisease, dogDisease, horseDisease } from "./diseases.js";
 
 window.iframeResizer = {
   license: "GPLv3",
@@ -76,8 +74,7 @@ function postIframeHeight() {
   // window.parent.postMessage({ iframeHeight: height }, "*");
   if ("parentIframe" in window) {
     parentIframe.resize();
-      parentIframe.autoResize(true);
-
+    parentIframe.autoResize(true);
   }
 }
 
@@ -91,7 +88,12 @@ const scheduleIframeHeightUpdate = () => {
   window.requestAnimationFrame(postIframeHeight);
 };
 
-const APP_SCREEN_IDS = ["formScreen", "pricingScreen", "successScreen", "applicationScreen"];
+const APP_SCREEN_IDS = [
+  "formScreen",
+  "pricingScreen",
+  "successScreen",
+  "applicationScreen",
+];
 let currentScreenId = "formScreen";
 
 function showScreen(targetId) {
@@ -196,41 +198,41 @@ window.plzCityMap = {
 };
 
 // Global function to auto-fill application form data from main form
-window.autoFillApplicationData = function() {
-  const mainFormPostalCode = document.getElementById('plz');
-  const appPostalCodeInput = document.getElementById('appPostalCode');
-  const appCityInput = document.getElementById('appCity');
-  
+window.autoFillApplicationData = function () {
+  const mainFormPostalCode = document.getElementById("plz");
+  const appPostalCodeInput = document.getElementById("appPostalCode");
+  const appCityInput = document.getElementById("appCity");
+
   if (mainFormPostalCode && mainFormPostalCode.value && appPostalCodeInput) {
     const postalCode = mainFormPostalCode.value;
-    
+
     // Auto-fill postal code
     appPostalCodeInput.value = postalCode;
-    
+
     // Auto-fill city using the global plzCityMap
     if (appCityInput && window.plzCityMap && window.plzCityMap[postalCode]) {
       appCityInput.value = window.plzCityMap[postalCode];
-      
+
       // Add visual feedback for city auto-fill
-      appCityInput.style.background = '#e8f5e8';
-      appCityInput.style.transition = 'background-color 0.3s ease';
-      
+      appCityInput.style.background = "#e8f5e8";
+      appCityInput.style.transition = "background-color 0.3s ease";
+
       setTimeout(() => {
-        appCityInput.style.background = '';
+        appCityInput.style.background = "";
       }, 1500);
     }
-    
+
     // Add visual feedback that the postal code field was auto-filled
-    appPostalCodeInput.style.background = '#e8f5e8';
-    appPostalCodeInput.style.transition = 'background-color 0.3s ease';
-    
+    appPostalCodeInput.style.background = "#e8f5e8";
+    appPostalCodeInput.style.transition = "background-color 0.3s ease";
+
     setTimeout(() => {
-      appPostalCodeInput.style.background = '';
+      appPostalCodeInput.style.background = "";
     }, 1500);
-    
-    console.log('Auto-filled postal code:', postalCode);
+
+    console.log("Auto-filled postal code:", postalCode);
     if (window.plzCityMap && window.plzCityMap[postalCode]) {
-      console.log('Auto-filled city:', window.plzCityMap[postalCode]);
+      console.log("Auto-filled city:", window.plzCityMap[postalCode]);
     }
   }
 };
@@ -611,12 +613,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const diseaseData = {
     katze: catDisease,
     hund: dogDisease,
-    pferd: horseDisease
+    pferd: horseDisease,
   };
 
   // Function to update disease list based on selected animal type
   function updateDiseaseList(animalType) {
-    const diseaseColumnsContainer = document.getElementById('diseaseColumnsContainer');
+    const diseaseColumnsContainer = document.getElementById(
+      "diseaseColumnsContainer"
+    );
     if (!diseaseColumnsContainer || !diseaseData[animalType]) return;
 
     const diseases = diseaseData[animalType];
@@ -627,31 +631,37 @@ document.addEventListener("DOMContentLoaded", function () {
     diseaseColumnsContainer.innerHTML = `
       <div class="disease-column">
         <ul>
-          ${firstColumnDiseases.map(disease => `<li>${disease}</li>`).join('')}
+          ${firstColumnDiseases
+            .map((disease) => `<li>${disease}</li>`)
+            .join("")}
         </ul>
       </div>
       <div class="disease-column">
         <ul>
-          ${secondColumnDiseases.map(disease => `<li>${disease}</li>`).join('')}
+          ${secondColumnDiseases
+            .map((disease) => `<li>${disease}</li>`)
+            .join("")}
         </ul>
       </div>
     `;
   }
 
   // Initialize disease list for default animal (cat)
-  updateDiseaseList(tierKategorieSelect?.value || 'katze');
+  updateDiseaseList(tierKategorieSelect?.value || "katze");
 
   // Function to update housing question visibility based on animal type
   function updateHousingVisibility(animalType) {
-    const housingQuestion = document.getElementById('housingQuestion');
+    const housingQuestion = document.getElementById("housingQuestion");
     if (housingQuestion) {
-      if (animalType === 'katze') {
-        housingQuestion.style.display = 'block';
+      if (animalType === "katze") {
+        housingQuestion.style.display = "block";
       } else {
-        housingQuestion.style.display = 'none';
+        housingQuestion.style.display = "none";
         // Clear housing selection when hiding
-        const housingRadios = document.querySelectorAll('input[name="haltung"]');
-        housingRadios.forEach(radio => radio.checked = false);
+        const housingRadios = document.querySelectorAll(
+          'input[name="haltung"]'
+        );
+        housingRadios.forEach((radio) => (radio.checked = false));
       }
     }
   }
@@ -659,13 +669,13 @@ document.addEventListener("DOMContentLoaded", function () {
   if (tierKategorieSelect) {
     tierKategorieSelect.addEventListener("change", () => {
       const selectedAnimal = tierKategorieSelect.value;
-      
+
       // Update disease list based on selected animal
       updateDiseaseList(selectedAnimal);
-      
+
       // Update housing question visibility based on selected animal
       updateHousingVisibility(selectedAnimal);
-      
+
       if (currentScreenId === "pricingScreen") {
         renderPricingComparison(true);
       }
@@ -766,18 +776,18 @@ document.addEventListener("DOMContentLoaded", function () {
   // Function to show disease alert when "Ja" is selected
   function showDiseaseAlert() {
     // Remove any existing alert
-    const existingAlert = document.getElementById('diseaseAlert');
+    const existingAlert = document.getElementById("diseaseAlert");
     if (existingAlert) {
       existingAlert.remove();
     }
 
     // Find the radio group container
-    const radioGroup = document.querySelector('#krankheitenListe .radio-group');
+    const radioGroup = document.querySelector("#krankheitenListe .radio-group");
     if (!radioGroup) return;
 
     // Create inline alert
-    const alertBox = document.createElement('div');
-    alertBox.id = 'diseaseAlert';
+    const alertBox = document.createElement("div");
+    alertBox.id = "diseaseAlert";
     alertBox.style.cssText = `
       background: #fff3cd;
       border: 2px solid #ffeaa7;
@@ -802,9 +812,9 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
 
     // Add CSS animation
-    if (!document.getElementById('alertAnimationStyle')) {
-      const style = document.createElement('style');
-      style.id = 'alertAnimationStyle';
+    if (!document.getElementById("alertAnimationStyle")) {
+      const style = document.createElement("style");
+      style.id = "alertAnimationStyle";
       style.textContent = `
         @keyframes slideDown {
           from {
@@ -896,8 +906,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // Only validate housing for cats
-      const selectedAnimal = tierKategorieSelect?.value || 'katze';
-      if (selectedAnimal === 'katze' && !haltungSelected) {
+      const selectedAnimal = tierKategorieSelect?.value || "katze";
+      if (selectedAnimal === "katze" && !haltungSelected) {
         showError("haltungError", "haltung");
         valid = false;
       }
@@ -906,16 +916,18 @@ document.addEventListener("DOMContentLoaded", function () {
         showError("gesundheitsproblemeError", "gesundheitsprobleme");
         valid = false;
       }
-      
 
       // Check if disease question is visible and answered with "Ja" - prevent progression
       const krankheitenListe = document.getElementById("krankheitenListe");
-      const isKrankheitenVisible = krankheitenListe && 
-        (krankheitenListe.style.display === "block" || 
-         getComputedStyle(krankheitenListe).display !== "none");
-      
+      const isKrankheitenVisible =
+        krankheitenListe &&
+        (krankheitenListe.style.display === "block" ||
+          getComputedStyle(krankheitenListe).display !== "none");
+
       if (isKrankheitenVisible) {
-        const diseaseSelected = document.querySelector('input[name="spezielle_krankheiten"]:checked');
+        const diseaseSelected = document.querySelector(
+          'input[name="spezielle_krankheiten"]:checked'
+        );
         if (diseaseSelected && diseaseSelected.value === "ja") {
           // Show the alert and prevent form progression
           showDiseaseAlert();
@@ -923,7 +935,6 @@ document.addEventListener("DOMContentLoaded", function () {
           valid = false;
         }
       }
-
     }
 
     return valid;
@@ -941,14 +952,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (currentStepIndex === 1) {
-          // Additional check: Block progression if disease question shows "Ja"
+      // Additional check: Block progression if disease question shows "Ja"
       const krankheitenListe = document.getElementById("krankheitenListe");
-      const isKrankheitenVisible = krankheitenListe && 
-        (krankheitenListe.style.display === "block" || 
-         getComputedStyle(krankheitenListe).display !== "none");
-      
+      const isKrankheitenVisible =
+        krankheitenListe &&
+        (krankheitenListe.style.display === "block" ||
+          getComputedStyle(krankheitenListe).display !== "none");
+
       if (isKrankheitenVisible) {
-        const diseaseSelected = document.querySelector('input[name="spezielle_krankheiten"]:checked');
+        const diseaseSelected = document.querySelector(
+          'input[name="spezielle_krankheiten"]:checked'
+        );
         if (diseaseSelected && diseaseSelected.value === "ja") {
           console.log("GoToNextStep: Blocking due to disease Ja selection");
           showDiseaseAlert();
@@ -1221,7 +1235,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  
   // Helper function to add backspace handling for date inputs
   function addDateInputBackspaceHandler(input) {
     if (input) {
@@ -1229,22 +1242,27 @@ document.addEventListener("DOMContentLoaded", function () {
         if (e.key === "Backspace") {
           const cursorPosition = this.selectionStart;
           const value = this.value;
-          
+
           // If the character before cursor is a dot, remove it along with the preceding number
           if (cursorPosition > 0 && value[cursorPosition - 1] === ".") {
             e.preventDefault();
             let newValue;
-            
+
             // Remove the dot and the character before it (if it exists)
             if (cursorPosition > 1) {
-              newValue = value.substring(0, cursorPosition - 2) + value.substring(cursorPosition);
+              newValue =
+                value.substring(0, cursorPosition - 2) +
+                value.substring(cursorPosition);
             } else {
               newValue = value.substring(cursorPosition);
             }
-            
+
             this.value = newValue;
-            this.setSelectionRange(Math.max(0, cursorPosition - 2), Math.max(0, cursorPosition - 2));
-            
+            this.setSelectionRange(
+              Math.max(0, cursorPosition - 2),
+              Math.max(0, cursorPosition - 2)
+            );
+
             // Don't call validateDateInput here as it would add dots back
             // Just trigger completion check if needed
             if (this.id === "geburtsdatum") {
@@ -1289,8 +1307,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Only count housing for cats
-    const selectedAnimal = tierKategorieSelect?.value || 'katze';
-    if (selectedAnimal === 'katze') {
+    const selectedAnimal = tierKategorieSelect?.value || "katze";
+    if (selectedAnimal === "katze") {
       const housingRadios = document.querySelectorAll('input[name="haltung"]');
       const housingSelected = Array.from(housingRadios).some(
         (radio) => radio.checked
@@ -3181,7 +3199,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Function to add event listeners to disease radio buttons
   function addDiseaseRadioListeners() {
-    const diseaseRadios = document.querySelectorAll('input[name="spezielle_krankheiten"]');
+    const diseaseRadios = document.querySelectorAll(
+      'input[name="spezielle_krankheiten"]'
+    );
     diseaseRadios.forEach((radio) => {
       // Remove existing listeners to avoid duplicates
       radio.removeEventListener("change", handleDiseaseRadioChange);
@@ -3192,76 +3212,81 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Disease radio change handler function
   function handleDiseaseRadioChange() {
-    const nextBtn = document.getElementById('nextStepBtn');
-    const berechnenBtn = document.getElementById('berechnenButton');
-    
+    const nextBtn = document.getElementById("nextStepBtn");
+    const berechnenBtn = document.getElementById("berechnenButton");
+
     if (this.value === "ja") {
       // Show alert inline below the buttons
       showDiseaseAlert();
       // Disable next button to make it clear user cannot proceed
       if (nextBtn) {
-        nextBtn.style.opacity = '0.5';
-        nextBtn.style.cursor = 'not-allowed';
-        nextBtn.title = 'Sie können nicht fortfahren, da Ihr Tier eine Vorerkrankung hat';
+        nextBtn.style.opacity = "0.5";
+        nextBtn.style.cursor = "not-allowed";
+        nextBtn.title =
+          "Sie können nicht fortfahren, da Ihr Tier eine Vorerkrankung hat";
       }
       // Disable "Jetzt Tarif berechnen" button
       if (berechnenBtn) {
         berechnenBtn.disabled = true;
-        berechnenBtn.style.opacity = '0.5';
-        berechnenBtn.style.cursor = 'not-allowed';
-        berechnenBtn.title = 'Tarif kann nicht berechnet werden - Ihr Tier hat eine Vorerkrankung';
+        berechnenBtn.style.opacity = "0.5";
+        berechnenBtn.style.cursor = "not-allowed";
+        berechnenBtn.title =
+          "Tarif kann nicht berechnet werden - Ihr Tier hat eine Vorerkrankung";
       }
     } else if (this.value === "nein") {
       // Hide alert when "Nein" is selected
-      const existingAlert = document.getElementById('diseaseAlert');
+      const existingAlert = document.getElementById("diseaseAlert");
       if (existingAlert) {
-        existingAlert.style.animation = 'slideUp 0.3s ease-out';
+        existingAlert.style.animation = "slideUp 0.3s ease-out";
         setTimeout(() => existingAlert.remove(), 300);
       }
       // Re-enable next button
       if (nextBtn) {
-        nextBtn.style.opacity = '1';
-        nextBtn.style.cursor = 'pointer';
-        nextBtn.title = '';
+        nextBtn.style.opacity = "1";
+        nextBtn.style.cursor = "pointer";
+        nextBtn.title = "";
       }
       // Re-enable "Jetzt Tarif berechnen" button
       if (berechnenBtn) {
         berechnenBtn.disabled = false;
-        berechnenBtn.style.opacity = '1';
-        berechnenBtn.style.cursor = 'pointer';
-        berechnenBtn.title = '';
+        berechnenBtn.style.opacity = "1";
+        berechnenBtn.style.cursor = "pointer";
+        berechnenBtn.title = "";
       }
     }
     checkFormCompletion();
   }
 
   // Handle disease list radio button change
-  const diseaseRadios = document.querySelectorAll('input[name="spezielle_krankheiten"]');
+  const diseaseRadios = document.querySelectorAll(
+    'input[name="spezielle_krankheiten"]'
+  );
   diseaseRadios.forEach((radio) => {
     radio.addEventListener("change", function () {
-      const nextBtn = document.getElementById('nextStepBtn');
-      
+      const nextBtn = document.getElementById("nextStepBtn");
+
       if (this.value === "ja") {
         // Show alert inline below the buttons
         showDiseaseAlert();
         // Disable next button to make it clear user cannot proceed
         if (nextBtn) {
-          nextBtn.style.opacity = '0.5';
-          nextBtn.style.cursor = 'not-allowed';
-          nextBtn.title = 'Sie können nicht fortfahren, da Ihr Tier eine Vorerkrankung hat';
+          nextBtn.style.opacity = "0.5";
+          nextBtn.style.cursor = "not-allowed";
+          nextBtn.title =
+            "Sie können nicht fortfahren, da Ihr Tier eine Vorerkrankung hat";
         }
       } else if (this.value === "nein") {
         // Hide alert when "Nein" is selected
-        const existingAlert = document.getElementById('diseaseAlert');
+        const existingAlert = document.getElementById("diseaseAlert");
         if (existingAlert) {
-          existingAlert.style.animation = 'slideUp 0.3s ease-out';
+          existingAlert.style.animation = "slideUp 0.3s ease-out";
           setTimeout(() => existingAlert.remove(), 300);
         }
         // Re-enable next button
         if (nextBtn) {
-          nextBtn.style.opacity = '1';
-          nextBtn.style.cursor = 'pointer';
-          nextBtn.title = '';
+          nextBtn.style.opacity = "1";
+          nextBtn.style.cursor = "pointer";
+          nextBtn.title = "";
         }
       }
       checkFormCompletion();
@@ -3505,7 +3530,7 @@ document.addEventListener("DOMContentLoaded", function () {
           birthdate: null,
           coverage: 65000,
           retention: 20,
-    product: null,
+          product: null,
           options: [],
           payment_schedule: "M",
           contract_term: 1,
@@ -3960,8 +3985,8 @@ document.addEventListener("DOMContentLoaded", function () {
     ];
 
     // Only validate housing for cats
-    const selectedAnimal = tierKategorieSelect?.value || 'katze';
-    if (selectedAnimal === 'katze') {
+    const selectedAnimal = tierKategorieSelect?.value || "katze";
+    if (selectedAnimal === "katze") {
       radioFields.push({ name: "haltung", label: "Haltungsart" });
     }
 
@@ -4300,9 +4325,9 @@ document.addEventListener("DOMContentLoaded", function () {
   updateGermanDateDisplay();
   updateStepThreeAvailability();
   initializeAppScreen();
-  
+
   // Initialize housing visibility based on default animal selection
-  updateHousingVisibility(tierKategorieSelect?.value || 'katze');
+  updateHousingVisibility(tierKategorieSelect?.value || "katze");
 });
 
 let selectedPlan = null;
@@ -4412,7 +4437,7 @@ function getDefaultPricingPayload() {
         birthdate: null,
         coverage: 65000,
         retention: 20,
-  product: null,
+        product: null,
         options: [],
         payment_schedule: "M",
         contract_term: 1,
@@ -4717,7 +4742,8 @@ function getPlanDisplayTitle(planKey, productEntry) {
 
 function getActivePaymentContext(scheduleCodeOverride) {
   const paymentSelect = document.getElementById("paymentFrequency");
-  const billingValue = paymentSelect?.value || latestPricingData?.billing || "monthly";
+  const billingValue =
+    paymentSelect?.value || latestPricingData?.billing || "monthly";
   const scheduleCode =
     scheduleCodeOverride ||
     PAYMENT_SCHEDULE_MAP[billingValue] ||
@@ -4752,7 +4778,10 @@ function updateSelectedPlanPricingSnapshot(scheduleCodeOverride) {
     ident = product?.ident || product?.raw?.ident || null;
   }
 
-  if (!Number.isFinite(price) && selectedPlanPricing?.planKey === resolvedPlanKey) {
+  if (
+    !Number.isFinite(price) &&
+    selectedPlanPricing?.planKey === resolvedPlanKey
+  ) {
     price = Number.isFinite(selectedPlanPricing.price)
       ? selectedPlanPricing.price
       : null;
@@ -4835,7 +4864,8 @@ function getSelectedPlanPricingDetails(scheduleCodeOverride) {
       if (Number.isFinite(storedPrice) && storedPrice > 0) {
         price = storedPrice;
         description =
-          description || getPlanName(storedSelection.selectedPlan || resolvedPlanKey);
+          description ||
+          getPlanName(storedSelection.selectedPlan || resolvedPlanKey);
         ident = ident || storedSelection.planIdent || null;
       }
     } catch (error) {
@@ -5087,9 +5117,7 @@ function initializeSuccessModule() {
 
 function setupPricingEventListeners() {
   document.addEventListener("click", function (e) {
-    const planButton = e.target.closest(
-      ".table-select-btn[data-plan]"
-    );
+    const planButton = e.target.closest(".table-select-btn[data-plan]");
     if (planButton) {
       e.preventDefault();
       const plan = planButton.getAttribute("data-plan");
@@ -5475,7 +5503,7 @@ function updateAddonPricing() {
     const config = addonOptions[input.value];
     const isDisabled =
       !config || config.disabled || !Number.isFinite(config.price);
-    
+
     // Hide disabled options instead of just disabling them
     if (isDisabled) {
       label.style.display = "none";
@@ -5577,7 +5605,8 @@ function updateConfirmationSection() {
   const planDetails = getSelectedPlanPricingDetails();
   const planName =
     planDetails?.description || getPlanName(selectedPlan) || selectedPlan;
-  const planPriceValue = planDetails?.price ?? getCurrentPrice(selectedPlan || "komfort");
+  const planPriceValue =
+    planDetails?.price ?? getCurrentPrice(selectedPlan || "komfort");
 
   if (confirmationHeading) {
     confirmationHeading.textContent =
@@ -5624,7 +5653,8 @@ function continueToApplication() {
   )?.value;
 
   const planDetails = getSelectedPlanPricingDetails();
-  const planPriceValue = planDetails?.price ?? getCurrentPrice(selectedPlan || "komfort");
+  const planPriceValue =
+    planDetails?.price ?? getCurrentPrice(selectedPlan || "komfort");
 
   const selectionData = {
     selectedPlan: selectedPlan,
@@ -5737,7 +5767,9 @@ function initializeCalendly() {
         a1: customerData.phone || "",
         a2:
           insuranceSelection.planTitle ||
-          getPlanName(insuranceSelection.selectedPlan || selectedPlan || "smart"),
+          getPlanName(
+            insuranceSelection.selectedPlan || selectedPlan || "smart"
+          ),
       },
     },
     utm: {
@@ -5799,9 +5831,7 @@ function getPlanName(plan) {
         storedSelection.planIdent === value
       ) {
         return (
-          storedSelection.planTitle ||
-          storedSelection.selectedPlan ||
-          value
+          storedSelection.planTitle || storedSelection.selectedPlan || value
         );
       }
     }
@@ -5827,7 +5857,9 @@ function goBack() {
 }
 
 // Global showApiError function
-function showApiError(errorMessage = "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.") {
+function showApiError(
+  errorMessage = "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+) {
   const pricingScreen = document.getElementById("pricingScreen");
   if (!pricingScreen) {
     console.error("Pricing screen container not found");
@@ -5849,7 +5881,9 @@ function showApiError(errorMessage = "Es ist ein Fehler aufgetreten. Bitte versu
       font-weight: 500;
     `;
 
-    const insertionTarget = pricingScreen.querySelector(".plans-title-section") || pricingScreen.firstElementChild;
+    const insertionTarget =
+      pricingScreen.querySelector(".plans-title-section") ||
+      pricingScreen.firstElementChild;
     if (insertionTarget) {
       insertionTarget.insertAdjacentElement("afterend", errorBanner);
     } else {
@@ -5870,7 +5904,7 @@ function proceedToApplication() {
   try {
     // Check if a plan is selected
     if (!selectedPlan) {
-      alert('Bitte wählen Sie zuerst einen Tarif aus.');
+      alert("Bitte wählen Sie zuerst einen Tarif aus.");
       return;
     }
 
@@ -5880,7 +5914,8 @@ function proceedToApplication() {
     )?.value;
 
     const planDetails = getSelectedPlanPricingDetails();
-    const planPriceValue = planDetails?.price ?? getCurrentPrice(selectedPlan || "komfort");
+    const planPriceValue =
+      planDetails?.price ?? getCurrentPrice(selectedPlan || "komfort");
 
     // Get addon price if selected
     const addonPrice = addonSelected ? getSelectedAddonPrice() : 0;
@@ -5892,33 +5927,39 @@ function proceedToApplication() {
     const selectedData = {
       selectedPlan: selectedPlan,
       planIdent: planDetails?.ident || null,
-      planTitle: planDetails?.description || getPlanName(selectedPlan) || selectedPlan,
+      planTitle:
+        planDetails?.description || getPlanName(selectedPlan) || selectedPlan,
       planPrice: planPriceValue,
       monthlyPrice: planPriceValue,
       deductible: document.getElementById("deductible")?.value || "20",
-      paymentFrequency: document.getElementById("paymentFrequency")?.value || "monthly",
+      paymentFrequency:
+        document.getElementById("paymentFrequency")?.value || "monthly",
       addonSelected: addonSelected,
       addonOption: addonSelected ? addonOptionValue || "2000" : null,
       addonPrice: addonPrice,
       totalPrice: totalPrice,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
-    
+
     // Store in sessionStorage so application form can access it
-    sessionStorage.setItem('selectedInsurancePlan', JSON.stringify(selectedData));
-    
+    sessionStorage.setItem(
+      "selectedInsurancePlan",
+      JSON.stringify(selectedData)
+    );
+
     // Show application screen
-    showScreen('applicationScreen');
-    
+    showScreen("applicationScreen");
+
     // Scroll to top
     window.scrollTo(0, 0);
-    
+
     // Populate the application form with the selected plan data
     populateApplicationForm(selectedData);
-    
   } catch (error) {
-    console.error('Fehler beim Weiterleiten zur Antragstellung:', error);
-    alert('Es gab einen Fehler beim Weiterleiten. Bitte versuchen Sie es erneut.');
+    console.error("Fehler beim Weiterleiten zur Antragstellung:", error);
+    alert(
+      "Es gab einen Fehler beim Weiterleiten. Bitte versuchen Sie es erneut."
+    );
   }
 }
 
@@ -5929,27 +5970,29 @@ window.proceedToApplication = proceedToApplication;
 function populateApplicationForm(selectedData) {
   // Set today's date as default insurance start date
   const today = new Date();
-  const formattedDate = `${String(today.getDate()).padStart(2, '0')}.${String(today.getMonth() + 1).padStart(2, '0')}.${today.getFullYear()}`;
-  
-  const insuranceStartInput = document.getElementById('appInsuranceStartDate');
+  const formattedDate = `${String(today.getDate()).padStart(2, "0")}.${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}.${today.getFullYear()}`;
+
+  const insuranceStartInput = document.getElementById("appInsuranceStartDate");
   if (insuranceStartInput) {
     insuranceStartInput.value = formattedDate;
   }
-  
+
   // Display the total price in summary
-  const summaryTotalPrice = document.getElementById('summaryTotalPrice');
+  const summaryTotalPrice = document.getElementById("summaryTotalPrice");
   if (summaryTotalPrice && selectedData.totalPrice) {
     summaryTotalPrice.textContent = `${selectedData.totalPrice}€ pro Monat`;
   }
 }
 
 // Application Form Logic
-document.addEventListener('DOMContentLoaded', function() {
-  const applicationForm = document.getElementById('applicationForm');
-  
-  console.log('Application form found:', applicationForm);
+document.addEventListener("DOMContentLoaded", function () {
+  const applicationForm = document.getElementById("applicationForm");
+
+  console.log("Application form found:", applicationForm);
   if (!applicationForm) {
-    console.error('Application form not found!');
+    console.error("Application form not found!");
     return;
   }
 
@@ -5957,156 +6000,167 @@ document.addEventListener('DOMContentLoaded', function() {
   autoFillApplicationData();
 
   // Also auto-fill if user changes postal code in main form while on application
-  const mainFormPostalCode = document.getElementById('plz');
+  const mainFormPostalCode = document.getElementById("plz");
   if (mainFormPostalCode) {
-    mainFormPostalCode.addEventListener('input', function() {
+    mainFormPostalCode.addEventListener("input", function () {
       // Delay to allow for proper input processing
       setTimeout(() => {
-        if (currentScreenId === 'applicationScreen') {
+        if (currentScreenId === "applicationScreen") {
           autoFillApplicationData();
         }
       }, 100);
     });
   }
-  
+
   // Birth date formatting for application form
-  const birthDateInput = document.getElementById('appBirthDate');
+  const birthDateInput = document.getElementById("appBirthDate");
   if (birthDateInput) {
-    birthDateInput.addEventListener('input', function() {
-      let value = this.value.replace(/\D/g, '');
+    birthDateInput.addEventListener("input", function () {
+      let value = this.value.replace(/\D/g, "");
       if (value.length >= 2) {
-        value = value.substring(0, 2) + '.' + value.substring(2);
+        value = value.substring(0, 2) + "." + value.substring(2);
       }
       if (value.length >= 5) {
-        value = value.substring(0, 5) + '.' + value.substring(5, 9);
+        value = value.substring(0, 5) + "." + value.substring(5, 9);
       }
       this.value = value;
     });
   }
 
   // Insurance start date formatting
-  const insuranceStartInput = document.getElementById('appInsuranceStartDate');
+  const insuranceStartInput = document.getElementById("appInsuranceStartDate");
   if (insuranceStartInput) {
-    insuranceStartInput.addEventListener('input', function() {
-      let value = this.value.replace(/\D/g, '');
+    insuranceStartInput.addEventListener("input", function () {
+      let value = this.value.replace(/\D/g, "");
       if (value.length >= 2) {
-        value = value.substring(0, 2) + '.' + value.substring(2);
+        value = value.substring(0, 2) + "." + value.substring(2);
       }
       if (value.length >= 5) {
-        value = value.substring(0, 5) + '.' + value.substring(5, 9);
+        value = value.substring(0, 5) + "." + value.substring(5, 9);
       }
       this.value = value;
     });
   }
 
   // IBAN formatting and validation
-  const ibanInput = document.getElementById('appIban');
+  const ibanInput = document.getElementById("appIban");
   if (ibanInput) {
-    ibanInput.addEventListener('input', function() {
-      let value = this.value.replace(/\s/g, '').toUpperCase();
-      
+    ibanInput.addEventListener("input", function () {
+      let value = this.value.replace(/\s/g, "").toUpperCase();
+
       // Clean value - first 2 letters, then 20 digits
-      let cleanValue = '';
-      
+      let cleanValue = "";
+
       if (value.length >= 1) {
-        cleanValue += value[0].match(/[A-Z]/) ? value[0] : '';
+        cleanValue += value[0].match(/[A-Z]/) ? value[0] : "";
       }
       if (value.length >= 2) {
-        cleanValue += value[1].match(/[A-Z]/) ? value[1] : '';
+        cleanValue += value[1].match(/[A-Z]/) ? value[1] : "";
       }
-      
+
       if (value.length > 2) {
-        const digits = value.substring(2).replace(/\D/g, '');
+        const digits = value.substring(2).replace(/\D/g, "");
         cleanValue += digits.substring(0, 20);
       }
-      
+
       // Format like: DE95 2022 0800 0052 2738 94
-      let formattedValue = '';
+      let formattedValue = "";
       for (let i = 0; i < cleanValue.length; i++) {
         if (i > 0 && i % 4 === 0) {
-          formattedValue += ' ';
+          formattedValue += " ";
         }
         formattedValue += cleanValue[i];
       }
-      
+
       this.value = formattedValue;
-      
+
       // Validation styling
       if (cleanValue.length >= 22 && /^[A-Z]{2}[0-9]{20}$/.test(cleanValue)) {
-        this.style.borderColor = '#28a745';
+        this.style.borderColor = "#28a745";
       } else if (cleanValue.length > 0) {
-        this.style.borderColor = '#ddd';
+        this.style.borderColor = "#ddd";
       }
     });
 
-    ibanInput.addEventListener('blur', function() {
-      const cleanIban = this.value.replace(/\s/g, '');
-      if (cleanIban.length > 0 && (cleanIban.length !== 22 || !/^[A-Z]{2}[0-9]{20}$/.test(cleanIban))) {
-        this.style.borderColor = '#d32f2f';
+    ibanInput.addEventListener("blur", function () {
+      const cleanIban = this.value.replace(/\s/g, "");
+      if (
+        cleanIban.length > 0 &&
+        (cleanIban.length !== 22 || !/^[A-Z]{2}[0-9]{20}$/.test(cleanIban))
+      ) {
+        this.style.borderColor = "#d32f2f";
       }
     });
   }
 
   // Pet identification radio button logic
-  const petIdRadios = document.querySelectorAll('input[name="petIdentification"]');
-  const chipNumberContainer = document.getElementById('chipNumberContainer');
-  const tattooNumberContainer = document.getElementById('tattooNumberContainer');
-  const chipNumberInput = document.getElementById('appChipNumber');
-  const tattooNumberInput = document.getElementById('appTattooNumber');
+  const petIdRadios = document.querySelectorAll(
+    'input[name="petIdentification"]'
+  );
+  const chipNumberContainer = document.getElementById("chipNumberContainer");
+  const tattooNumberContainer = document.getElementById(
+    "tattooNumberContainer"
+  );
+  const chipNumberInput = document.getElementById("appChipNumber");
+  const tattooNumberInput = document.getElementById("appTattooNumber");
 
-  petIdRadios.forEach(radio => {
-    radio.addEventListener('change', function() {
+  petIdRadios.forEach((radio) => {
+    radio.addEventListener("change", function () {
       // Hide all containers first
-      if (chipNumberContainer) chipNumberContainer.style.display = 'none';
-      if (tattooNumberContainer) tattooNumberContainer.style.display = 'none';
-      
+      if (chipNumberContainer) chipNumberContainer.style.display = "none";
+      if (tattooNumberContainer) tattooNumberContainer.style.display = "none";
+
       // Clear inputs when hiding
-      if (chipNumberInput) chipNumberInput.value = '';
-      if (tattooNumberInput) tattooNumberInput.value = '';
-      
+      if (chipNumberInput) chipNumberInput.value = "";
+      if (tattooNumberInput) tattooNumberInput.value = "";
+
       // Show relevant container based on selection
-      if (this.value === 'chip' && chipNumberContainer) {
-        chipNumberContainer.style.display = 'block';
-        if (chipNumberInput) chipNumberInput.setAttribute('required', '');
-      } else if (this.value === 'tattoo' && tattooNumberContainer) {
-        tattooNumberContainer.style.display = 'block';
-        if (tattooNumberInput) tattooNumberInput.setAttribute('required', '');
+      if (this.value === "chip" && chipNumberContainer) {
+        chipNumberContainer.style.display = "block";
+        if (chipNumberInput) chipNumberInput.setAttribute("required", "");
+      } else if (this.value === "tattoo" && tattooNumberContainer) {
+        tattooNumberContainer.style.display = "block";
+        if (tattooNumberInput) tattooNumberInput.setAttribute("required", "");
       } else {
         // Remove required attribute when "none" is selected
-        if (chipNumberInput) chipNumberInput.removeAttribute('required');
-        if (tattooNumberInput) tattooNumberInput.removeAttribute('required');
+        if (chipNumberInput) chipNumberInput.removeAttribute("required");
+        if (tattooNumberInput) tattooNumberInput.removeAttribute("required");
       }
     });
   });
 
   // Chip number validation - should be 15 digits
   if (chipNumberInput) {
-    chipNumberInput.addEventListener('input', function() {
+    chipNumberInput.addEventListener("input", function () {
       // Only allow numbers
-      this.value = this.value.replace(/\D/g, '');
-      
+      this.value = this.value.replace(/\D/g, "");
+
       // Limit to 15 digits
       if (this.value.length > 15) {
         this.value = this.value.substring(0, 15);
       }
-      
+
       // Validation styling
-      const chipError = document.getElementById('chipNumberError');
+      const chipError = document.getElementById("chipNumberError");
       if (this.value.length === 15) {
-        this.style.borderColor = '#28a745';
-        if (chipError) chipError.style.display = 'none';
+        this.style.borderColor = "#28a745";
+        if (chipError) chipError.style.display = "none";
       } else if (this.value.length > 0) {
-        this.style.borderColor = '#ddd';
-        if (chipError) chipError.style.display = 'none';
+        this.style.borderColor = "#ddd";
+        if (chipError) chipError.style.display = "none";
       }
     });
 
-    chipNumberInput.addEventListener('blur', function() {
-      const chipError = document.getElementById('chipNumberError');
-      if (this.hasAttribute('required') && this.value.length > 0 && this.value.length !== 15) {
-        this.style.borderColor = '#d32f2f';
+    chipNumberInput.addEventListener("blur", function () {
+      const chipError = document.getElementById("chipNumberError");
+      if (
+        this.hasAttribute("required") &&
+        this.value.length > 0 &&
+        this.value.length !== 15
+      ) {
+        this.style.borderColor = "#d32f2f";
         if (chipError) {
-          chipError.style.display = 'block';
+          chipError.style.display = "block";
           chipError.innerHTML = `
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align: middle; margin-right: 4px;">
               <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm1 12H7V7h2v5zm0-6H7V4h2v2z" fill="#E20000"/>
@@ -6114,38 +6168,38 @@ document.addEventListener('DOMContentLoaded', function() {
             Chipnummer muss genau 15 Ziffern haben.
           `;
         }
-      } else if (this.hasAttribute('required') && this.value.length === 0) {
-        this.style.borderColor = '#d32f2f';
-        if (chipError) chipError.style.display = 'block';
+      } else if (this.hasAttribute("required") && this.value.length === 0) {
+        this.style.borderColor = "#d32f2f";
+        if (chipError) chipError.style.display = "block";
       } else {
-        if (chipError) chipError.style.display = 'none';
+        if (chipError) chipError.style.display = "none";
       }
     });
   }
 
   // Summary toggle functionality
-  const summaryToggleBtn = document.getElementById('summaryToggleBtn');
-  const summaryContent = document.getElementById('summaryContent');
-  
+  const summaryToggleBtn = document.getElementById("summaryToggleBtn");
+  const summaryContent = document.getElementById("summaryContent");
+
   if (summaryToggleBtn && summaryContent) {
-    summaryToggleBtn.addEventListener('click', function() {
-      const isExpanded = summaryContent.classList.contains('show');
-      const toggleText = this.querySelector('.toggle-text');
-      const toggleArrow = this.querySelector('.toggle-arrow');
-      
+    summaryToggleBtn.addEventListener("click", function () {
+      const isExpanded = summaryContent.classList.contains("show");
+      const toggleText = this.querySelector(".toggle-text");
+      const toggleArrow = this.querySelector(".toggle-arrow");
+
       if (isExpanded) {
         // Hide summary
-        summaryContent.classList.remove('show');
-        summaryContent.style.display = 'none';
-        this.classList.remove('expanded');
-        if (toggleText) toggleText.textContent = 'Zusammenfassung anzeigen';
+        summaryContent.classList.remove("show");
+        summaryContent.style.display = "none";
+        this.classList.remove("expanded");
+        if (toggleText) toggleText.textContent = "Zusammenfassung anzeigen";
       } else {
         // Show summary
-        summaryContent.classList.add('show');
-        summaryContent.style.display = 'block';
-        this.classList.add('expanded');
-        if (toggleText) toggleText.textContent = 'Zusammenfassung ausblenden';
-        
+        summaryContent.classList.add("show");
+        summaryContent.style.display = "block";
+        this.classList.add("expanded");
+        if (toggleText) toggleText.textContent = "Zusammenfassung ausblenden";
+
         // Update summary content when showing
         updateApplicationSummary();
       }
@@ -6153,269 +6207,335 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Update summary when form changes
-  applicationForm.addEventListener('change', updateApplicationSummary);
-  applicationForm.addEventListener('input', updateApplicationSummary);
+  applicationForm.addEventListener("change", updateApplicationSummary);
+  applicationForm.addEventListener("input", updateApplicationSummary);
 
   function updateApplicationSummary() {
     // Personal Data
     const gender = document.querySelector('input[name="gender"]:checked');
-    const firstName = document.getElementById('appFirstName')?.value || '';
-    const lastName = document.getElementById('appLastName')?.value || '';
-    const birthDate = document.getElementById('appBirthDate')?.value || '';
-    const email = document.getElementById('appEmail')?.value || '';
-    const phone = document.getElementById('appPhone')?.value || '';
-    const street = document.getElementById('appStreet')?.value || '';
-    const houseNumber = document.getElementById('appHouseNumber')?.value || '';
-    const postalCode = document.getElementById('appPostalCode')?.value || '';
-    const city = document.getElementById('appCity')?.value || '';
+    const firstName = document.getElementById("appFirstName")?.value || "";
+    const lastName = document.getElementById("appLastName")?.value || "";
+    const birthDate = document.getElementById("appBirthDate")?.value || "";
+    const email = document.getElementById("appEmail")?.value || "";
+    const phone = document.getElementById("appPhone")?.value || "";
+    const street = document.getElementById("appStreet")?.value || "";
+    const houseNumber = document.getElementById("appHouseNumber")?.value || "";
+    const postalCode = document.getElementById("appPostalCode")?.value || "";
+    const city = document.getElementById("appCity")?.value || "";
 
     // Insurance Information
-    const insuranceStartDate = document.getElementById('appInsuranceStartDate')?.value || '';
+    const insuranceStartDate =
+      document.getElementById("appInsuranceStartDate")?.value || "";
     const duration = document.querySelector('input[name="duration"]:checked');
-    const previousInsurance = document.querySelector('input[name="previousInsurance"]:checked');
+    const previousInsurance = document.querySelector(
+      'input[name="previousInsurance"]:checked'
+    );
 
     // Account Data
-    const accountHolder = document.getElementById('appAccountHolder')?.value || '';
-    const iban = document.getElementById('appIban')?.value || '';
+    const accountHolder =
+      document.getElementById("appAccountHolder")?.value || "";
+    const iban = document.getElementById("appIban")?.value || "";
 
     // Update Personal Data Summary
     if (gender) {
-      const summaryGender = document.getElementById('summaryGender');
-      if (summaryGender) summaryGender.textContent = gender.value === 'frau' ? 'Frau' : 'Herr';
+      const summaryGender = document.getElementById("summaryGender");
+      if (summaryGender)
+        summaryGender.textContent = gender.value === "frau" ? "Frau" : "Herr";
     }
     if (firstName || lastName) {
-      const summaryName = document.getElementById('summaryName');
-      if (summaryName) summaryName.textContent = `${firstName} ${lastName}`.trim() || '-';
+      const summaryName = document.getElementById("summaryName");
+      if (summaryName)
+        summaryName.textContent = `${firstName} ${lastName}`.trim() || "-";
     }
     if (birthDate) {
-      const summaryBirthDate = document.getElementById('summaryBirthDate');
+      const summaryBirthDate = document.getElementById("summaryBirthDate");
       if (summaryBirthDate) summaryBirthDate.textContent = birthDate;
     }
     if (email) {
-      const summaryEmail = document.getElementById('summaryEmail');
+      const summaryEmail = document.getElementById("summaryEmail");
       if (summaryEmail) summaryEmail.textContent = email;
     }
     if (phone) {
-      const summaryPhone = document.getElementById('summaryPhone');
+      const summaryPhone = document.getElementById("summaryPhone");
       if (summaryPhone) summaryPhone.textContent = phone;
     }
     if (street && houseNumber && postalCode && city) {
-      const summaryAddress = document.getElementById('summaryAddress');
-      if (summaryAddress) summaryAddress.textContent = `${street} ${houseNumber}, ${postalCode} ${city}`;
+      const summaryAddress = document.getElementById("summaryAddress");
+      if (summaryAddress)
+        summaryAddress.textContent = `${street} ${houseNumber}, ${postalCode} ${city}`;
     }
 
     // Update Insurance Information Summary
     if (insuranceStartDate) {
-      const summaryInsuranceStart = document.getElementById('summaryInsuranceStart');
-      if (summaryInsuranceStart) summaryInsuranceStart.textContent = insuranceStartDate;
+      const summaryInsuranceStart = document.getElementById(
+        "summaryInsuranceStart"
+      );
+      if (summaryInsuranceStart)
+        summaryInsuranceStart.textContent = insuranceStartDate;
     }
     if (duration) {
-      const summaryDuration = document.getElementById('summaryDuration');
-      if (summaryDuration) summaryDuration.textContent = duration.value === '1' ? '1 Jahr' : '3 Jahre';
+      const summaryDuration = document.getElementById("summaryDuration");
+      if (summaryDuration)
+        summaryDuration.textContent =
+          duration.value === "1" ? "1 Jahr" : "3 Jahre";
     }
     if (previousInsurance) {
-      const summaryPreviousInsurance = document.getElementById('summaryPreviousInsurance');
-      if (summaryPreviousInsurance) summaryPreviousInsurance.textContent = previousInsurance.value === 'ja' ? 'Ja' : 'Nein';
+      const summaryPreviousInsurance = document.getElementById(
+        "summaryPreviousInsurance"
+      );
+      if (summaryPreviousInsurance)
+        summaryPreviousInsurance.textContent =
+          previousInsurance.value === "ja" ? "Ja" : "Nein";
     }
 
     // Update Account Data Summary
     if (accountHolder) {
-      const summaryAccountHolder = document.getElementById('summaryAccountHolder');
-      if (summaryAccountHolder) summaryAccountHolder.textContent = accountHolder;
+      const summaryAccountHolder = document.getElementById(
+        "summaryAccountHolder"
+      );
+      if (summaryAccountHolder)
+        summaryAccountHolder.textContent = accountHolder;
     }
     if (iban) {
-      const summaryIban = document.getElementById('summaryIban');
+      const summaryIban = document.getElementById("summaryIban");
       if (summaryIban) summaryIban.textContent = iban;
     }
   }
 
   // Handle form submission
-  console.log('Adding form submission event listener');
-  applicationForm.addEventListener('submit', function(e) {
-    console.log('Form submitted!');
+  console.log("Adding form submission event listener");
+  applicationForm.addEventListener("submit", function (e) {
+    console.log("Form submitted!");
     e.preventDefault();
-    
+
     // Validate required fields
-    const requiredFields = applicationForm.querySelectorAll('[required]');
+    const requiredFields = applicationForm.querySelectorAll("[required]");
     let isValid = true;
-    
-    console.log('Found required fields:', requiredFields.length);
-    
-    requiredFields.forEach(field => {
-      console.log('Checking field:', field.name, 'value:', field.value, 'type:', field.type);
-      if (!field.value && field.type !== 'radio' && field.type !== 'checkbox') {
-        console.log('Field invalid:', field.name);
+
+    console.log("Found required fields:", requiredFields.length);
+
+    requiredFields.forEach((field) => {
+      console.log(
+        "Checking field:",
+        field.name,
+        "value:",
+        field.value,
+        "type:",
+        field.type
+      );
+      if (!field.value && field.type !== "radio" && field.type !== "checkbox") {
+        console.log("Field invalid:", field.name);
         isValid = false;
-        field.style.borderColor = '#d32f2f';
-      } else if (field.type === 'radio') {
-        const radioGroup = applicationForm.querySelectorAll(`input[name="${field.name}"]`);
-        const isChecked = Array.from(radioGroup).some(radio => radio.checked);
-        console.log('Radio group', field.name, 'checked:', isChecked);
+        field.style.borderColor = "#d32f2f";
+      } else if (field.type === "radio") {
+        const radioGroup = applicationForm.querySelectorAll(
+          `input[name="${field.name}"]`
+        );
+        const isChecked = Array.from(radioGroup).some((radio) => radio.checked);
+        console.log("Radio group", field.name, "checked:", isChecked);
         if (!isChecked) {
-          console.log('Radio group invalid:', field.name);
+          console.log("Radio group invalid:", field.name);
           isValid = false;
         }
-      } else if (field.type === 'checkbox' && field.hasAttribute('required') && !field.checked) {
-        console.log('Checkbox invalid:', field.name);
+      } else if (
+        field.type === "checkbox" &&
+        field.hasAttribute("required") &&
+        !field.checked
+      ) {
+        console.log("Checkbox invalid:", field.name);
         isValid = false;
       } else {
-        field.style.borderColor = '#ddd';
+        field.style.borderColor = "#ddd";
       }
     });
 
-    console.log('Form validation result:', isValid);
+    console.log("Form validation result:", isValid);
 
     if (isValid) {
       // Collect form data
       const formData = new FormData(applicationForm);
       const data = Object.fromEntries(formData.entries());
-      
+
       // Add pricing data from session storage
-      const pricingData = JSON.parse(sessionStorage.getItem('selectedInsurancePlan') || '{}');
+      const pricingData = JSON.parse(
+        sessionStorage.getItem("selectedInsurancePlan") || "{}"
+      );
       const applicationData = { ...data, pricing: pricingData };
-      
+
       // Store application data
-      sessionStorage.setItem('applicationData', JSON.stringify(applicationData));
-      
+      sessionStorage.setItem(
+        "applicationData",
+        JSON.stringify(applicationData)
+      );
+
       // Show loading state
-      const submitButton = applicationForm.querySelector('button[type="submit"]');
+      const submitButton = applicationForm.querySelector(
+        'button[type="submit"]'
+      );
       if (submitButton) {
         const originalText = submitButton.innerHTML;
-        submitButton.innerHTML = '⏳ Antrag wird übermittelt...';
+        submitButton.innerHTML = "⏳ Antrag wird übermittelt...";
         submitButton.disabled = true;
-        
+
         // Simulate form submission delay
         setTimeout(() => {
-          console.log('Application Data:', applicationData);
-          
+          console.log("Application Data:", applicationData);
+
           // Reset button
           submitButton.innerHTML = originalText;
           submitButton.disabled = false;
-          
+
           // Redirect to thank you page
-          showScreen('successScreen');
+          showScreen("successScreen");
         }, 2000);
       } else {
         // Fallback if no submit button found
-        console.log('Application Data:', applicationData);
-        showScreen('successScreen');
+        console.log("Application Data:", applicationData);
+        showScreen("successScreen");
       }
     } else {
-      alert('Bitte füllen Sie alle Pflichtfelder aus.');
+      alert("Bitte füllen Sie alle Pflichtfelder aus.");
     }
   });
 
   // Backup: Direct click handler for submit button
-  const submitButton = applicationForm.querySelector('button[type="submit"], .btn-continue');
+  const submitButton = applicationForm.querySelector(
+    'button[type="submit"], .btn-continue'
+  );
   if (submitButton) {
-    console.log('Submit button found, adding click handler');
-    submitButton.addEventListener('click', function(e) {
-      console.log('Submit button clicked');
+    console.log("Submit button found, adding click handler");
+    submitButton.addEventListener("click", function (e) {
+      console.log("Submit button clicked");
       // The form submission handler above should handle this
       // This is just for debugging
     });
   } else {
-    console.error('Submit button not found!');
+    console.error("Submit button not found!");
   }
 
   // ===== Insurance Section Logic =====
   let insuranceCounter = 0;
 
   // Handle insurance start date and end date calculation
-  const appInsuranceStartDate = document.getElementById('appInsuranceStartDate');
-  const insuranceExpirationDisplay = document.getElementById('insuranceExpirationDisplay');
-  const duration1 = document.getElementById('duration1');
-  const duration3 = document.getElementById('duration3');
+  const appInsuranceStartDate = document.getElementById(
+    "appInsuranceStartDate"
+  );
+  const insuranceExpirationDisplay = document.getElementById(
+    "insuranceExpirationDisplay"
+  );
+  const duration1 = document.getElementById("duration1");
+  const duration3 = document.getElementById("duration3");
 
   // Format date input as DD.MM.YYYY
   if (appInsuranceStartDate) {
-    appInsuranceStartDate.addEventListener('input', function() {
-      let value = this.value.replace(/\D/g, '');
+    appInsuranceStartDate.addEventListener("input", function () {
+      let value = this.value.replace(/\D/g, "");
       if (value.length >= 2) {
-        value = value.substring(0, 2) + '.' + value.substring(2);
+        value = value.substring(0, 2) + "." + value.substring(2);
       }
       if (value.length >= 5) {
-        value = value.substring(0, 5) + '.' + value.substring(5, 9);
+        value = value.substring(0, 5) + "." + value.substring(5, 9);
       }
       this.value = value;
     });
 
-    appInsuranceStartDate.addEventListener('blur', calculateEndDate);
+    appInsuranceStartDate.addEventListener("blur", calculateEndDate);
   }
 
   function calculateEndDate() {
     if (!appInsuranceStartDate || !insuranceExpirationDisplay) return;
-    
+
     const dateValue = appInsuranceStartDate.value;
     if (!dateValue || dateValue.length < 10) {
-      insuranceExpirationDisplay.querySelector('.expiration-date').textContent = '--';
+      insuranceExpirationDisplay.querySelector(".expiration-date").textContent =
+        "--";
       return;
     }
 
     // Parse DD.MM.YYYY format
-    const parts = dateValue.split('.');
+    const parts = dateValue.split(".");
     if (parts.length !== 3) return;
-    
+
     const day = parseInt(parts[0], 10);
     const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
     const year = parseInt(parts[2], 10);
-    
+
     const startDate = new Date(year, month, day);
     if (isNaN(startDate.getTime())) {
-      insuranceExpirationDisplay.querySelector('.expiration-date').textContent = '--';
+      insuranceExpirationDisplay.querySelector(".expiration-date").textContent =
+        "--";
       return;
     }
 
     const duration = duration1?.checked ? 1 : 3;
     const endDate = new Date(startDate);
     endDate.setFullYear(endDate.getFullYear() + duration);
-    
+
     // Format date as "Month Day, Year" (e.g., "October 6, 2026")
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                    'July', 'August', 'September', 'October', 'November', 'December'];
-    const formattedEndDate = `${months[endDate.getMonth()]} ${endDate.getDate()}, ${endDate.getFullYear()}`;
-    
-    insuranceExpirationDisplay.querySelector('.expiration-date').textContent = formattedEndDate;
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    const formattedEndDate = `${
+      months[endDate.getMonth()]
+    } ${endDate.getDate()}, ${endDate.getFullYear()}`;
+
+    insuranceExpirationDisplay.querySelector(".expiration-date").textContent =
+      formattedEndDate;
   }
 
   if (duration1) {
-    duration1.addEventListener('change', calculateEndDate);
+    duration1.addEventListener("change", calculateEndDate);
   }
 
   if (duration3) {
-    duration3.addEventListener('change', calculateEndDate);
+    duration3.addEventListener("change", calculateEndDate);
   }
 
   // Handle previous insurance toggle
-  const prevInsYes = document.getElementById('prevInsYes');
-  const prevInsNo = document.getElementById('prevInsNo');
-  const previousInsuranceContainer = document.getElementById('previousInsuranceContainer');
+  const prevInsYes = document.getElementById("prevInsYes");
+  const prevInsNo = document.getElementById("prevInsNo");
+  const previousInsuranceContainer = document.getElementById(
+    "previousInsuranceContainer"
+  );
 
   function togglePreviousInsurance() {
     if (!previousInsuranceContainer) return;
-    
+
     if (prevInsYes?.checked) {
-      previousInsuranceContainer.style.display = 'block';
+      previousInsuranceContainer.style.display = "block";
       // Add first insurance entry if none exists
       if (insuranceCounter === 0) {
         addInsuranceEntry();
       }
     } else {
-      previousInsuranceContainer.style.display = 'none';
+      previousInsuranceContainer.style.display = "none";
     }
   }
 
   if (prevInsYes) {
-    prevInsYes.addEventListener('change', togglePreviousInsurance);
+    prevInsYes.addEventListener("change", togglePreviousInsurance);
   }
 
   if (prevInsNo) {
-    prevInsNo.addEventListener('change', togglePreviousInsurance);
+    prevInsNo.addEventListener("change", togglePreviousInsurance);
   }
 
   // Add insurance entry
-  const addInsuranceBtn = document.getElementById('addInsuranceBtn');
-  const previousInsuranceList = document.getElementById('previousInsuranceList');
+  const addInsuranceBtn = document.getElementById("addInsuranceBtn");
+  const previousInsuranceList = document.getElementById(
+    "previousInsuranceList"
+  );
 
   // Insurance companies list for autocomplete
   const insuranceCompanies = [
@@ -6564,78 +6684,79 @@ document.addEventListener('DOMContentLoaded', function() {
     "WWK Allgemeine Versicherung, 80335 München",
     "WWK Lebensversicherung auf Gegenseitigkeit, 80335 München",
     "ZURICH Insurance plc Niederlassung für Deutschland, 50668 Köln",
-    "Zurich Deutscher Herold Lebensversicherung AG, 53115 Bonn"
+    "Zurich Deutscher Herold Lebensversicherung AG, 53115 Bonn",
   ];
 
   function setupAutocomplete(inputElement) {
     if (!inputElement) return;
 
     // Create autocomplete container
-    const autocompleteContainer = document.createElement('div');
-    autocompleteContainer.className = 'autocomplete-dropdown';
-    inputElement.parentNode.style.position = 'relative';
+    const autocompleteContainer = document.createElement("div");
+    autocompleteContainer.className = "autocomplete-dropdown";
+    inputElement.parentNode.style.position = "relative";
     inputElement.parentNode.appendChild(autocompleteContainer);
 
-    inputElement.addEventListener('input', function() {
+    inputElement.addEventListener("input", function () {
       const value = this.value.toLowerCase();
-      autocompleteContainer.innerHTML = '';
-      
+      autocompleteContainer.innerHTML = "";
+
       if (value.length < 2) {
-        autocompleteContainer.style.display = 'none';
+        autocompleteContainer.style.display = "none";
         return;
       }
 
-      const filtered = insuranceCompanies.filter(company => 
+      const filtered = insuranceCompanies.filter((company) =>
         company.toLowerCase().includes(value)
       );
 
       if (filtered.length === 0) {
-        autocompleteContainer.style.display = 'none';
+        autocompleteContainer.style.display = "none";
         return;
       }
 
-      filtered.slice(0, 10).forEach(company => {
-        const item = document.createElement('div');
-        item.className = 'autocomplete-item';
-        
+      filtered.slice(0, 10).forEach((company) => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+
         // Highlight matching text
         const matchIndex = company.toLowerCase().indexOf(value);
         const beforeMatch = company.substring(0, matchIndex);
         const match = company.substring(matchIndex, matchIndex + value.length);
         const afterMatch = company.substring(matchIndex + value.length);
-        
+
         item.innerHTML = `${beforeMatch}<strong>${match}</strong>${afterMatch}`;
-        
-        item.addEventListener('click', function() {
+
+        item.addEventListener("click", function () {
           inputElement.value = company;
-          autocompleteContainer.style.display = 'none';
+          autocompleteContainer.style.display = "none";
         });
-        
+
         autocompleteContainer.appendChild(item);
       });
 
-      autocompleteContainer.style.display = 'block';
+      autocompleteContainer.style.display = "block";
     });
 
     // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
+    document.addEventListener("click", function (e) {
       if (e.target !== inputElement) {
-        autocompleteContainer.style.display = 'none';
+        autocompleteContainer.style.display = "none";
       }
     });
 
     // Navigate with keyboard
-    inputElement.addEventListener('keydown', function(e) {
-      const items = autocompleteContainer.querySelectorAll('.autocomplete-item');
+    inputElement.addEventListener("keydown", function (e) {
+      const items =
+        autocompleteContainer.querySelectorAll(".autocomplete-item");
       let currentFocus = -1;
-      
-      if (e.key === 'ArrowDown') {
+
+      if (e.key === "ArrowDown") {
         currentFocus++;
         addActive(items, currentFocus);
-      } else if (e.key === 'ArrowUp') {
+      } else if (e.key === "ArrowUp") {
         currentFocus--;
         addActive(items, currentFocus);
-      } else if (e.key === 'Enter') {
+      } else if (e.key === "Enter") {
         e.preventDefault();
         if (currentFocus > -1 && items[currentFocus]) {
           items[currentFocus].click();
@@ -6648,29 +6769,30 @@ document.addEventListener('DOMContentLoaded', function() {
       removeActive(items);
       if (index >= items.length) index = 0;
       if (index < 0) index = items.length - 1;
-      items[index]?.classList.add('autocomplete-active');
+      items[index]?.classList.add("autocomplete-active");
     }
 
     function removeActive(items) {
-      items.forEach(item => item.classList.remove('autocomplete-active'));
+      items.forEach((item) => item.classList.remove("autocomplete-active"));
     }
   }
 
   function addInsuranceEntry() {
     if (!previousInsuranceList) return;
-    
+
     insuranceCounter++;
-    
-    const insuranceEntry = document.createElement('div');
-    insuranceEntry.className = 'insurance-entry';
+
+    const insuranceEntry = document.createElement("div");
+    insuranceEntry.className = "insurance-entry";
     insuranceEntry.id = `insurance-entry-${insuranceCounter}`;
-    insuranceEntry.innerHTML = `
+    let insuranceEntryinnerHTML = `
       <div class="insurance-entry-header">
-        <span class="insurance-entry-title">${insuranceCounter}. Vorversicherung</span>
-        <button type="button" class="remove-insurance-btn" onclick="removeInsuranceEntry(${insuranceCounter})">
+        <span class="insurance-entry-title">${insuranceCounter}. Vorversicherung</span>`;
+    if (insuranceCounter > 1)
+      insuranceEntryinnerHTML += `<button type="button" class="remove-insurance-btn" onclick="removeInsuranceEntry(${insuranceCounter})">
           Entfernen
-        </button>
-      </div>
+        </button>`;
+    insuranceEntryinnerHTML += `</div>
       <div class="form-row">
         <div class="form-group full-width">
           <label for="insurance-company-${insuranceCounter}">
@@ -6702,27 +6824,30 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
       </div>
     `;
-    
+    insuranceEntry.innerHTML = insuranceEntryinnerHTML;
     previousInsuranceList.appendChild(insuranceEntry);
-    
+
     // Setup autocomplete for the newly added input
-    const companyInput = document.getElementById(`insurance-company-${insuranceCounter}`);
+    const companyInput = document.getElementById(
+      `insurance-company-${insuranceCounter}`
+    );
     if (companyInput) {
       setupAutocomplete(companyInput);
     }
   }
 
   // Remove insurance entry function (make it global)
-  window.removeInsuranceEntry = function(id) {
+  window.removeInsuranceEntry = function (id) {
     const entry = document.getElementById(`insurance-entry-${id}`);
     if (entry) {
       entry.remove();
       // Renumber remaining entries
-      const remainingEntries = previousInsuranceList.querySelectorAll('.insurance-entry');
+      const remainingEntries =
+        previousInsuranceList.querySelectorAll(".insurance-entry");
       insuranceCounter = 0;
       remainingEntries.forEach((entry, index) => {
         insuranceCounter++;
-        const title = entry.querySelector('.insurance-entry-title');
+        const title = entry.querySelector(".insurance-entry-title");
         if (title) {
           title.textContent = `${insuranceCounter}. Vorversicherung`;
         }
@@ -6731,6 +6856,6 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   if (addInsuranceBtn) {
-    addInsuranceBtn.addEventListener('click', addInsuranceEntry);
+    addInsuranceBtn.addEventListener("click", addInsuranceEntry);
   }
 });
