@@ -1180,16 +1180,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Date input validation function for German format
   function validateDateInput(input) {
+    const previousValue = input.dataset.previousValue || "";
     let value = input.value;
 
     // Remove any characters that aren't numbers or dots
     value = value.replace(/[^0-9.]/g, "");
 
-    // Auto-format as user types
-    if (value.length === 2 && !value.includes(".")) {
-      value = value + ".";
-    } else if (value.length === 5 && value.split(".").length === 2) {
-      value = value + ".";
+    // Only auto-add dots when typing forward (value is getting longer)
+    // Don't add dots when deleting (value is getting shorter)
+    if (value.length > previousValue.length) {
+      // Auto-format as user types
+      if (value.length === 2 && !value.includes(".")) {
+        value = value + ".";
+      } else if (value.length === 5 && value.split(".").length === 2) {
+        value = value + ".";
+      }
     }
 
     // Limit to DD.MM.YYYY format (10 characters max)
@@ -1198,6 +1203,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     input.value = value;
+    // Store current value for next comparison
+    input.dataset.previousValue = value;
 
     // Check if field is required and empty
     if (input.hasAttribute("required") && !value) {
@@ -1241,7 +1248,13 @@ document.addEventListener("DOMContentLoaded", function () {
       input.addEventListener("keydown", function (e) {
         if (e.key === "Backspace") {
           const cursorPosition = this.selectionStart;
+          const cursorEnd = this.selectionEnd;
           const value = this.value;
+
+          // If there's a selection range, let default behavior handle it
+          if (cursorPosition !== cursorEnd) {
+            return;
+          }
 
           // If the character before cursor is a dot, remove it along with the preceding number
           if (cursorPosition > 0 && value[cursorPosition - 1] === ".") {
@@ -1253,15 +1266,37 @@ document.addEventListener("DOMContentLoaded", function () {
               newValue =
                 value.substring(0, cursorPosition - 2) +
                 value.substring(cursorPosition);
+              this.value = newValue;
+              this.setSelectionRange(
+                Math.max(0, cursorPosition - 2),
+                Math.max(0, cursorPosition - 2)
+              );
             } else {
               newValue = value.substring(cursorPosition);
+              this.value = newValue;
+              this.setSelectionRange(0, 0);
             }
 
+            // Don't call validateDateInput here as it would add dots back
+            // Just trigger completion check if needed
+            if (this.id === "geburtsdatum") {
+              checkFormCompletion();
+            }
+          }
+          // If we're deleting a digit that comes right after a dot, also remove the dot
+          else if (
+            cursorPosition > 1 &&
+            value[cursorPosition - 2] === "." &&
+            /\d/.test(value[cursorPosition - 1])
+          ) {
+            e.preventDefault();
+
+            // Remove both the digit and the dot before it
+            const newValue =
+              value.substring(0, cursorPosition - 2) +
+              value.substring(cursorPosition);
             this.value = newValue;
-            this.setSelectionRange(
-              Math.max(0, cursorPosition - 2),
-              Math.max(0, cursorPosition - 2)
-            );
+            this.setSelectionRange(cursorPosition - 2, cursorPosition - 2);
 
             // Don't call validateDateInput here as it would add dots back
             // Just trigger completion check if needed
@@ -6016,30 +6051,70 @@ document.addEventListener("DOMContentLoaded", function () {
   const birthDateInput = document.getElementById("appBirthDate");
   if (birthDateInput) {
     birthDateInput.addEventListener("input", function () {
+      const previousValue = this.dataset.previousValue || "";
       let value = this.value.replace(/\D/g, "");
-      if (value.length >= 2) {
-        value = value.substring(0, 2) + "." + value.substring(2);
+      
+      // Only auto-add dots when typing forward (value is getting longer)
+      if (this.value.length > previousValue.length) {
+        if (value.length >= 2) {
+          value = value.substring(0, 2) + "." + value.substring(2);
+        }
+        if (value.length >= 5) {
+          value = value.substring(0, 5) + "." + value.substring(5, 9);
+        }
+      } else {
+        // When deleting, just remove non-digits but keep existing structure
+        const currentValue = this.value;
+        let cleanValue = "";
+        for (let i = 0; i < currentValue.length && cleanValue.replace(/\D/g, "").length < 8; i++) {
+          if (/\d/.test(currentValue[i]) || currentValue[i] === ".") {
+            cleanValue += currentValue[i];
+          }
+        }
+        value = cleanValue;
       }
-      if (value.length >= 5) {
-        value = value.substring(0, 5) + "." + value.substring(5, 9);
-      }
+      
       this.value = value;
+      this.dataset.previousValue = value;
     });
+
+    // Add backspace handler for birth date
+    addDateInputBackspaceHandler(birthDateInput);
   }
 
   // Insurance start date formatting
   const insuranceStartInput = document.getElementById("appInsuranceStartDate");
   if (insuranceStartInput) {
     insuranceStartInput.addEventListener("input", function () {
+      const previousValue = this.dataset.previousValue || "";
       let value = this.value.replace(/\D/g, "");
-      if (value.length >= 2) {
-        value = value.substring(0, 2) + "." + value.substring(2);
+      
+      // Only auto-add dots when typing forward (value is getting longer)
+      if (this.value.length > previousValue.length) {
+        if (value.length >= 2) {
+          value = value.substring(0, 2) + "." + value.substring(2);
+        }
+        if (value.length >= 5) {
+          value = value.substring(0, 5) + "." + value.substring(5, 9);
+        }
+      } else {
+        // When deleting, just remove non-digits but keep existing structure
+        const currentValue = this.value;
+        let cleanValue = "";
+        for (let i = 0; i < currentValue.length && cleanValue.replace(/\D/g, "").length < 8; i++) {
+          if (/\d/.test(currentValue[i]) || currentValue[i] === ".") {
+            cleanValue += currentValue[i];
+          }
+        }
+        value = cleanValue;
       }
-      if (value.length >= 5) {
-        value = value.substring(0, 5) + "." + value.substring(5, 9);
-      }
+      
       this.value = value;
+      this.dataset.previousValue = value;
     });
+
+    // Add backspace handler for insurance start date
+    addDateInputBackspaceHandler(insuranceStartInput);
   }
 
   // IBAN formatting and validation
