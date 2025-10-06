@@ -7,13 +7,33 @@
     <link rel="stylesheet" href="styles.css?v=1727080000" />
   </head>
   <body class="embedded-full">
+    <header class="site-header">
+      <div class="header-container">
+        <a href="https://www.vierbeinerabsicherung.de/" class="logo">
+          <img
+            src="https://onecdn.io/media/2a012ece-734c-4098-aeab-58d1faac1f4c/md2x"
+            alt="Allianz Logo"
+          />
+        </a>
+      </div>
+    </header>
     <main class="full-screen-scroll" data-iframe-size>
-      <section data-iframe-size id="formScreen" class="app-screen active-screen">
+      <section
+        data-iframe-size
+        id="formScreen"
+        class="app-screen active-screen"
+      >
         <div class="section-banner">
           <h1>Tierkrankenversicherung Antrag</h1>
           <p>
-            Beantworten Sie die Fragen Schritt für Schritt und erhalten Sie innerhalb weniger Sekunden die passenden Allianz Angebote für Ihr Haustier.
+            Beantworten Sie die Fragen Schritt für Schritt und erhalten Sie
+            innerhalb weniger Sekunden die passenden Allianz Angebote für Ihr
+            Haustier.
           </p>
+          <img
+            src="https://inno-prod.allianz.de/tkv/assets/images/Privatschutz_PetHealth_TariffData_Desktop.svg"
+            alt=""
+          />
         </div>
         <div class="form-card">
           <form id="insuranceForm">
@@ -46,7 +66,8 @@
                     id="plz"
                     class="form-input plz-input"
                     placeholder="z.B. 10115"
-                    maxlength="5" />
+                    maxlength="5"
+                  />
                 </div>
 
                 <div class="form-line">
@@ -104,7 +125,8 @@
                       maxlength="10"
                       pattern="^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d$"
                       title="Bitte geben Sie das Datum im Format TT.MM.JJJJ ein"
-                      required />
+                      required
+                    />
                     <span class="date-display" id="dateDisplay"></span>
                   </div>
                   <div class="input-help">
@@ -233,7 +255,8 @@
                       type="radio"
                       name="gesundheitsprobleme"
                       value="ja"
-                      id="gesundheitsprobleme_ja" />
+                      id="gesundheitsprobleme_ja"
+                    />
                     <span class="radio-custom"></span>
                     <span class="radio-text"
                       >⚠️ Ja, es sind Gesundheitsprobleme bekannt</span
@@ -244,7 +267,8 @@
                       type="radio"
                       name="gesundheitsprobleme"
                       value="nein"
-                      id="gesundheitsprobleme_nein" />
+                      id="gesundheitsprobleme_nein"
+                    />
                     <span class="radio-custom"></span>
                     <span class="radio-text"
                       >✅ Nein, keine Gesundheitsprobleme bekannt</span
@@ -267,7 +291,8 @@
               <div
                 class="form-question"
                 id="behandlungsFrage"
-                style="display: none">
+                style="display: none"
+              >
                 <div class="question-title">
                   Fanden deshalb bereits Behandlungen bei einer Tierärztin oder
                   bei einem Tierarzt statt?
@@ -278,7 +303,8 @@
                       type="checkbox"
                       name="neue_behandlung"
                       value="heilbehandlung"
-                      id="neue_heilbehandlung" />
+                      id="neue_heilbehandlung"
+                    />
                     <span class="checkbox-custom"></span>
                     <span>Behandlung ohne Operation (Heilbehandlung)</span>
                   </label>
@@ -287,7 +313,8 @@
                       type="checkbox"
                       name="neue_behandlung"
                       value="kein_besuch"
-                      id="neue_kein_besuch" />
+                      id="neue_kein_besuch"
+                    />
                     <span class="checkbox-custom"></span>
                     <span>bisher kein Tierarztbesuch erfolgt</span>
                   </label>
@@ -296,7 +323,8 @@
                       type="checkbox"
                       name="neue_behandlung"
                       value="operation"
-                      id="neue_operation" />
+                      id="neue_operation"
+                    />
                     <span class="checkbox-custom"></span>
                     <span>Operation</span>
                   </label>
@@ -306,13 +334,15 @@
                 <div
                   class="form-question"
                   id="operationAnzahl"
-                  style="display: none">
+                  style="display: none"
+                >
                   <div class="question-title">Anzahl der Operationen</div>
                   <div class="number-input-container">
                     <button
                       type="button"
                       class="number-btn minus-btn"
-                      id="decreaseBtn">
+                      id="decreaseBtn"
+                    >
                       −
                     </button>
                     <input
@@ -321,11 +351,13 @@
                       class="number-input"
                       value="1"
                       min="1"
-                      readonly />
+                      readonly
+                    />
                     <button
                       type="button"
                       class="number-btn plus-btn"
-                      id="increaseBtn">
+                      id="increaseBtn"
+                    >
                       +
                     </button>
                   </div>
@@ -336,7 +368,8 @@
               <div
                 class="form-question"
                 id="krankheitenListe"
-                style="display: none">
+                style="display: none"
+              >
                 <div class="question-title">
                   Hat oder hatte Ihr Tier eine der folgenden Erkrankungen oder
                   besteht der Verdacht auf eine dieser Erkrankungen?
@@ -346,7 +379,8 @@
                     <input
                       type="radio"
                       name="spezielle_krankheiten"
-                      value="ja" />
+                      value="ja"
+                    />
                     <span class="radio-custom"></span>
                     <span>Ja</span>
                   </label>
@@ -354,7 +388,8 @@
                     <input
                       type="radio"
                       name="spezielle_krankheiten"
-                      value="nein" />
+                      value="nein"
+                    />
                     <span class="radio-custom"></span>
                     <span>Nein</span>
                   </label>
@@ -371,7 +406,8 @@
               <button
                 type="button"
                 class="nav-button secondary"
-                id="prevStepBtn">
+                id="prevStepBtn"
+              >
                 Zurück
               </button>
               <button type="button" class="nav-button primary" id="nextStepBtn">
@@ -381,7 +417,8 @@
               <button
                 type="submit"
                 class="nav-button primary final-submit finalSubmitContainer"
-                id="berechnenButton">
+                id="berechnenButton"
+              >
                 <!-- <span class="button-icon">🚀</span> -->
                 <span class="button-text">Jetzt Tarif berechnen</span>
                 <!-- <span class="button-subtext"
@@ -398,8 +435,14 @@
         <div class="section-banner">
           <h1>Tarife vergleichen und auswählen</h1>
           <p>
-            Passen Sie Selbstbeteiligung und Zahlungsrhythmus an, vergleichen Sie die Leistungen der Tarife und wählen Sie den Schutz, der am besten zu Ihnen passt.
+            Passen Sie Selbstbeteiligung und Zahlungsrhythmus an, vergleichen
+            Sie die Leistungen der Tarife und wählen Sie den Schutz, der am
+            besten zu Ihnen passt.
           </p>
+          <img
+            src="https://inno-prod.allianz.de/tkv/assets/images/illustration_page3_2.svg"
+            alt="Tarife vergleichen und auswählen"
+          />
         </div>
         <section class="selection-section full-width-section">
           <div class="selection-row">
@@ -501,13 +544,15 @@
           <div
             class="comparison-mobile"
             role="list"
-            id="comparisonMobileList"></div>
+            id="comparisonMobileList"
+          ></div>
         </section>
 
         <section
           id="addonSection"
           class="addon-section full-width-section"
-          hidden>
+          hidden
+        >
           <div class="addon-intro">
             <p>
               Wenn Sie Ihr Tier nicht nur gegen Operationen absichern möchten,
@@ -564,7 +609,10 @@
               </label>
             </fieldset>
           </div>
+        </section>
 
+        <!-- Total Price Section - Always Visible -->
+        <section class="addon-section full-width-section">
           <div id="addonConfirmation" class="addon-confirmation">
             <div class="confirmation-content">
               <h2 id="confirmationHeading">Wählen Sie Ihren Tarif</h2>
@@ -591,7 +639,8 @@
                   <button
                     type="button"
                     class="remove-addon-btn"
-                    aria-label="Remove addon">
+                    aria-label="Remove addon"
+                  >
                     <span>entfernen</span>
                     <span class="remove-icon">🗑</span>
                   </button>
@@ -623,13 +672,16 @@
               <button class="btn-back" type="button" onclick="goBackToForm()">
                 ← Zurück
               </button>
-              <button class="btn-continue" id="continueBtn" onclick="proceedToApplication()">
+              <button
+                class="btn-continue"
+                id="continueBtn"
+                onclick="proceedToApplication()"
+              >
                 Zur Antragstellung →
               </button>
             </div>
           </div>
         </section>
-
       </section>
 
       <section data-iframe-size id="successScreen" class="app-screen" hidden>
@@ -638,8 +690,9 @@
             <div class="success-icon">🎉</div>
             <h1>Vielen Dank für Ihren Antrag!</h1>
             <p class="success-message">
-              Ihr Tierkrankenversicherungs-Antrag wurde erfolgreich übermittelt. 
-              Wir werden Ihre Unterlagen prüfen und uns in Kürze bei Ihnen melden.
+              Ihr Tierkrankenversicherungs-Antrag wurde erfolgreich übermittelt.
+              Wir werden Ihre Unterlagen prüfen und uns in Kürze bei Ihnen
+              melden.
             </p>
 
             <div class="thank-you-steps">
@@ -648,21 +701,30 @@
                 <div class="step-number">1</div>
                 <div class="step-content">
                   <h4>Prüfung Ihrer Unterlagen</h4>
-                  <p>Wir prüfen Ihren Antrag und alle eingereichten Dokumente innerhalb von 2-3 Werktagen.</p>
+                  <p>
+                    Wir prüfen Ihren Antrag und alle eingereichten Dokumente
+                    innerhalb von 2-3 Werktagen.
+                  </p>
                 </div>
               </div>
               <div class="step-item">
                 <div class="step-number">2</div>
                 <div class="step-content">
                   <h4>Bestätigung per E-Mail</h4>
-                  <p>Sie erhalten eine Bestätigungs-E-Mail mit Ihrer Versicherungspolice und weiteren Informationen.</p>
+                  <p>
+                    Sie erhalten eine Bestätigungs-E-Mail mit Ihrer
+                    Versicherungspolice und weiteren Informationen.
+                  </p>
                 </div>
               </div>
               <div class="step-item">
                 <div class="step-number">3</div>
                 <div class="step-content">
                   <h4>Versicherungsschutz beginnt</h4>
-                  <p>Ihr Versicherungsschutz startet zum von Ihnen gewählten Datum.</p>
+                  <p>
+                    Ihr Versicherungsschutz startet zum von Ihnen gewählten
+                    Datum.
+                  </p>
                 </div>
               </div>
             </div>
@@ -673,26 +735,36 @@
                 <div class="contact-item">
                   <span class="contact-icon">📞</span>
                   <div>
-                    <strong>Telefon:</strong><br>
-                    <a href="tel:+4989123456789">089 123 456 789</a><br>
+                    <strong>Telefon:</strong><br />
+                    <a href="tel:+4989123456789">089 123 456 789</a><br />
                     <small>Mo-Fr: 8:00-18:00 Uhr</small>
                   </div>
                 </div>
                 <div class="contact-item">
                   <span class="contact-icon">✉️</span>
                   <div>
-                    <strong>E-Mail:</strong><br>
-                    <a href="mailto:tierversicherung@allianz.de">tierversicherung@allianz.de</a>
+                    <strong>E-Mail:</strong><br />
+                    <a href="mailto:tierversicherung@allianz.de"
+                      >tierversicherung@allianz.de</a
+                    >
                   </div>
                 </div>
               </div>
             </div>
 
             <div class="action-buttons">
-              <button class="btn-primary" type="button" onclick="window.print()">
+              <button
+                class="btn-primary"
+                type="button"
+                onclick="window.print()"
+              >
                 📄 Seite drucken
               </button>
-              <button class="btn-secondary" type="button" onclick="goBackToForm()">
+              <button
+                class="btn-secondary"
+                type="button"
+                onclick="goBackToForm()"
+              >
                 🏠 Zur Startseite
               </button>
             </div>
@@ -701,12 +773,21 @@
       </section>
 
       <!-- Application Form Screen -->
-      <section data-iframe-size id="applicationScreen" class="app-screen" hidden>
+      <section
+        data-iframe-size
+        id="applicationScreen"
+        class="app-screen"
+        hidden
+      >
         <div class="section-banner">
           <h1>Antrag abschließen</h1>
           <p>
-            Tragen Sie Ihre Kontaktdaten ein, prüfen Sie alle Angaben und senden Sie Ihren Antrag bequem online ab.
+            Tragen Sie Ihre Kontaktdaten ein, prüfen Sie alle Angaben und senden
+            Sie Ihren Antrag bequem online ab.
           </p>
+          <img
+            src="https://inno-prod.allianz.de/tkv/assets/images/Privatschutz_PetHealth_Checkout_Desktop.svg"
+          />
         </div>
         <div class="application-container">
           <!-- <div class="application-header">
@@ -718,420 +799,684 @@
             <div class="application-progress-fill" id="applicationProgressFill"></div>
           </div> -->
 
-          
-            <form id="applicationForm">
-              <!-- Step 1: Contact Information -->
-              <div class="application-form-section">
-                <h3>1 von 4</h3>
-                <h2>Kontaktdaten</h2>
-                <p class="section-description">Alle Angaben sind Pflichtangaben, sofern sie nicht als optional gekennzeichnet sind.</p>
-                
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <div class="radio-group horizontal">
-                      <label class="radio-option">
-                        <input type="radio" name="gender" value="frau" required>
-                        <span class="radio-custom"></span>
-                        <span>Frau</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="gender" value="herr" required>
-                        <span class="radio-custom"></span>
-                        <span>Herr</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
+          <form id="applicationForm">
+            <!-- Step 1: Contact Information -->
+            <div class="application-form-section">
+              <h3>1 von 4</h3>
+              <h2>Kontaktdaten</h2>
+              <p class="section-description">
+                Alle Angaben sind Pflichtangaben, sofern sie nicht als optional
+                gekennzeichnet sind.
+              </p>
 
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label for="appFirstName">Vorname</label>
-                    <input type="text" id="appFirstName" name="firstName" class="form-input" required>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label for="appLastName">Nachname</label>
-                    <input type="text" id="appLastName" name="lastName" class="form-input" required>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="appPostalCode">Postleitzahl</label>
-                    <input type="text" id="appPostalCode" name="postalCode" class="form-input plz-input" pattern="[0-9]{5}" maxlength="5" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="appCity">Wohnort</label>
-                    <input type="text" id="appCity" name="city" class="form-input" required>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label for="appStreet">Straße</label>
-                    <input type="text" id="appStreet" name="street" class="form-input" required>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="appHouseNumber">Hausnummer</label>
-                    <input type="text" id="appHouseNumber" name="houseNumber" class="form-input" required>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label for="appBirthDate">Geburtsdatum</label>
-                    <input type="text" id="appBirthDate" name="birthDate" class="date-input" placeholder="TT.MM.JJJJ" required>
-                    <div class="input-help">💡 Format: TT.MM.JJJJ</div>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label for="appPhone">Mobilfunknummer</label>
-                    <div class="phone-input-group">
-                      <select id="appCountryCode" name="countryCode" class="form-select country-code-select">
-                        <option value="+49">+49</option>
-                        <option value="+43">+43</option>
-                        <option value="+41">+41</option>
-                      </select>
-                      <input type="tel" id="appPhone" name="phone" class="form-input phone-number-input" required>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label for="appEmail">📧 E-Mail</label>
-                    <input type="email" id="appEmail" name="email" class="form-input" required>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <p class="info-text">
-                      Ich möchte einmalig und unverbindlich eine E-Mail der Allianz Kunde und Markt GmbH erhalten.
-                    </p>
-                    <div class="radio-group horizontal">
-                      <label class="radio-option">
-                        <input type="radio" name="emailConsent" value="ja" required>
-                        <span class="radio-custom"></span>
-                        <span>Ja</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="emailConsent" value="nein" required>
-                        <span class="radio-custom"></span>
-                        <span>Nein</span>
-                      </label>
-                    </div>
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <div class="radio-group horizontal">
+                    <label class="radio-option">
+                      <input type="radio" name="gender" value="frau" required />
+                      <span class="radio-custom"></span>
+                      <span>Frau</span>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="gender" value="herr" required />
+                      <span class="radio-custom"></span>
+                      <span>Herr</span>
+                    </label>
                   </div>
                 </div>
               </div>
 
-              <!-- Step 2: Insurance Information -->
-              <div class="application-form-section">
-                <h3>2 von 5</h3>
-                <h2>Angaben zur Versicherung</h2>
-                <p class="section-description">Nennen Sie uns hier Ihre bisherige Versicherung und legen Sie den Beginn Ihrer Allianz Versicherung fest.</p>
-                
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="appInsuranceStartDate">Desired start date of insurance</label>
-                    <div class="date-input-wrapper">
-                      <input 
-                        type="text" 
-                        id="appInsuranceStartDate" 
-                        name="insuranceStartDate" 
-                        class="date-input" 
-                        placeholder="DD.MM.YYYY"
-                        maxlength="10"
-                        pattern="^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d$"
-                        required>
-                      <span class="calendar-icon">📅</span>
-                    </div>
-                    <div class="input-help" style="font-size: 11px; color: #666;">DD.MM.YYYY</div>
-                  </div>
-                  <div class="form-group">
-                    <label for="appInsuranceEndDate">
-                      Insurance expiration: 
-                      <span class="info-icon" title="Das Versicherungsende wird automatisch basierend auf der gewählten Laufzeit berechnet">ⓘ</span>
-                    </label>
-                    <div class="insurance-expiration-display" id="insuranceExpirationDisplay">
-                      <span class="expiration-date">--</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label>Duration:</label>
-                    <div class="radio-group horizontal">
-                      <label class="radio-option">
-                        <input type="radio" name="duration" value="1" id="duration1" checked required>
-                        <span class="radio-custom"></span>
-                        <span>1 year</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="duration" value="3" id="duration3" required>
-                        <span class="radio-custom"></span>
-                        <span>3 years</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label>Besteht oder bestand für Ihr Tier in den letzten 5 Jahren bereits eine Tierkrankenversicherung?</label>
-                    <div class="radio-group horizontal">
-                      <label class="radio-option">
-                        <input type="radio" name="previousInsurance" value="ja" id="prevInsYes" required>
-                        <span class="radio-custom"></span>
-                        <span>Ja</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="previousInsurance" value="nein" id="prevInsNo" required>
-                        <span class="radio-custom"></span>
-                        <span>Nein</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Previous Insurance Details Container -->
-                <div id="previousInsuranceContainer" style="display: none;">
-                  <div class="previous-insurance-list" id="previousInsuranceList">
-                    <!-- Insurance entries will be added here -->
-                  </div>
-                  <button type="button" class="add-insurance-btn" id="addInsuranceBtn">
-                    <span>+</span> Weitere Vorversicherung hinzufügen
-                  </button>
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label for="appFirstName">Vorname</label>
+                  <input
+                    type="text"
+                    id="appFirstName"
+                    name="firstName"
+                    class="form-input"
+                    required
+                  />
                 </div>
               </div>
 
-              <!-- Step 3: Pet Information -->
-              <div class="application-form-section">
-                <h3>3 von 5</h3>
-                <h2>Angaben zu Ihrem Tier</h2>
-                <p class="section-description">Um Ihr Tier im Schadenfall identifizieren zu können, benötigen wir noch ein paar Informationen.</p>
-                
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label for="appPetName">Name Ihres Tieres</label>
-                    <input type="text" id="appPetName" name="petName" class="form-input" required>
-                    <div class="validation-error" id="petNameError" style="display: none;">
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align: middle; margin-right: 4px;">
-                        <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm1 12H7V7h2v5zm0-6H7V4h2v2z" fill="#E20000"/>
-                      </svg>
-                      Bitte geben Sie den Namen Ihres Tieres an.
-                    </div>
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label for="appLastName">Nachname</label>
+                  <input
+                    type="text"
+                    id="appLastName"
+                    name="lastName"
+                    class="form-input"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="appPostalCode">Postleitzahl</label>
+                  <input
+                    type="text"
+                    id="appPostalCode"
+                    name="postalCode"
+                    class="form-input plz-input"
+                    pattern="[0-9]{5}"
+                    maxlength="5"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="appCity">Wohnort</label>
+                  <input
+                    type="text"
+                    id="appCity"
+                    name="city"
+                    class="form-input"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label for="appStreet">Straße</label>
+                  <input
+                    type="text"
+                    id="appStreet"
+                    name="street"
+                    class="form-input"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="appHouseNumber">Hausnummer</label>
+                  <input
+                    type="text"
+                    id="appHouseNumber"
+                    name="houseNumber"
+                    class="form-input"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label for="appBirthDate">Geburtsdatum</label>
+                  <input
+                    type="text"
+                    id="appBirthDate"
+                    pattern="^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d$"
+                    name="birthDate"
+                    class="date-input"
+                    placeholder="TT.MM.JJJJ"
+                    required
+                  />
+                  <div class="input-help">💡 Format: TT.MM.JJJJ</div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label for="appPhone">Mobilfunknummer</label>
+                  <div class="phone-input-group">
+                    <select
+                      id="appCountryCode"
+                      name="countryCode"
+                      class="form-select country-code-select"
+                    >
+                      <option value="+49">+49</option>
+                      <option value="+43">+43</option>
+                      <option value="+41">+41</option>
+                    </select>
+                    <input
+                      type="tel"
+                      id="appPhone"
+                      name="phone"
+                      class="form-input phone-number-input"
+                      required
+                    />
                   </div>
                 </div>
+              </div>
 
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label>
-                      Art der Kennzeichnung 
-                      <span class="info-icon" title="Wählen Sie die Art der Kennzeichnung Ihres Tieres">ⓘ</span>
-                    </label>
-                    <div class="radio-group vertical">
-                      <label class="radio-option">
-                        <input type="radio" name="petIdentification" value="chip" id="petIdChip" required>
-                        <span class="radio-custom"></span>
-                        <span>Transpondernummer (Chip)</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="petIdentification" value="tattoo" id="petIdTattoo" required>
-                        <span class="radio-custom"></span>
-                        <span>Tätowierung</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="petIdentification" value="none" id="petIdNone" required>
-                        <span class="radio-custom"></span>
-                        <span>Keine</span>
-                      </label>
-                    </div>
-                  </div>
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label for="appEmail">📧 E-Mail</label>
+                  <input
+                    type="email"
+                    id="appEmail"
+                    name="email"
+                    class="form-input"
+                    required
+                  />
                 </div>
+              </div>
 
-                <!-- Chip Number Field (shown when Chip is selected) -->
-                <div class="form-row" id="chipNumberContainer" style="display: none;">
-                  <div class="form-group full-width">
-                    <label for="appChipNumber">Chipnummer</label>
-                    <input type="text" id="appChipNumber" name="chipNumber" class="form-input" placeholder="15-stellige Chipnummer">
-                    <div class="validation-error" id="chipNumberError" style="display: none;">
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align: middle; margin-right: 4px;">
-                        <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm1 12H7V7h2v5zm0-6H7V4h2v2z" fill="#E20000"/>
-                      </svg>
-                      Bitte geben Sie eine Chipnummer ein.
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Tattoo Number Field (shown when Tattoo is selected) -->
-                <div class="form-row" id="tattooNumberContainer" style="display: none;">
-                  <div class="form-group full-width">
-                    <label for="appTattooNumber">Tätowierungsnummer</label>
-                    <input type="text" id="appTattooNumber" name="tattooNumber" class="form-input" placeholder="Tätowierungsnummer">
-                  </div>
-                </div>
-
-                <div class="info-box" style="margin-top: 20px;">
-                  <strong>Hinweis zum Vertrag</strong>
-                  <p style="margin: 8px 0 0 0; font-size: 13px; line-height: 1.5;">
-                    Änderung Ihres Versicherungsvertrages<br>
-                    Noch Vollendung des 3. Lebensjahres Ihres Tieres wird der Versicherungsbeitrag 
-                    <strong>jährlich um bis zu 5 % erhöht</strong>. Die Leistungen bleiben unverändert. Hier 
-                    über informieren wir Sie rechtzeitig.
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <p class="info-text">
+                    Ich möchte einmalig und unverbindlich eine E-Mail der
+                    Allianz Kunde und Markt GmbH erhalten.
                   </p>
+                  <div class="radio-group horizontal">
+                    <label class="radio-option">
+                      <input
+                        type="radio"
+                        name="emailConsent"
+                        value="ja"
+                        required
+                      />
+                      <span class="radio-custom"></span>
+                      <span>Ja</span>
+                    </label>
+                    <label class="radio-option">
+                      <input
+                        type="radio"
+                        name="emailConsent"
+                        value="nein"
+                        required
+                      />
+                      <span class="radio-custom"></span>
+                      <span>Nein</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Insurance Information -->
+            <div class="application-form-section">
+              <h3>2 von 5</h3>
+              <h2>Angaben zur Versicherung</h2>
+              <p class="section-description">
+                Nennen Sie uns hier Ihre bisherige Versicherung und legen Sie
+                den Beginn Ihrer Allianz Versicherung fest.
+              </p>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="appInsuranceStartDate"
+                    >Desired start date of insurance</label
+                  >
+                  <div class="date-input-wrapper">
+                    <input
+                      type="text"
+                      id="appInsuranceStartDate"
+                      name="insuranceStartDate"
+                      class="date-input"
+                      placeholder="DD.MM.YYYY"
+                      maxlength="10"
+                      pattern="^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d$"
+                      required
+                    />
+                    <span class="calendar-icon">📅</span>
+                  </div>
+                  <div class="input-help" style="font-size: 11px; color: #666">
+                    DD.MM.YYYY
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="appInsuranceEndDate">
+                    Insurance expiration:
+                    <span
+                      class="info-icon"
+                      title="Das Versicherungsende wird automatisch basierend auf der gewählten Laufzeit berechnet"
+                      >ⓘ</span
+                    >
+                  </label>
+                  <div
+                    class="insurance-expiration-display"
+                    id="insuranceExpirationDisplay"
+                  >
+                    <span class="expiration-date">--</span>
+                  </div>
                 </div>
               </div>
 
-              <!-- Step 4: Account Data -->
-              <div class="application-form-section">
-                <h3>4 von 5</h3>
-                <h2 class="section-title">Kontodaten</h2>
-                <p class="section-description">Wir buchen den Beitrag erst zum gewünschten Versicherungsbeginn ab.</p>
-                
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label for="appAccountHolder">Kontoinhaber</label>
-                    <input type="text" id="appAccountHolder" name="accountHolder" class="form-input" required>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label for="appIban">IBAN</label>
-                    <input type="text" id="appIban" name="iban" class="form-input" placeholder="DE95 2022 0800 0052 2738 94" maxlength="27" required>
-                    <div class="input-help">Format: DE + 20 Ziffern</div>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group full-width">
-                    <label class="checkbox-option">
-                      <input type="checkbox" id="appSepaMandate" name="sepaMandate" required>
-                      <span class="checkbox-custom"></span>
-                      <span>Ich erteile hiermit das SEPA-Lastschriftmandat</span>
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label>Duration:</label>
+                  <div class="radio-group horizontal">
+                    <label class="radio-option">
+                      <input
+                        type="radio"
+                        name="duration"
+                        value="1"
+                        id="duration1"
+                        checked
+                        required
+                      />
+                      <span class="radio-custom"></span>
+                      <span>1 year</span>
+                    </label>
+                    <label class="radio-option">
+                      <input
+                        type="radio"
+                        name="duration"
+                        value="3"
+                        id="duration3"
+                        required
+                      />
+                      <span class="radio-custom"></span>
+                      <span>3 years</span>
                     </label>
                   </div>
                 </div>
               </div>
 
-              <!-- Step 5: Summary -->
-              <div class="application-form-section">
-                <h3>5 von 5</h3>
-                <h2 class="section-title">Zusammenfassung</h2>
-                <p class="section-description">Bitte überprüfen Sie Ihre Angaben vor dem Absenden.</p>
-                
-                <!-- Summary Toggle Button -->
-                <div class="summary-toggle-container">
-                  <button type="button" class="summary-toggle-btn" id="summaryToggleBtn">
-                    <span class="toggle-icon">📋</span>
-                    <span class="toggle-text">Zusammenfassung anzeigen</span>
-                    <span class="toggle-arrow">▼</span>
-                  </button>
-                </div>
-
-                <!-- Collapsible Summary Content -->
-                <div class="summary-content" id="summaryContent" style="display: none;">
-                  <div class="summary-card">
-                    <h4>Persönliche Daten</h4>
-                    <div class="summary-item">
-                      <span>Anrede:</span>
-                      <span id="summaryGender">-</span>
-                    </div>
-                    <div class="summary-item">
-                      <span>Name:</span>
-                      <span id="summaryName">-</span>
-                    </div>
-                    <div class="summary-item">
-                      <span>Geburtsdatum:</span>
-                      <span id="summaryBirthDate">-</span>
-                    </div>
-                    <div class="summary-item">
-                      <span>E-Mail:</span>
-                      <span id="summaryEmail">-</span>
-                    </div>
-                    <div class="summary-item">
-                      <span>Telefon:</span>
-                      <span id="summaryPhone">-</span>
-                    </div>
-                    <div class="summary-item">
-                      <span>Adresse:</span>
-                      <span id="summaryAddress">-</span>
-                    </div>
-                  </div>
-
-                  <div class="summary-card">
-                    <h4>Versicherungsinformationen</h4>
-                    <div class="summary-item">
-                      <span>Versicherungsbeginn:</span>
-                      <span id="summaryInsuranceStart">-</span>
-                    </div>
-                    <div class="summary-item">
-                      <span>Laufzeit:</span>
-                      <span id="summaryDuration">-</span>
-                    </div>
-                    <div class="summary-item">
-                      <span>Vorversicherung:</span>
-                      <span id="summaryPreviousInsurance">-</span>
-                    </div>
-                  </div>
-
-                  <div class="summary-card">
-                    <h4>Kontodaten</h4>
-                    <div class="summary-item">
-                      <span>Kontoinhaber:</span>
-                      <span id="summaryAccountHolder">-</span>
-                    </div>
-                    <div class="summary-item">
-                      <span>IBAN:</span>
-                      <span id="summaryIban">-</span>
-                    </div>
-                  </div>
-
-                  <div class="summary-total">
-                    <div class="summary-item">
-                      <h3>Ihr Gesamtbeitrag</h3>
-                      <h3 id="summaryTotalPrice">-</h3>
-                    </div>
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label
+                    >Besteht oder bestand für Ihr Tier in den letzten 5 Jahren
+                    bereits eine Tierkrankenversicherung?</label
+                  >
+                  <div class="radio-group horizontal">
+                    <label class="radio-option">
+                      <input
+                        type="radio"
+                        name="previousInsurance"
+                        value="ja"
+                        id="prevInsYes"
+                        required
+                      />
+                      <span class="radio-custom"></span>
+                      <span>Ja</span>
+                    </label>
+                    <label class="radio-option">
+                      <input
+                        type="radio"
+                        name="previousInsurance"
+                        value="nein"
+                        id="prevInsNo"
+                        required
+                      />
+                      <span class="radio-custom"></span>
+                      <span>Nein</span>
+                    </label>
                   </div>
                 </div>
               </div>
 
-              <div class="legal-notice">
-                <h4>⚖️ Rechtliche Hinweise</h4>
-                <label class="checkbox-option">
-                  <input type="checkbox" id="appPrivacyConsent" name="privacyConsent" required>
-                  <span class="checkbox-custom"></span>
-                  <span>Ich habe die Datenschutzerklärung gelesen und stimme zu</span>
-                </label>
+              <!-- Previous Insurance Details Container -->
+              <div id="previousInsuranceContainer" style="display: none">
+                <div class="previous-insurance-list" id="previousInsuranceList">
+                  <!-- Insurance entries will be added here -->
+                </div>
+                <button
+                  type="button"
+                  class="add-insurance-btn"
+                  id="addInsuranceBtn"
+                >
+                  <span>+</span> Weitere Vorversicherung hinzufügen
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 3: Pet Information -->
+            <div class="application-form-section">
+              <h3>3 von 5</h3>
+              <h2>Angaben zu Ihrem Tier</h2>
+              <p class="section-description">
+                Um Ihr Tier im Schadenfall identifizieren zu können, benötigen
+                wir noch ein paar Informationen.
+              </p>
+
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label for="appPetName">Name Ihres Tieres</label>
+                  <input
+                    type="text"
+                    id="appPetName"
+                    name="petName"
+                    class="form-input"
+                    required
+                  />
+                  <div
+                    class="validation-error"
+                    id="petNameError"
+                    style="display: none"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      style="vertical-align: middle; margin-right: 4px"
+                    >
+                      <path
+                        d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm1 12H7V7h2v5zm0-6H7V4h2v2z"
+                        fill="#E20000"
+                      />
+                    </svg>
+                    Bitte geben Sie den Namen Ihres Tieres an.
+                  </div>
+                </div>
               </div>
 
-              <div class="action-buttons">
-                <button type="button" class="btn-back" onclick="goBackToPricing()">← Zurück</button>
-                <button type="submit" class="btn-continue">Antrag absenden</button>
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label>
+                    Art der Kennzeichnung
+                    <span
+                      class="info-icon"
+                      title="Wählen Sie die Art der Kennzeichnung Ihres Tieres"
+                      >ⓘ</span
+                    >
+                  </label>
+                  <div class="radio-group vertical">
+                    <label class="radio-option">
+                      <input
+                        type="radio"
+                        name="petIdentification"
+                        value="chip"
+                        id="petIdChip"
+                        required
+                      />
+                      <span class="radio-custom"></span>
+                      <span>Transpondernummer (Chip)</span>
+                    </label>
+                    <label class="radio-option">
+                      <input
+                        type="radio"
+                        name="petIdentification"
+                        value="tattoo"
+                        id="petIdTattoo"
+                        required
+                      />
+                      <span class="radio-custom"></span>
+                      <span>Tätowierung</span>
+                    </label>
+                    <label class="radio-option">
+                      <input
+                        type="radio"
+                        name="petIdentification"
+                        value="none"
+                        id="petIdNone"
+                        required
+                      />
+                      <span class="radio-custom"></span>
+                      <span>Keine</span>
+                    </label>
+                  </div>
+                </div>
               </div>
-            </form>
-         
+
+              <!-- Chip Number Field (shown when Chip is selected) -->
+              <div
+                class="form-row"
+                id="chipNumberContainer"
+                style="display: none"
+              >
+                <div class="form-group full-width">
+                  <label for="appChipNumber">Chipnummer</label>
+                  <input
+                    type="text"
+                    id="appChipNumber"
+                    name="chipNumber"
+                    class="form-input"
+                    placeholder="15-stellige Chipnummer"
+                  />
+                  <div
+                    class="validation-error"
+                    id="chipNumberError"
+                    style="display: none"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      style="vertical-align: middle; margin-right: 4px"
+                    >
+                      <path
+                        d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm1 12H7V7h2v5zm0-6H7V4h2v2z"
+                        fill="#E20000"
+                      />
+                    </svg>
+                    Bitte geben Sie eine Chipnummer ein.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tattoo Number Field (shown when Tattoo is selected) -->
+              <div
+                class="form-row"
+                id="tattooNumberContainer"
+                style="display: none"
+              >
+                <div class="form-group full-width">
+                  <label for="appTattooNumber">Tätowierungsnummer</label>
+                  <input
+                    type="text"
+                    id="appTattooNumber"
+                    name="tattooNumber"
+                    class="form-input"
+                    placeholder="Tätowierungsnummer"
+                  />
+                </div>
+              </div>
+
+              <div class="info-box" style="margin-top: 20px">
+                <strong>Hinweis zum Vertrag</strong>
+                <p style="margin: 8px 0 0 0; font-size: 13px; line-height: 1.5">
+                  Änderung Ihres Versicherungsvertrages<br />
+                  Noch Vollendung des 3. Lebensjahres Ihres Tieres wird der
+                  Versicherungsbeitrag
+                  <strong>jährlich um bis zu 5 % erhöht</strong>. Die Leistungen
+                  bleiben unverändert. Hier über informieren wir Sie
+                  rechtzeitig.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 4: Account Data -->
+            <div class="application-form-section">
+              <h3>4 von 5</h3>
+              <h2 class="section-title">Kontodaten</h2>
+              <p class="section-description">
+                Wir buchen den Beitrag erst zum gewünschten Versicherungsbeginn
+                ab.
+              </p>
+
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label for="appAccountHolder">Kontoinhaber</label>
+                  <input
+                    type="text"
+                    id="appAccountHolder"
+                    name="accountHolder"
+                    class="form-input"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label for="appIban">IBAN</label>
+                  <input
+                    type="text"
+                    id="appIban"
+                    name="iban"
+                    class="form-input"
+                    placeholder="DE95 2022 0800 0052 2738 94"
+                    maxlength="27"
+                    required
+                  />
+                  <div class="input-help">Format: DE + 20 Ziffern</div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label class="checkbox-option">
+                    <input
+                      type="checkbox"
+                      id="appSepaMandate"
+                      name="sepaMandate"
+                      required
+                    />
+                    <span class="checkbox-custom"></span>
+                    <span>Ich erteile hiermit das SEPA-Lastschriftmandat</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 5: Summary -->
+            <div class="application-form-section">
+              <h3>5 von 5</h3>
+              <h2 class="section-title">Zusammenfassung</h2>
+              <p class="section-description">
+                Bitte überprüfen Sie Ihre Angaben vor dem Absenden.
+              </p>
+
+              <!-- Summary Toggle Button -->
+              <div class="summary-toggle-container">
+                <button
+                  type="button"
+                  class="summary-toggle-btn"
+                  id="summaryToggleBtn"
+                >
+                  <span class="toggle-icon">📋</span>
+                  <span class="toggle-text">Zusammenfassung anzeigen</span>
+                  <span class="toggle-arrow">▼</span>
+                </button>
+              </div>
+
+              <!-- Collapsible Summary Content -->
+              <div
+                class="summary-content"
+                id="summaryContent"
+                style="display: none"
+              >
+                <div class="summary-card">
+                  <h4>Persönliche Daten</h4>
+                  <div class="summary-item">
+                    <span>Anrede:</span>
+                    <span id="summaryGender">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Name:</span>
+                    <span id="summaryName">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Geburtsdatum:</span>
+                    <span id="summaryBirthDate">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>E-Mail:</span>
+                    <span id="summaryEmail">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Telefon:</span>
+                    <span id="summaryPhone">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Adresse:</span>
+                    <span id="summaryAddress">-</span>
+                  </div>
+                </div>
+
+                <div class="summary-card">
+                  <h4>Versicherungsinformationen</h4>
+                  <div class="summary-item">
+                    <span>Versicherungsbeginn:</span>
+                    <span id="summaryInsuranceStart">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Laufzeit:</span>
+                    <span id="summaryDuration">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Vorversicherung:</span>
+                    <span id="summaryPreviousInsurance">-</span>
+                  </div>
+                </div>
+
+                <div class="summary-card">
+                  <h4>Kontodaten</h4>
+                  <div class="summary-item">
+                    <span>Kontoinhaber:</span>
+                    <span id="summaryAccountHolder">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>IBAN:</span>
+                    <span id="summaryIban">-</span>
+                  </div>
+                </div>
+
+                <div class="summary-total">
+                  <div class="summary-item">
+                    <h3>Ihr Gesamtbeitrag</h3>
+                    <h3 id="summaryTotalPrice">-</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="legal-notice">
+              <h4>⚖️ Rechtliche Hinweise</h4>
+              <label class="checkbox-option">
+                <input
+                  type="checkbox"
+                  id="appPrivacyConsent"
+                  name="privacyConsent"
+                  required
+                />
+                <span class="checkbox-custom"></span>
+                <span
+                  >Ich habe die Datenschutzerklärung gelesen und stimme zu</span
+                >
+              </label>
+            </div>
+
+            <div class="action-buttons">
+              <button
+                type="button"
+                class="btn-back"
+                onclick="goBackToPricing()"
+              >
+                ← Zurück
+              </button>
+              <button type="submit" class="btn-continue">
+                Antrag absenden
+              </button>
+            </div>
+          </form>
         </div>
       </section>
     </main>
     <script
       async
-      src="https://cdn.jsdelivr.net/npm/@iframe-resizer/child@5.5.7"></script>
+      src="https://cdn.jsdelivr.net/npm/@iframe-resizer/child@5.5.7"
+    ></script>
     <script
       type="text/javascript"
-      src="https://assets.calendly.com/assets/external/widget.js"></script>
+      src="https://assets.calendly.com/assets/external/widget.js"
+    ></script>
     <!-- JavaScript Connection -->
     <script type="module" src="script.js?v=1727013600"></script>
     <!-- Backup form handler for submit button -->
     <script src="form-handler.js"></script>
+    <footer class="site-footer">
+      <div class="footer-container">
+        <p>© 2025 · Allianz · Tierversicherung</p>
+        <div class="footer-links">
+          <a
+            href="https://vierbeinervorsorge.de/datenschutzerklaerung/"
+            target="_blank"
+            >Datenschutz</a
+          >
+          <a href="https://vierbeinervorsorge.de/Impressum/" target="_blank"
+            >Impressum</a
+          >
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
