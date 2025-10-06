@@ -402,6 +402,9 @@
               </div>
             </div>
 
+             <!-- Submit Button -->
+          </form>
+        </div>
             <div class="form-navigation">
               <button
                 type="button"
@@ -418,6 +421,7 @@
                 type="submit"
                 class="nav-button primary final-submit finalSubmitContainer"
                 id="berechnenButton"
+                form="insuranceForm"
               >
                 <!-- <span class="button-icon">🚀</span> -->
                 <span class="button-text">Jetzt Tarif berechnen</span>
@@ -426,9 +430,6 @@
                 > -->
               </button>
             </div>
-
-            <!-- Submit Button -->
-          </form>
         </div>
       </section>
       <section data-iframe-size id="pricingScreen" class="app-screen" hidden>
@@ -666,6 +667,7 @@
                   <span id="totalPrice">--</span>
                   <span>pro Monat</span>
                 </div>
+                </div>
               </div>
             </div>
             <div class="action-buttons">
@@ -679,7 +681,6 @@
               >
                 Zur Antragstellung →
               </button>
-            </div>
           </div>
         </section>
       </section>
@@ -751,7 +752,8 @@
                 </div>
               </div>
             </div>
-
+            
+          </div>
             <div class="action-buttons">
               <button
                 class="btn-primary"
@@ -767,7 +769,6 @@
               >
                 🏠 Zur Startseite
               </button>
-            </div>
           </div>
         </section>
       </section>
@@ -922,24 +923,16 @@
               <div class="form-row">
                 <div class="form-group full-width">
                   <label for="appPhone">Mobilfunknummer</label>
-                  <div class="phone-input-group">
-                    <select
-                      id="appCountryCode"
-                      name="countryCode"
-                      class="form-select country-code-select"
-                    >
-                      <option value="+49">+49</option>
-                      <option value="+43">+43</option>
-                      <option value="+41">+41</option>
-                    </select>
+                  
                     <input
                       type="tel"
                       id="appPhone"
                       name="phone"
-                      class="form-input phone-number-input"
+                      class="form-input"
+                      placeholder="+49 123 456 7890"
                       required
                     />
-                  </div>
+                  
                 </div>
               </div>
 

@@ -6163,7 +6163,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const lastName = document.getElementById('appLastName')?.value || '';
     const birthDate = document.getElementById('appBirthDate')?.value || '';
     const email = document.getElementById('appEmail')?.value || '';
-    const countryCode = document.getElementById('appCountryCode')?.value || '';
     const phone = document.getElementById('appPhone')?.value || '';
     const street = document.getElementById('appStreet')?.value || '';
     const houseNumber = document.getElementById('appHouseNumber')?.value || '';
@@ -6196,9 +6195,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const summaryEmail = document.getElementById('summaryEmail');
       if (summaryEmail) summaryEmail.textContent = email;
     }
-    if (countryCode && phone) {
+    if (phone) {
       const summaryPhone = document.getElementById('summaryPhone');
-      if (summaryPhone) summaryPhone.textContent = `${countryCode} ${phone}`;
+      if (summaryPhone) summaryPhone.textContent = phone;
     }
     if (street && houseNumber && postalCode && city) {
       const summaryAddress = document.getElementById('summaryAddress');
