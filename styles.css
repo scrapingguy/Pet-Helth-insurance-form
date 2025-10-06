@@ -101,6 +101,7 @@
 }
 
 .footer-container {
+    color: #ffffff;
     max-width: var(--layout-max-width);
     margin: 0 auto;
     display: flex;
@@ -110,7 +111,7 @@
 }
 
 .footer-container p {
-    color: #9ca3af;
+    color: #ffffff;
     margin: 0;
     font-size: 0.9rem;
     font-weight: 400;
@@ -123,7 +124,7 @@
 }
 
 .footer-links a {
-    color: #e91e63;
+    color: #ffffff;
     text-decoration: underline;
     font-weight: 600;
     font-size: 0.9rem;
@@ -131,7 +132,7 @@
 }
 
 .footer-links a:hover {
-    color: #c2185b;
+    color: #fff;
 }
 
 @media (max-width: 768px) {
@@ -1782,7 +1783,7 @@ body.embedded-full {
     .section-banner p {
         font-size: 0.9rem;
     }   
-          
+
     .section-banner img {
         max-height: 200px;
         margin-top: var(--spacing-sm);
@@ -3281,6 +3282,15 @@ body {
     .comparison-table {
         min-width: 600px;
     }
+    .summary-total .summary-item{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--border-light);
+}
+    }
 }
 
 @media (max-width: 480px) {
@@ -3510,7 +3520,6 @@ body {
 }
 
 .radio-group.vertical .radio-option input[type="radio"]:checked+.radio-custom {
-    background: var(--primary-blue);
     border-color: var(--primary-blue);
 }
 
