@@ -6869,24 +6869,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const endDate = new Date(startDate);
     endDate.setFullYear(endDate.getFullYear() + duration);
 
-    // Format date as "Month Day, Year" (e.g., "October 6, 2026")
+    // Format date as "Day. Month Year" (e.g., "7. Oktober 2028")
     const months = [
-      "January",
-      "February",
-      "March",
+      "Januar",
+      "Februar",
+      "März",
       "April",
-      "May",
-      "June",
-      "July",
+      "Mai",
+      "Juni",
+      "Juli",
       "August",
       "September",
-      "October",
+      "Oktober",
       "November",
-      "December",
+      "Dezember",
     ];
-    const formattedEndDate = `${
+    const formattedEndDate = `${endDate.getDate()}. ${
       months[endDate.getMonth()]
-    } ${endDate.getDate()}, ${endDate.getFullYear()}`;
+    } ${endDate.getFullYear()}`;
 
     insuranceExpirationDisplay.querySelector(".expiration-date").textContent =
       formattedEndDate;
