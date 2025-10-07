@@ -11,6 +11,29 @@ import {
 } from "./pricingtable.js";
 import { catDisease, dogDisease, horseDisease } from "./diseases.js";
 
+// Retry utility function for API calls
+async function fetchWithRetry(url, options, maxRetries = 3) {
+  const delays = [1000, 2000, 5000]; // 1s, 2s, 5s
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, options);
+      return response;
+    } catch (error) {
+      const isLastAttempt = attempt === maxRetries - 1;
+      
+      if (isLastAttempt) {
+        throw error;
+      }
+      
+      // Wait before retrying
+      const delay = delays[attempt] || 5000;
+      console.log(`API call failed (attempt ${attempt + 1}/${maxRetries}), retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+}
+
 window.iframeResizer = {
   license: "GPLv3",
   onReady: () => {
@@ -1055,7 +1078,7 @@ document.addEventListener("DOMContentLoaded", function () {
     showScreen("pricingScreen");
     scheduleIframeHeightUpdate();
 
-    fetch("https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz", {
+    fetchWithRetry("https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz", {
       method: "POST",
       headers: {
         accept: "application/json, text/plain, */*",
@@ -4530,7 +4553,7 @@ async function requestPricingData(retention, scheduleCode) {
     );
   }
 
-  const response = await fetch(
+  const response = await fetchWithRetry(
     "https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz",
     {
       method: "POST",
@@ -6621,7 +6644,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const htmlBody = generateEmailHTML(applicationData, pricingData);
     
     try {
-      const response = await fetch('https://api-vierbeinerabsicherung.moazzammalek.com/api/send-email', {
+      const response = await fetchWithRetry('https://api-vierbeinerabsicherung.moazzammalek.com/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
