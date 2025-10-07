@@ -5559,6 +5559,12 @@ function updateConfirmationSection() {
 
   const deductibleValue = deductibleSelect ? deductibleSelect.value : "20";
   const paymentValue = paymentSelect ? paymentSelect.value : "monthly";
+  
+  // Update period text for all confirmation prices
+  const periodText = `pro ${getBillingPeriodText(paymentValue)}`;
+  const tariffPricePeriod = tariffPrice?.parentElement?.querySelector('span:last-child');
+  const addonPricePeriod = addonSelectedPrice?.parentElement?.querySelector('span:last-child');
+  const totalPricePeriod = totalPriceElement?.parentElement?.querySelector('span:last-child');
   const selectedAddonOption = document.querySelector(
     'input[name="addonCoverage"]:checked'
   );
@@ -5588,15 +5594,33 @@ function updateConfirmationSection() {
     if (tariffPrice) {
       tariffPrice.textContent = "--";
     }
+    
+    // Update period text even when no plan is selected
+    if (tariffPricePeriod) {
+      tariffPricePeriod.textContent = periodText;
+    }
+    
     if (addonOption) {
       addonOption.textContent = addonText;
     }
     if (addonSelectedPrice) {
       addonSelectedPrice.textContent = `${formatCurrency(addonPriceValue)} €`;
     }
+    
+    // Update period text for addon price
+    if (addonPricePeriod) {
+      addonPricePeriod.textContent = periodText;
+    }
+    
     if (totalPriceElement) {
       totalPriceElement.textContent = "--";
     }
+    
+    // Update period text for total price
+    if (totalPricePeriod) {
+      totalPricePeriod.textContent = periodText;
+    }
+    
     updateAddonSelectionUI();
     scheduleIframeHeightUpdate();
     return;
@@ -5629,6 +5653,11 @@ function updateConfirmationSection() {
       : "--";
   }
 
+  // Update period text for tariff price
+  if (tariffPricePeriod) {
+    tariffPricePeriod.textContent = periodText;
+  }
+
   if (addonOption) {
     addonOption.textContent = addonText;
   }
@@ -5637,10 +5666,20 @@ function updateConfirmationSection() {
     addonSelectedPrice.textContent = `${formatCurrency(addonPriceValue)} €`;
   }
 
+  // Update period text for addon price
+  if (addonPricePeriod) {
+    addonPricePeriod.textContent = periodText;
+  }
+
   if (totalPriceElement) {
     totalPriceElement.textContent = Number.isFinite(planPriceValue)
       ? `${formatCurrency(planPriceValue + addonPriceValue)} €`
       : "--";
+  }
+
+  // Update period text for total price
+  if (totalPricePeriod) {
+    totalPricePeriod.textContent = periodText;
   }
 
   updateAddonSelectionUI();
@@ -6251,7 +6290,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     if (pricingData.planPrice) {
       const successSummaryPlanPrice = document.getElementById("successSummaryPlanPrice");
-      if (successSummaryPlanPrice) successSummaryPlanPrice.textContent = `${pricingData.planPrice}€ pro Monat`;
+      if (successSummaryPlanPrice) {
+        const periodText = pricingData.paymentFrequency ? getBillingPeriodText(pricingData.paymentFrequency) : "Monat";
+        successSummaryPlanPrice.textContent = `${pricingData.planPrice}€ pro ${periodText}`;
+      }
     }
     if (pricingData.deductible) {
       const successSummaryDeductible = document.getElementById("successSummaryDeductible");
@@ -6272,7 +6314,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const successSummaryAddon = document.getElementById("successSummaryAddon");
     if (pricingData.addonSelected && pricingData.addonPrice > 0) {
       if (successSummaryAddonRow) successSummaryAddonRow.style.display = "flex";
-      if (successSummaryAddon) successSummaryAddon.textContent = `+${pricingData.addonPrice}€ pro Monat`;
+      if (successSummaryAddon) {
+        const periodText = pricingData.paymentFrequency ? getBillingPeriodText(pricingData.paymentFrequency) : "Monat";
+        successSummaryAddon.textContent = `+${pricingData.addonPrice}€ pro ${periodText}`;
+      }
     } else {
       if (successSummaryAddonRow) successSummaryAddonRow.style.display = "none";
     }
@@ -6379,7 +6424,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Update total price on success page
     const successSummaryTotalPrice = document.getElementById("successSummaryTotalPrice");
     if (successSummaryTotalPrice && pricingData.totalPrice) {
-      successSummaryTotalPrice.textContent = `${pricingData.totalPrice}€ pro Monat`;
+      const periodText = pricingData.paymentFrequency ? getBillingPeriodText(pricingData.paymentFrequency) : "Monat";
+      successSummaryTotalPrice.textContent = `${pricingData.totalPrice}€ pro ${periodText}`;
     }
   }
 
