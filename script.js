@@ -6009,30 +6009,60 @@ document.addEventListener("DOMContentLoaded", function () {
   // Birth date formatting for application form
   const birthDateInput = document.getElementById("appBirthDate");
   if (birthDateInput) {
+    let lastValue = "";
     birthDateInput.addEventListener("input", function () {
-      let value = this.value.replace(/\D/g, "");
+      let value = this.value;
+      let cursorPosition = this.selectionStart;
+      
+      // If backspace was used (value is shorter), don't auto-format
+      if (value.length < lastValue.length) {
+        lastValue = value;
+        return;
+      }
+      
+      // Only keep digits
+      value = value.replace(/\D/g, "");
+      
+      // Add dots for formatting
       if (value.length >= 2) {
         value = value.substring(0, 2) + "." + value.substring(2);
       }
       if (value.length >= 5) {
         value = value.substring(0, 5) + "." + value.substring(5, 9);
       }
+      
       this.value = value;
+      lastValue = value;
     });
   }
 
   // Insurance start date formatting
   const insuranceStartInput = document.getElementById("appInsuranceStartDate");
   if (insuranceStartInput) {
+    let lastValue = "";
     insuranceStartInput.addEventListener("input", function () {
-      let value = this.value.replace(/\D/g, "");
+      let value = this.value;
+      let cursorPosition = this.selectionStart;
+      
+      // If backspace was used (value is shorter), don't auto-format
+      if (value.length < lastValue.length) {
+        lastValue = value;
+        return;
+      }
+      
+      // Only keep digits
+      value = value.replace(/\D/g, "");
+      
+      // Add dots for formatting
       if (value.length >= 2) {
         value = value.substring(0, 2) + "." + value.substring(2);
       }
       if (value.length >= 5) {
         value = value.substring(0, 5) + "." + value.substring(5, 9);
       }
+      
       this.value = value;
+      lastValue = value;
     });
   }
 
@@ -6483,15 +6513,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Format date input as DD.MM.YYYY
   if (appInsuranceStartDate) {
+    let lastValue = "";
     appInsuranceStartDate.addEventListener("input", function () {
-      let value = this.value.replace(/\D/g, "");
+      let value = this.value;
+      let cursorPosition = this.selectionStart;
+      
+      // If backspace was used (value is shorter), don't auto-format
+      if (value.length < lastValue.length) {
+        lastValue = value;
+        return;
+      }
+      
+      // Only keep digits
+      value = value.replace(/\D/g, "");
+      
+      // Add dots for formatting
       if (value.length >= 2) {
         value = value.substring(0, 2) + "." + value.substring(2);
       }
       if (value.length >= 5) {
         value = value.substring(0, 5) + "." + value.substring(5, 9);
       }
+      
       this.value = value;
+      lastValue = value;
     });
 
     appInsuranceStartDate.addEventListener("blur", calculateEndDate);
