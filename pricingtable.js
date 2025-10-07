@@ -30,7 +30,7 @@ export const catPricingTableData = [
         "Behandlung rassespezifischer und besonderer Erkrankungen und Fehlstellungen",
       tooltip:
         "Der Erstattungsbetrag wird bis zur Höchstgrenze und unabhängig von den Operationskosten (bzw. Heilbehandlungskosten) einmal pro Erkrankung ausgezahlt, solange Ihr Tier bei der Allianz versichert ist. Die Höchstgrenze gilt insgesamt für alle mit der Erkrankung bzw. Fehlentwicklung zusammenhängenden Behandlungen. Hierzu zählen:\n\nOperationen\nHeilbehandlungen (bei ergänzender Auswahl Heilbehandlungs- und Vorsorgeschutz)\nPhysiotherapie\nFolgende Erkrankungen bzw. Fehlstellungen sind versichert:\n\nHüftgelenksdysplasie (HD)\nEllenbogengelenksdysplasie (ED)\nRadius Curvus\nPatellaluxation\nLidanomalien\nNabelbruch\nKryptorchismus",
-      "value 1": "-",
+      "value 1": "–",
       "value 2": "einmalig bis 500 €",
       "value 3": "einmalig bis 2.500 €",
     },
@@ -38,7 +38,7 @@ export const catPricingTableData = [
       Title: "Strahlentherapie nach Operationen",
       tooltip:
         "Übernahme der Tierarztkosten für die Strahlentherapie nach einer Operation bis zur vereinbarten Höhe, auch über den Nachbehandlungszeitraum hinaus.\n\nDie Erstattung erfolgt anteilig auf die Jahreshöchstentschädigung für Operationen.",
-      "value 1": "-",
+      "value 1": "–",
       "value 2": "500€",
       "value 3": "2.500€",
     },
@@ -103,9 +103,9 @@ export const catPricingTableData = [
   {
     "Title": "Futterberatung",
     "tooltip": "Erstattet werden die Kosten für eine ernährungsmedizinische Beratung.",
-    "value 1": "-",
-    "value 2": "-",
-    "value 3": "-"
+    "value 1": "–",
+    "value 2": "–",
+    "value 3": "–"
   },
   {
     "Title": "Trächtigkeitsuntersuchungen",
@@ -137,17 +137,17 @@ export const catPricingTableData = [
   },
   {
     "Title": "Die Behandlung der Jungtiere ist nicht versichert.",
-    "tooltip": "-",
-    "value 1": "-",
-    "value 2": "-",
+    "tooltip": "–",
+    "value 1": "–",
+    "value 2": "–",
     "value 3": ""
   },
   {
     "Title": "Kosten für Einschläferung",
     "tooltip": "Wenn Ihr Tier unheilbar erkrankt ist oder bei einem Unfall schwer verletzt wurde, werden die Kosten der Einschläferung erstattet.",
-    "value 1": "-",
-    "value 2": "-",
-    "value 3": "-"
+    "value 1": "–",
+    "value 2": "–",
+    "value 3": "–"
   }
 ],
   [
@@ -232,7 +232,7 @@ export const dogPricingTableData = [
         "Behandlung rassespezifischer und besonderer Erkrankungen und Fehlstellungen",
       tooltip:
         "Der Erstattungsbetrag wird bis zur Höchstgrenze und unabhängig von den Operationskosten (bzw. Heilbehandlungskosten) einmal pro Erkrankung ausgezahlt, solange Ihr Tier bei der Allianz versichert ist. Die Höchstgrenze gilt insgesamt für alle mit der Erkrankung bzw. Fehlentwicklung zusammenhängenden Behandlungen. Hierzu zählen:\n\nOperationen\nHeilbehandlungen (bei ergänzender Auswahl Heilbehandlungs- und Vorsorgeschutz)\nPhysiotherapie\nFolgende Erkrankungen bzw. Fehlstellungen sind versichert:\n\nHüftgelenksdysplasie (HD)\nEllenbogengelenksdysplasie (ED)\nRadius Curvus\nPatellaluxation\nLidanomalien\nNabelbruch",
-      "value 1": "-",
+      "value 1": "–",
       "value 2": "einmalig bis 500 €",
       "value 3": "einmalig bis 2.500 €",
     },
@@ -240,7 +240,7 @@ export const dogPricingTableData = [
       Title: "Strahlentherapie nach Operationen",
       tooltip:
         "Übernahme der Tierarztkosten für die Strahlentherapie nach einer Operation bis zur vereinbarten Höhe, auch über den Nachbehandlungszeitraum hinaus.\n\nDie Erstattung erfolgt anteilig auf die Jahreshöchstentschädigung für Operationen.",
-      "value 1": "-",
+      "value 1": "–",
       "value 2": "500€",
       "value 3": "2.500€",
     },
@@ -309,25 +309,25 @@ export const dogPricingTableData = [
       Title: "Futterberatung",
       tooltip:
         "Erstattet werden die Kosten für eine ernährungsmedizinische Beratung.",
-      "value 1": "-",
-      "value 2": "-",
-      "value 3": "-",
+      "value 1": "–",
+      "value 2": "–",
+      "value 3": "–",
     },
     {
       Title: "Trächtigkeitsuntersuchungen",
       tooltip:
         "Erstattet werden die Kosten für notwendige Untersuchungen und Behandlungen, wenn Ihr Tier trächtig wird. Dazu zählen:\n \nVorsorgeuntersuchungen während der Trächtigkeit\nGeburtshilfe und\ndie Nachbehandlung nach der Geburt.\n\nDie Behandlung der Jungtiere ist nicht versichert.",
-      "value 1": "-",
-      "value 2": "-",
-      "value 3": "-",
+      "value 1": "–",
+      "value 2": "–",
+      "value 3": "–",
     },
     {
       Title: "Kosten für Einschläferung",
       tooltip:
         "Wenn Ihr Tier unheilbar erkrankt ist oder bei einem Unfall schwer verletzt wurde, werden die Kosten der Einschläferung erstattet.",
-      "value 1": "-",
-      "value 2": "-",
-      "value 3": "-",
+      "value 1": "–",
+      "value 2": "–",
+      "value 3": "–",
     },
   ],
   [
@@ -418,7 +418,7 @@ export const horsePricingTableData = [
       Title: "Regenerative Therapien (IRAP/PRP, Stammzellentherapie)",
       tooltip:
         "Mitversichert sind die Kosten für Therapien, bei denen körpereigenen Zellen und Substanzen verwendet werden. Diese Behandlungen kommen besonders häufig bei akuten und chronischen Gelenkerkrankungen zum Einsatz.",
-      "value 1": "-",
+      "value 1": "–",
       "value 2": "1.500€",
       "value 3": "2.500€",
     },
@@ -426,7 +426,7 @@ export const horsePricingTableData = [
       Title: "Strahlentherapie nach Operationen",
       tooltip:
         "Übernahme der Tierarztkosten für die Strahlentherapie nach einer Operation bis zur vereinbarten Höhe, auch über den Nachbehandlungszeitraum hinaus.\n\nDie Erstattung erfolgt anteilig auf die Jahreshöchstentschädigung für Operationen.",
-      "value 1": "-",
+      "value 1": "–",
       "value 2": "1.500€",
       "value 3": "2.500€",
     },
@@ -471,25 +471,25 @@ export const horsePricingTableData = [
       Title: "Futterberatung",
       tooltip:
         "Erstattet werden die Kosten für eine ernährungsmedizinische Beratung.",
-      "value 1": "-",
-      "value 2": "-",
-      "value 3": "-",
+      "value 1": "–",
+      "value 2": "–",
+      "value 3": "–",
     },
     {
       Title: "Trächtigkeitsuntersuchungen",
       tooltip:
         "Erstattet werden die Kosten für notwendige Untersuchungen und Behandlungen, wenn Ihr Tier trächtig wird. Dazu zählen:\n \nVorsorgeuntersuchungen während der Trächtigkeit\nGeburtshilfe und\ndie Nachbehandlung nach der Geburt.\n\nDie Behandlung der Jungtiere ist nicht versichert.",
-      "value 1": "-",
-      "value 2": "-",
-      "value 3": "-",
+      "value 1": "–",
+      "value 2": "–",
+      "value 3": "–",
     },
     {
       Title: "Kosten für Einschläferung",
       tooltip:
         "Wenn Ihr Tier unheilbar erkrankt ist oder bei einem Unfall schwer verletzt wurde, werden die Kosten der Einschläferung erstattet.",
-      "value 1": "-",
-      "value 2": "-",
-      "value 3": "-",
+      "value 1": "–",
+      "value 2": "–",
+      "value 3": "–",
     },
   ],
   [

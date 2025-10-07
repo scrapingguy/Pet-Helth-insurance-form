@@ -5978,12 +5978,6 @@ function populateApplicationForm(selectedData) {
   if (insuranceStartInput) {
     insuranceStartInput.value = formattedDate;
   }
-
-  // Display the total price in summary
-  const summaryTotalPrice = document.getElementById("summaryTotalPrice");
-  if (summaryTotalPrice && selectedData.totalPrice) {
-    summaryTotalPrice.textContent = `${selectedData.totalPrice}€ pro Monat`;
-  }
 }
 
 // Application Form Logic
@@ -6177,41 +6171,25 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Summary toggle functionality
-  const summaryToggleBtn = document.getElementById("summaryToggleBtn");
-  const summaryContent = document.getElementById("summaryContent");
+  // Success page summary functionality - populate when form is submitted
+  function updateSuccessPageSummary() {
+    // Get selected plan data from sessionStorage
+    const pricingData = JSON.parse(
+      sessionStorage.getItem("selectedInsurancePlan") || "{}"
+    );
 
-  if (summaryToggleBtn && summaryContent) {
-    summaryToggleBtn.addEventListener("click", function () {
-      const isExpanded = summaryContent.classList.contains("show");
-      const toggleText = this.querySelector(".toggle-text");
-      const toggleArrow = this.querySelector(".toggle-arrow");
+    // Basic pet information from form step 1
+    const plz = document.getElementById("plz")?.value || "";
+    const tierKategorie = document.getElementById("tierKategorie")?.value || "";
+    const geschlecht = document.getElementById("geschlecht")?.value || "";
+    const rasse = document.getElementById("rasse");
+    const rasseText = rasse?.options[rasse.selectedIndex]?.text || "";
 
-      if (isExpanded) {
-        // Hide summary
-        summaryContent.classList.remove("show");
-        summaryContent.style.display = "none";
-        this.classList.remove("expanded");
-        if (toggleText) toggleText.textContent = "Zusammenfassung anzeigen";
-      } else {
-        // Show summary
-        summaryContent.classList.add("show");
-        summaryContent.style.display = "block";
-        this.classList.add("expanded");
-        if (toggleText) toggleText.textContent = "Zusammenfassung ausblenden";
+    // Pet details from form step 3
+    const petName = document.getElementById("appPetName")?.value || "";
+    const petBirthDate = document.getElementById("geburtsdatum")?.value || "";
 
-        // Update summary content when showing
-        updateApplicationSummary();
-      }
-    });
-  }
-
-  // Update summary when form changes
-  applicationForm.addEventListener("change", updateApplicationSummary);
-  applicationForm.addEventListener("input", updateApplicationSummary);
-
-  function updateApplicationSummary() {
-    // Personal Data
+    // Personal Data from form step 2
     const gender = document.querySelector('input[name="gender"]:checked');
     const firstName = document.getElementById("appFirstName")?.value || "";
     const lastName = document.getElementById("appLastName")?.value || "";
@@ -6223,7 +6201,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const postalCode = document.getElementById("appPostalCode")?.value || "";
     const city = document.getElementById("appCity")?.value || "";
 
-    // Insurance Information
+    // Insurance Information from form step 4
     const insuranceStartDate =
       document.getElementById("appInsuranceStartDate")?.value || "";
     const duration = document.querySelector('input[name="duration"]:checked');
@@ -6231,76 +6209,151 @@ document.addEventListener("DOMContentLoaded", function () {
       'input[name="previousInsurance"]:checked'
     );
 
-    // Account Data
+    // Account Data from form step 4
     const accountHolder =
       document.getElementById("appAccountHolder")?.value || "";
     const iban = document.getElementById("appIban")?.value || "";
 
-    // Update Personal Data Summary
-    if (gender) {
-      const summaryGender = document.getElementById("summaryGender");
-      if (summaryGender)
-        summaryGender.textContent = gender.value === "frau" ? "Frau" : "Herr";
+    // Update Selected Plan Information
+    if (pricingData.planTitle) {
+      const successSummaryPlanTitle = document.getElementById("successSummaryPlanTitle");
+      if (successSummaryPlanTitle) successSummaryPlanTitle.textContent = pricingData.planTitle;
     }
-    if (firstName || lastName) {
-      const summaryName = document.getElementById("summaryName");
-      if (summaryName)
-        summaryName.textContent = `${firstName} ${lastName}`.trim() || "-";
+    if (pricingData.planPrice) {
+      const successSummaryPlanPrice = document.getElementById("successSummaryPlanPrice");
+      if (successSummaryPlanPrice) successSummaryPlanPrice.textContent = `${pricingData.planPrice}€ pro Monat`;
     }
-    if (birthDate) {
-      const summaryBirthDate = document.getElementById("summaryBirthDate");
-      if (summaryBirthDate) summaryBirthDate.textContent = birthDate;
+    if (pricingData.deductible) {
+      const successSummaryDeductible = document.getElementById("successSummaryDeductible");
+      if (successSummaryDeductible) successSummaryDeductible.textContent = `${pricingData.deductible}€`;
     }
-    if (email) {
-      const summaryEmail = document.getElementById("summaryEmail");
-      if (summaryEmail) summaryEmail.textContent = email;
+    if (pricingData.paymentFrequency) {
+      const successSummaryPaymentFrequency = document.getElementById("successSummaryPaymentFrequency");
+      if (successSummaryPaymentFrequency) {
+        const frequencyText = pricingData.paymentFrequency === "monthly" ? "Monatlich" : 
+                              pricingData.paymentFrequency === "quarterly" ? "Vierteljährlich" :
+                              pricingData.paymentFrequency === "annually" ? "Jährlich" : pricingData.paymentFrequency;
+        successSummaryPaymentFrequency.textContent = frequencyText;
+      }
     }
-    if (phone) {
-      const summaryPhone = document.getElementById("summaryPhone");
-      if (summaryPhone) summaryPhone.textContent = phone;
-    }
-    if (street && houseNumber && postalCode && city) {
-      const summaryAddress = document.getElementById("summaryAddress");
-      if (summaryAddress)
-        summaryAddress.textContent = `${street} ${houseNumber}, ${postalCode} ${city}`;
+    
+    // Handle addon information
+    const successSummaryAddonRow = document.getElementById("successSummaryAddonRow");
+    const successSummaryAddon = document.getElementById("successSummaryAddon");
+    if (pricingData.addonSelected && pricingData.addonPrice > 0) {
+      if (successSummaryAddonRow) successSummaryAddonRow.style.display = "flex";
+      if (successSummaryAddon) successSummaryAddon.textContent = `+${pricingData.addonPrice}€ pro Monat`;
+    } else {
+      if (successSummaryAddonRow) successSummaryAddonRow.style.display = "none";
     }
 
-    // Update Insurance Information Summary
+    // Update Pet Information
+    if (plz) {
+      const successSummaryPLZ = document.getElementById("successSummaryPLZ");
+      if (successSummaryPLZ) successSummaryPLZ.textContent = plz;
+    }
+    if (tierKategorie) {
+      const successSummaryPetType = document.getElementById("successSummaryPetType");
+      if (successSummaryPetType) {
+        const petTypeText = tierKategorie === "katze" ? "🐱 Katze" : 
+                           tierKategorie === "hund" ? "🐶 Hund" : 
+                           tierKategorie === "pferd" ? "🐴 Pferd" : tierKategorie;
+        successSummaryPetType.textContent = petTypeText;
+      }
+    }
+    if (geschlecht) {
+      const successSummaryPetGender = document.getElementById("successSummaryPetGender");
+      if (successSummaryPetGender) {
+        const genderText = geschlecht === "maennlich" ? "♂️ Männlich" : "♀️ Weiblich";
+        successSummaryPetGender.textContent = genderText;
+      }
+    }
+    if (rasseText) {
+      const successSummaryBreed = document.getElementById("successSummaryBreed");
+      if (successSummaryBreed) successSummaryBreed.textContent = rasseText;
+    }
+    if (petName) {
+      const successSummaryPetName = document.getElementById("successSummaryPetName");
+      if (successSummaryPetName) successSummaryPetName.textContent = petName;
+    }
+    if (petBirthDate) {
+      const successSummaryPetBirthDate = document.getElementById("successSummaryPetBirthDate");
+      if (successSummaryPetBirthDate) successSummaryPetBirthDate.textContent = petBirthDate;
+    }
+
+    // Update Personal Data Summary on Success Page
+    if (gender) {
+      const successSummaryGender = document.getElementById("successSummaryGender");
+      if (successSummaryGender)
+        successSummaryGender.textContent = gender.value === "frau" ? "Frau" : "Herr";
+    }
+    if (firstName || lastName) {
+      const successSummaryName = document.getElementById("successSummaryName");
+      if (successSummaryName)
+        successSummaryName.textContent = `${firstName} ${lastName}`.trim() || "-";
+    }
+    if (birthDate) {
+      const successSummaryBirthDate = document.getElementById("successSummaryBirthDate");
+      if (successSummaryBirthDate) successSummaryBirthDate.textContent = birthDate;
+    }
+    if (email) {
+      const successSummaryEmail = document.getElementById("successSummaryEmail");
+      if (successSummaryEmail) successSummaryEmail.textContent = email;
+    }
+    if (phone) {
+      const successSummaryPhone = document.getElementById("successSummaryPhone");
+      if (successSummaryPhone) successSummaryPhone.textContent = phone;
+    }
+    if (street && houseNumber && postalCode && city) {
+      const successSummaryAddress = document.getElementById("successSummaryAddress");
+      if (successSummaryAddress)
+        successSummaryAddress.textContent = `${street} ${houseNumber}, ${postalCode} ${city}`;
+    }
+
+    // Update Insurance Information Summary on Success Page
     if (insuranceStartDate) {
-      const summaryInsuranceStart = document.getElementById(
-        "summaryInsuranceStart"
+      const successSummaryInsuranceStart = document.getElementById(
+        "successSummaryInsuranceStart"
       );
-      if (summaryInsuranceStart)
-        summaryInsuranceStart.textContent = insuranceStartDate;
+      if (successSummaryInsuranceStart)
+        successSummaryInsuranceStart.textContent = insuranceStartDate;
     }
     if (duration) {
-      const summaryDuration = document.getElementById("summaryDuration");
-      if (summaryDuration)
-        summaryDuration.textContent =
+      const successSummaryDuration = document.getElementById("successSummaryDuration");
+      if (successSummaryDuration)
+        successSummaryDuration.textContent =
           duration.value === "1" ? "1 Jahr" : "3 Jahre";
     }
     if (previousInsurance) {
-      const summaryPreviousInsurance = document.getElementById(
-        "summaryPreviousInsurance"
+      const successSummaryPreviousInsurance = document.getElementById(
+        "successSummaryPreviousInsurance"
       );
-      if (summaryPreviousInsurance)
-        summaryPreviousInsurance.textContent =
+      if (successSummaryPreviousInsurance)
+        successSummaryPreviousInsurance.textContent =
           previousInsurance.value === "ja" ? "Ja" : "Nein";
     }
 
-    // Update Account Data Summary
+    // Update Account Data Summary on Success Page
     if (accountHolder) {
-      const summaryAccountHolder = document.getElementById(
-        "summaryAccountHolder"
+      const successSummaryAccountHolder = document.getElementById(
+        "successSummaryAccountHolder"
       );
-      if (summaryAccountHolder)
-        summaryAccountHolder.textContent = accountHolder;
+      if (successSummaryAccountHolder)
+        successSummaryAccountHolder.textContent = accountHolder;
     }
     if (iban) {
-      const summaryIban = document.getElementById("summaryIban");
-      if (summaryIban) summaryIban.textContent = iban;
+      const successSummaryIban = document.getElementById("successSummaryIban");
+      if (successSummaryIban) successSummaryIban.textContent = iban;
+    }
+
+    // Update total price on success page
+    const successSummaryTotalPrice = document.getElementById("successSummaryTotalPrice");
+    if (successSummaryTotalPrice && pricingData.totalPrice) {
+      successSummaryTotalPrice.textContent = `${pricingData.totalPrice}€ pro Monat`;
     }
   }
+
+
 
   // Handle form submission
   console.log("Adding form submission event listener");
@@ -6387,11 +6440,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // Redirect to thank you page
           showScreen("successScreen");
+          updateSuccessPageSummary();
         }, 2000);
       } else {
         // Fallback if no submit button found
         console.log("Application Data:", applicationData);
         showScreen("successScreen");
+        updateSuccessPageSummary();
       }
     } else {
       alert("Bitte füllen Sie alle Pflichtfelder aus.");

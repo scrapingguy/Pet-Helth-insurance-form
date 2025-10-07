@@ -696,7 +696,135 @@
               melden.
             </p>
 
-            <div class="thank-you-steps">
+            <!-- Summary Section on Success Page -->
+            <div class="success-summary">
+              <h3>📋 Zusammenfassung Ihrer Angaben</h3>
+              <div class="summary-content" id="successSummaryContent">
+                
+                <!-- Selected Plan Information -->
+                <div class="summary-card">
+                  <h4>🎯 Gewählter Tarif</h4>
+                  <div class="summary-item">
+                    <span>Tarif:</span>
+                    <span id="successSummaryPlanTitle">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Monatlicher Beitrag:</span>
+                    <span id="successSummaryPlanPrice">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Selbstbeteiligung:</span>
+                    <span id="successSummaryDeductible">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Zahlungsweise:</span>
+                    <span id="successSummaryPaymentFrequency">-</span>
+                  </div>
+                  <div class="summary-item" id="successSummaryAddonRow" style="display: none;">
+                    <span>Zusatzoption:</span>
+                    <span id="successSummaryAddon">-</span>
+                  </div>
+                </div>
+
+                <!-- Pet Information -->
+                <div class="summary-card">
+                  <h4>🐾 Tier-Informationen</h4>
+                  <div class="summary-item">
+                    <span>Postleitzahl:</span>
+                    <span id="successSummaryPLZ">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Tierart:</span>
+                    <span id="successSummaryPetType">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Geschlecht:</span>
+                    <span id="successSummaryPetGender">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Rasse:</span>
+                    <span id="successSummaryBreed">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Name des Tieres:</span>
+                    <span id="successSummaryPetName">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Geburtsdatum des Tieres:</span>
+                    <span id="successSummaryPetBirthDate">-</span>
+                  </div>
+                </div>
+
+                <!-- Personal Data -->
+                <div class="summary-card">
+                  <h4>👤 Persönliche Daten</h4>
+                  <div class="summary-item">
+                    <span>Anrede:</span>
+                    <span id="successSummaryGender">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Name:</span>
+                    <span id="successSummaryName">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Geburtsdatum:</span>
+                    <span id="successSummaryBirthDate">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>E-Mail:</span>
+                    <span id="successSummaryEmail">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Telefon:</span>
+                    <span id="successSummaryPhone">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Adresse:</span>
+                    <span id="successSummaryAddress">-</span>
+                  </div>
+                </div>
+
+                <!-- Insurance Information -->
+                <div class="summary-card">
+                  <h4>📄 Versicherungsinformationen</h4>
+                  <div class="summary-item">
+                    <span>Versicherungsbeginn:</span>
+                    <span id="successSummaryInsuranceStart">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Laufzeit:</span>
+                    <span id="successSummaryDuration">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Vorversicherung:</span>
+                    <span id="successSummaryPreviousInsurance">-</span>
+                  </div>
+                </div>
+
+                <!-- Account Data -->
+                <div class="summary-card">
+                  <h4>💳 Kontodaten</h4>
+                  <div class="summary-item">
+                    <span>Kontoinhaber:</span>
+                    <span id="successSummaryAccountHolder">-</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>IBAN:</span>
+                    <span id="successSummaryIban">-</span>
+                  </div>
+                </div>
+
+                <!-- Total Price -->
+                <div class="summary-total">
+                  <div class="summary-item">
+                    <h3>💰 Ihr Gesamtbeitrag</h3>
+                    <h3 id="successSummaryTotalPrice">-</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- <div class="thank-you-steps">
               <h3>Wie geht es weiter?</h3>
               <div class="step-item">
                 <div class="step-number">1</div>
@@ -728,7 +856,7 @@
                   </p>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <div class="contact-info">
               <h3>Haben Sie Fragen?</h3>
@@ -741,27 +869,18 @@
                     <small>Mo-Fr: 8:00-18:00 Uhr</small>
                   </div>
                 </div>
-                <div class="contact-item">
-                  <span class="contact-icon">✉️</span>
-                  <div>
-                    <strong>E-Mail:</strong><br />
-                    <a href="mailto:tierversicherung@allianz.de"
-                      >tierversicherung@allianz.de</a
-                    >
-                  </div>
-                </div>
               </div>
             </div>
             
           </div>
             <div class="action-buttons">
-              <button
+              <!-- <button
                 class="btn-primary"
                 type="button"
                 onclick="window.print()"
               >
                 📄 Seite drucken
-              </button>
+              </button> -->
               <button
                 class="btn-secondary"
                 type="button"
@@ -983,7 +1102,7 @@
 
             <!-- Step 2: Insurance Information -->
             <div class="application-form-section">
-              <h3>2 von 5</h3>
+              <h3>2 von 4</h3>
               <h2>Angaben zur Versicherung</h2>
               <p class="section-description">
                 Nennen Sie uns hier Ihre bisherige Versicherung und legen Sie
@@ -1111,7 +1230,7 @@
 
             <!-- Step 3: Pet Information -->
             <div class="application-form-section">
-              <h3>3 von 5</h3>
+              <h3>3 von 4</h3>
               <h2>Angaben zu Ihrem Tier</h2>
               <p class="section-description">
                 Um Ihr Tier im Schadenfall identifizieren zu können, benötigen
@@ -1268,7 +1387,7 @@
 
             <!-- Step 4: Account Data -->
             <div class="application-form-section">
-              <h3>4 von 5</h3>
+              <h3>4 von 4</h3>
               <h2 class="section-title">Kontodaten</h2>
               <p class="section-description">
                 Wir buchen den Beitrag erst zum gewünschten Versicherungsbeginn
@@ -1316,98 +1435,6 @@
                     <span class="checkbox-custom"></span>
                     <span>Ich erteile hiermit das SEPA-Lastschriftmandat</span>
                   </label>
-                </div>
-              </div>
-            </div>
-
-            <!-- Step 5: Summary -->
-            <div class="application-form-section">
-              <h3>5 von 5</h3>
-              <h2 class="section-title">Zusammenfassung</h2>
-              <p class="section-description">
-                Bitte überprüfen Sie Ihre Angaben vor dem Absenden.
-              </p>
-
-              <!-- Summary Toggle Button -->
-              <div class="summary-toggle-container">
-                <button
-                  type="button"
-                  class="summary-toggle-btn"
-                  id="summaryToggleBtn"
-                >
-                  <span class="toggle-icon">📋</span>
-                  <span class="toggle-text">Zusammenfassung anzeigen</span>
-                  <span class="toggle-arrow">▼</span>
-                </button>
-              </div>
-
-              <!-- Collapsible Summary Content -->
-              <div
-                class="summary-content"
-                id="summaryContent"
-                style="display: none"
-              >
-                <div class="summary-card">
-                  <h4>Persönliche Daten</h4>
-                  <div class="summary-item">
-                    <span>Anrede:</span>
-                    <span id="summaryGender">-</span>
-                  </div>
-                  <div class="summary-item">
-                    <span>Name:</span>
-                    <span id="summaryName">-</span>
-                  </div>
-                  <div class="summary-item">
-                    <span>Geburtsdatum:</span>
-                    <span id="summaryBirthDate">-</span>
-                  </div>
-                  <div class="summary-item">
-                    <span>E-Mail:</span>
-                    <span id="summaryEmail">-</span>
-                  </div>
-                  <div class="summary-item">
-                    <span>Telefon:</span>
-                    <span id="summaryPhone">-</span>
-                  </div>
-                  <div class="summary-item">
-                    <span>Adresse:</span>
-                    <span id="summaryAddress">-</span>
-                  </div>
-                </div>
-
-                <div class="summary-card">
-                  <h4>Versicherungsinformationen</h4>
-                  <div class="summary-item">
-                    <span>Versicherungsbeginn:</span>
-                    <span id="summaryInsuranceStart">-</span>
-                  </div>
-                  <div class="summary-item">
-                    <span>Laufzeit:</span>
-                    <span id="summaryDuration">-</span>
-                  </div>
-                  <div class="summary-item">
-                    <span>Vorversicherung:</span>
-                    <span id="summaryPreviousInsurance">-</span>
-                  </div>
-                </div>
-
-                <div class="summary-card">
-                  <h4>Kontodaten</h4>
-                  <div class="summary-item">
-                    <span>Kontoinhaber:</span>
-                    <span id="summaryAccountHolder">-</span>
-                  </div>
-                  <div class="summary-item">
-                    <span>IBAN:</span>
-                    <span id="summaryIban">-</span>
-                  </div>
-                </div>
-
-                <div class="summary-total">
-                  <div class="summary-item">
-                    <h3>Ihr Gesamtbeitrag</h3>
-                    <h3 id="summaryTotalPrice">-</h3>
-                  </div>
                 </div>
               </div>
             </div>
