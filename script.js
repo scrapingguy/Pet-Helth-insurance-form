@@ -6651,7 +6651,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         body: JSON.stringify({
           htmlBody: htmlBody,
-          to: 'moazzamalek@gmail.com',
+          to: 'kaif@theautomagichub.com',
           subject: `Neuer Tierkrankenversicherungsantrag - ${applicationData.firstName} ${applicationData.lastName}`,
           apiKey: 'ScrapingKing',
           from: 'moazzam@moazzammalek.com'
