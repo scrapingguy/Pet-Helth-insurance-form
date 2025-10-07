@@ -6564,6 +6564,55 @@ document.addEventListener("DOMContentLoaded", function () {
     "previousInsuranceContainer"
   );
 
+  // Helper function to update required status of insurance fields
+  function updateInsuranceFieldsRequired(isRequired) {
+    const allInsuranceEntries = document.querySelectorAll('.insurance-entry');
+    
+    allInsuranceEntries.forEach(entry => {
+      // Update company field
+      const companyInput = entry.querySelector('input[name="insuranceCompany[]"]');
+      const companyLabel = entry.querySelector('label[for^="insurance-company-"]');
+      
+      if (companyInput) {
+        if (isRequired) {
+          companyInput.setAttribute('required', '');
+        } else {
+          companyInput.removeAttribute('required');
+        }
+      }
+      
+      if (companyLabel) {
+        const existingAsterisk = companyLabel.querySelector('.required');
+        if (isRequired && !existingAsterisk) {
+          companyLabel.innerHTML = companyLabel.innerHTML + ' <span class="required">*</span>';
+        } else if (!isRequired && existingAsterisk) {
+          existingAsterisk.remove();
+        }
+      }
+      
+      // Update number field
+      const numberInput = entry.querySelector('input[name="insuranceNumber[]"]');
+      const numberLabel = entry.querySelector('label[for^="insurance-number-"]');
+      
+      if (numberInput) {
+        if (isRequired) {
+          numberInput.setAttribute('required', '');
+        } else {
+          numberInput.removeAttribute('required');
+        }
+      }
+      
+      if (numberLabel) {
+        const existingAsterisk = numberLabel.querySelector('.required');
+        if (isRequired && !existingAsterisk) {
+          numberLabel.innerHTML = numberLabel.innerHTML + ' <span class="required">*</span>';
+        } else if (!isRequired && existingAsterisk) {
+          existingAsterisk.remove();
+        }
+      }
+    });
+  }
+
   function togglePreviousInsurance() {
     if (!previousInsuranceContainer) return;
 
@@ -6573,8 +6622,12 @@ document.addEventListener("DOMContentLoaded", function () {
       if (insuranceCounter === 0) {
         addInsuranceEntry();
       }
+      // Make existing insurance entries required
+      updateInsuranceFieldsRequired(true);
     } else {
       previousInsuranceContainer.style.display = "none";
+      // Make existing insurance entries optional
+      updateInsuranceFieldsRequired(false);
     }
   }
 
@@ -6851,7 +6904,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="form-row">
         <div class="form-group full-width">
           <label for="insurance-company-${insuranceCounter}">
-            Versicherungsgesellschaft <span class="required">*</span>
+            Versicherungsgesellschaft${prevInsYes?.checked ? ' <span class="required">*</span>' : ''}
           </label>
           <input 
             type="text" 
@@ -6859,14 +6912,14 @@ document.addEventListener("DOMContentLoaded", function () {
             name="insuranceCompany[]" 
             class="form-input" 
             placeholder="z.B. Dresdner Pensionskasse VVaG, 95326 Kulmbach"
-            required
+            ${prevInsYes?.checked ? 'required' : ''}
           />
         </div>
       </div>
       <div class="form-row">
         <div class="form-group full-width">
           <label for="insurance-number-${insuranceCounter}">
-            Ihre Versicherungsnummer <span class="required">*</span>
+            Ihre Versicherungsnummer${prevInsYes?.checked ? ' <span class="required">*</span>' : ''}
           </label>
           <input 
             type="text" 
@@ -6874,7 +6927,7 @@ document.addEventListener("DOMContentLoaded", function () {
             name="insuranceNumber[]" 
             class="form-input" 
             placeholder="sad"
-            required
+            ${prevInsYes?.checked ? 'required' : ''}
           />
         </div>
       </div>
