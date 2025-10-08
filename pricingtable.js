@@ -86,70 +86,75 @@ export const catPricingTableData = [
     },
   ],
   [
-  {
-    "Title": "Telemedizin",
-    "tooltip": "Im Rahmen der Diagnostik sind auch die Kosten für eine Videokonsultation bei einer Online-Tierärztin oder einem Online-Tierarzt mitversichert. Voraussetzung ist, dass die Rechnung nach GOT gestellt ist. Beispielsweise können monatliche Beiträge nicht erstattet werden.",
-    "value 1": "TRUE",
-    "value 2": "TRUE",
-    "value 3": "TRUE"
-  },
-  {
-    "Title": "Schutz im Ausland",
-    "tooltip": "Versichert sind Behandlungskosten bei einer Tierärztin oder einem Tierarzt im Ausland bei einem vorübergehendem Aufenthalt bis zu 12 Monaten.",
-    "value 1": "12 Monate weltweit",
-    "value 2": "12 Monate weltweit",
-    "value 3": "12 Monate weltweit"
-  },
-  {
-    "Title": "Futterberatung",
-    "tooltip": "Erstattet werden die Kosten für eine ernährungsmedizinische Beratung.",
-    "value 1": "–",
-    "value 2": "–",
-    "value 3": "–"
-  },
-  {
-    "Title": "Trächtigkeitsuntersuchungen",
-    "tooltip": "Erstattet werden die Kosten für notwendige Untersuchungen und Behandlungen, wenn Ihr Tier trächtig wird. Dazu zählen:",
-    "value 1": "",
-    "value 2": "",
-    "value 3": ""
-  },
-  {
-    "Title": "Vorsorgeuntersuchungen während der Trächtigkeit",
-    "tooltip": "",
-    "value 1": "",
-    "value 2": "",
-    "value 3": ""
-  },
-  {
-    "Title": "Geburtshilfe und",
-    "tooltip": "",
-    "value 1": "",
-    "value 2": "",
-    "value 3": ""
-  },
-  {
-    "Title": "die Nachbehandlung nach der Geburt.",
-    "tooltip": "",
-    "value 1": "",
-    "value 2": "",
-    "value 3": ""
-  },
-  {
-    "Title": "Die Behandlung der Jungtiere ist nicht versichert.",
-    "tooltip": "–",
-    "value 1": "–",
-    "value 2": "–",
-    "value 3": ""
-  },
-  {
-    "Title": "Kosten für Einschläferung",
-    "tooltip": "Wenn Ihr Tier unheilbar erkrankt ist oder bei einem Unfall schwer verletzt wurde, werden die Kosten der Einschläferung erstattet.",
-    "value 1": "–",
-    "value 2": "–",
-    "value 3": "–"
-  }
-],
+    {
+      Title: "Telemedizin",
+      tooltip:
+        "Im Rahmen der Diagnostik sind auch die Kosten für eine Videokonsultation bei einer Online-Tierärztin oder einem Online-Tierarzt mitversichert. Voraussetzung ist, dass die Rechnung nach GOT gestellt ist. Beispielsweise können monatliche Beiträge nicht erstattet werden.",
+      "value 1": "TRUE",
+      "value 2": "TRUE",
+      "value 3": "TRUE",
+    },
+    {
+      Title: "Schutz im Ausland",
+      tooltip:
+        "Versichert sind Behandlungskosten bei einer Tierärztin oder einem Tierarzt im Ausland bei einem vorübergehendem Aufenthalt bis zu 12 Monaten.",
+      "value 1": "12 Monate weltweit",
+      "value 2": "12 Monate weltweit",
+      "value 3": "12 Monate weltweit",
+    },
+    {
+      Title: "Futterberatung",
+      tooltip:
+        "Erstattet werden die Kosten für eine ernährungsmedizinische Beratung.",
+      "value 1": "–",
+      "value 2": "–",
+      "value 3": "–",
+    },
+    {
+      Title: "Trächtigkeitsuntersuchungen",
+      tooltip:
+        "Erstattet werden die Kosten für notwendige Untersuchungen und Behandlungen, wenn Ihr Tier trächtig wird. Dazu zählen:",
+      "value 1": "",
+      "value 2": "",
+      "value 3": "",
+    },
+    {
+      Title: "Vorsorgeuntersuchungen während der Trächtigkeit",
+      tooltip: "",
+      "value 1": "",
+      "value 2": "",
+      "value 3": "",
+    },
+    {
+      Title: "Geburtshilfe und",
+      tooltip: "",
+      "value 1": "",
+      "value 2": "",
+      "value 3": "",
+    },
+    {
+      Title: "die Nachbehandlung nach der Geburt.",
+      tooltip: "",
+      "value 1": "",
+      "value 2": "",
+      "value 3": "",
+    },
+    {
+      Title: "Die Behandlung der Jungtiere ist nicht versichert.",
+      tooltip: "–",
+      "value 1": "–",
+      "value 2": "–",
+      "value 3": "",
+    },
+    {
+      Title: "Kosten für Einschläferung",
+      tooltip:
+        "Wenn Ihr Tier unheilbar erkrankt ist oder bei einem Unfall schwer verletzt wurde, werden die Kosten der Einschläferung erstattet.",
+      "value 1": "–",
+      "value 2": "–",
+      "value 3": "–",
+    },
+  ],
   [
     {
       Title: "Direkte Abrechnung mit der Tierärztin oder dem Tierarzt",

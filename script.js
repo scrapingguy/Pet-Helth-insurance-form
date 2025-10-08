@@ -14,22 +14,26 @@ import { catDisease, dogDisease, horseDisease } from "./diseases.js";
 // Retry utility function for API calls
 async function fetchWithRetry(url, options, maxRetries = 3) {
   const delays = [1000, 2000, 5000]; // 1s, 2s, 5s
-  
+
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const response = await fetch(url, options);
       return response;
     } catch (error) {
       const isLastAttempt = attempt === maxRetries - 1;
-      
+
       if (isLastAttempt) {
         throw error;
       }
-      
+
       // Wait before retrying
       const delay = delays[attempt] || 5000;
-      console.log(`API call failed (attempt ${attempt + 1}/${maxRetries}), retrying in ${delay}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      console.log(
+        `API call failed (attempt ${
+          attempt + 1
+        }/${maxRetries}), retrying in ${delay}ms...`
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 }
@@ -449,6 +453,30 @@ function renderMobilePricingCards(container, sections, headers) {
 
     sections.forEach((sectionRows, sectionIndex) => {
       const sectionTitle = resolveSectionTitle(headers, sectionIndex);
+
+      // First, collect visible items for this section
+      const visibleItems = [];
+      sectionRows.forEach((rowData) => {
+        const rawValue = rowData[`value ${planIndex + 1}`];
+        const normalizedValue = normalizeFeatureValue(rawValue);
+
+        // Check if value should be hidden (is "–" or empty)
+        const shouldHide = normalizedValue === "–" || normalizedValue === "";
+
+        if (!shouldHide) {
+          visibleItems.push({
+            title: resolveFeatureTitle(rowData),
+            tooltip: rowData.tooltip,
+            value: normalizedValue,
+          });
+        }
+      });
+
+      // Only render the section if there are visible items
+      if (visibleItems.length === 0) {
+        return; // Skip this section entirely
+      }
+
       const sectionBlock = document.createElement("div");
       sectionBlock.className = "mobile-plan-section";
 
@@ -484,23 +512,22 @@ function renderMobilePricingCards(container, sections, headers) {
       const list = document.createElement("ul");
       list.className = "mobile-feature-list";
 
-      sectionRows.forEach((rowData) => {
+      // Render only the visible items
+      visibleItems.forEach((item) => {
         const listItem = document.createElement("li");
         listItem.className = "mobile-feature";
 
         const featureName = document.createElement("span");
         featureName.className = "feature-name";
-        featureName.textContent = resolveFeatureTitle(rowData);
-        if (rowData.tooltip) {
-          featureName.title = rowData.tooltip;
+        featureName.textContent = item.title;
+        if (item.tooltip) {
+          featureName.title = item.tooltip;
           featureName.classList.add("has-tooltip");
         }
 
         const featureValue = document.createElement("span");
         featureValue.className = "feature-value";
-        featureValue.textContent = normalizeFeatureValue(
-          rowData[`value ${planIndex + 1}`]
-        );
+        featureValue.textContent = item.value;
 
         listItem.appendChild(featureName);
         listItem.appendChild(featureValue);
@@ -1078,15 +1105,18 @@ document.addEventListener("DOMContentLoaded", function () {
     showScreen("pricingScreen");
     scheduleIframeHeightUpdate();
 
-    fetchWithRetry("https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz", {
-      method: "POST",
-      headers: {
-        accept: "application/json, text/plain, */*",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(jsonData),
-      redirect: "follow",
-    })
+    fetchWithRetry(
+      "https://api-vierbeinerabsicherung.moazzammalek.com/api/allianz",
+      {
+        method: "POST",
+        headers: {
+          accept: "application/json, text/plain, */*",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(jsonData),
+        redirect: "follow",
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(
@@ -5582,12 +5612,15 @@ function updateConfirmationSection() {
 
   const deductibleValue = deductibleSelect ? deductibleSelect.value : "20";
   const paymentValue = paymentSelect ? paymentSelect.value : "monthly";
-  
+
   // Update period text for all confirmation prices
   const periodText = `pro ${getBillingPeriodText(paymentValue)}`;
-  const tariffPricePeriod = tariffPrice?.parentElement?.querySelector('span:last-child');
-  const addonPricePeriod = addonSelectedPrice?.parentElement?.querySelector('span:last-child');
-  const totalPricePeriod = totalPriceElement?.parentElement?.querySelector('span:last-child');
+  const tariffPricePeriod =
+    tariffPrice?.parentElement?.querySelector("span:last-child");
+  const addonPricePeriod =
+    addonSelectedPrice?.parentElement?.querySelector("span:last-child");
+  const totalPricePeriod =
+    totalPriceElement?.parentElement?.querySelector("span:last-child");
   const selectedAddonOption = document.querySelector(
     'input[name="addonCoverage"]:checked'
   );
@@ -5617,33 +5650,33 @@ function updateConfirmationSection() {
     if (tariffPrice) {
       tariffPrice.textContent = "--";
     }
-    
+
     // Update period text even when no plan is selected
     if (tariffPricePeriod) {
       tariffPricePeriod.textContent = periodText;
     }
-    
+
     if (addonOption) {
       addonOption.textContent = addonText;
     }
     if (addonSelectedPrice) {
       addonSelectedPrice.textContent = `${formatCurrency(addonPriceValue)} €`;
     }
-    
+
     // Update period text for addon price
     if (addonPricePeriod) {
       addonPricePeriod.textContent = periodText;
     }
-    
+
     if (totalPriceElement) {
       totalPriceElement.textContent = "--";
     }
-    
+
     // Update period text for total price
     if (totalPricePeriod) {
       totalPricePeriod.textContent = periodText;
     }
-    
+
     updateAddonSelectionUI();
     scheduleIframeHeightUpdate();
     return;
@@ -6075,16 +6108,16 @@ document.addEventListener("DOMContentLoaded", function () {
     birthDateInput.addEventListener("input", function () {
       let value = this.value;
       let cursorPosition = this.selectionStart;
-      
+
       // If backspace was used (value is shorter), don't auto-format
       if (value.length < lastValue.length) {
         lastValue = value;
         return;
       }
-      
+
       // Only keep digits
       value = value.replace(/\D/g, "");
-      
+
       // Add dots for formatting
       if (value.length >= 2) {
         value = value.substring(0, 2) + "." + value.substring(2);
@@ -6092,7 +6125,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (value.length >= 5) {
         value = value.substring(0, 5) + "." + value.substring(5, 9);
       }
-      
+
       this.value = value;
       lastValue = value;
     });
@@ -6105,16 +6138,16 @@ document.addEventListener("DOMContentLoaded", function () {
     insuranceStartInput.addEventListener("input", function () {
       let value = this.value;
       let cursorPosition = this.selectionStart;
-      
+
       // If backspace was used (value is shorter), don't auto-format
       if (value.length < lastValue.length) {
         lastValue = value;
         return;
       }
-      
+
       // Only keep digits
       value = value.replace(/\D/g, "");
-      
+
       // Add dots for formatting
       if (value.length >= 2) {
         value = value.substring(0, 2) + "." + value.substring(2);
@@ -6122,7 +6155,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (value.length >= 5) {
         value = value.substring(0, 5) + "." + value.substring(5, 9);
       }
-      
+
       this.value = value;
       lastValue = value;
     });
@@ -6308,37 +6341,58 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Update Selected Plan Information
     if (pricingData.planTitle) {
-      const successSummaryPlanTitle = document.getElementById("successSummaryPlanTitle");
-      if (successSummaryPlanTitle) successSummaryPlanTitle.textContent = pricingData.planTitle;
+      const successSummaryPlanTitle = document.getElementById(
+        "successSummaryPlanTitle"
+      );
+      if (successSummaryPlanTitle)
+        successSummaryPlanTitle.textContent = pricingData.planTitle;
     }
     if (pricingData.planPrice) {
-      const successSummaryPlanPrice = document.getElementById("successSummaryPlanPrice");
+      const successSummaryPlanPrice = document.getElementById(
+        "successSummaryPlanPrice"
+      );
       if (successSummaryPlanPrice) {
-        const periodText = pricingData.paymentFrequency ? getBillingPeriodText(pricingData.paymentFrequency) : "Monat";
+        const periodText = pricingData.paymentFrequency
+          ? getBillingPeriodText(pricingData.paymentFrequency)
+          : "Monat";
         successSummaryPlanPrice.textContent = `${pricingData.planPrice}€ pro ${periodText}`;
       }
     }
     if (pricingData.deductible) {
-      const successSummaryDeductible = document.getElementById("successSummaryDeductible");
-      if (successSummaryDeductible) successSummaryDeductible.textContent = `${pricingData.deductible}€`;
+      const successSummaryDeductible = document.getElementById(
+        "successSummaryDeductible"
+      );
+      if (successSummaryDeductible)
+        successSummaryDeductible.textContent = `${pricingData.deductible}€`;
     }
     if (pricingData.paymentFrequency) {
-      const successSummaryPaymentFrequency = document.getElementById("successSummaryPaymentFrequency");
+      const successSummaryPaymentFrequency = document.getElementById(
+        "successSummaryPaymentFrequency"
+      );
       if (successSummaryPaymentFrequency) {
-        const frequencyText = pricingData.paymentFrequency === "monthly" ? "Monatlich" : 
-                              pricingData.paymentFrequency === "quarterly" ? "Vierteljährlich" :
-                              pricingData.paymentFrequency === "annually" ? "Jährlich" : pricingData.paymentFrequency;
+        const frequencyText =
+          pricingData.paymentFrequency === "monthly"
+            ? "Monatlich"
+            : pricingData.paymentFrequency === "quarterly"
+            ? "Vierteljährlich"
+            : pricingData.paymentFrequency === "annually"
+            ? "Jährlich"
+            : pricingData.paymentFrequency;
         successSummaryPaymentFrequency.textContent = frequencyText;
       }
     }
-    
+
     // Handle addon information
-    const successSummaryAddonRow = document.getElementById("successSummaryAddonRow");
+    const successSummaryAddonRow = document.getElementById(
+      "successSummaryAddonRow"
+    );
     const successSummaryAddon = document.getElementById("successSummaryAddon");
     if (pricingData.addonSelected && pricingData.addonPrice > 0) {
       if (successSummaryAddonRow) successSummaryAddonRow.style.display = "flex";
       if (successSummaryAddon) {
-        const periodText = pricingData.paymentFrequency ? getBillingPeriodText(pricingData.paymentFrequency) : "Monat";
+        const periodText = pricingData.paymentFrequency
+          ? getBillingPeriodText(pricingData.paymentFrequency)
+          : "Monat";
         successSummaryAddon.textContent = `+${pricingData.addonPrice}€ pro ${periodText}`;
       }
     } else {
@@ -6351,59 +6405,89 @@ document.addEventListener("DOMContentLoaded", function () {
       if (successSummaryPLZ) successSummaryPLZ.textContent = plz;
     }
     if (tierKategorie) {
-      const successSummaryPetType = document.getElementById("successSummaryPetType");
+      const successSummaryPetType = document.getElementById(
+        "successSummaryPetType"
+      );
       if (successSummaryPetType) {
-        const petTypeText = tierKategorie === "katze" ? "🐱 Katze" : 
-                           tierKategorie === "hund" ? "🐶 Hund" : 
-                           tierKategorie === "pferd" ? "🐴 Pferd" : tierKategorie;
+        const petTypeText =
+          tierKategorie === "katze"
+            ? "🐱 Katze"
+            : tierKategorie === "hund"
+            ? "🐶 Hund"
+            : tierKategorie === "pferd"
+            ? "🐴 Pferd"
+            : tierKategorie;
         successSummaryPetType.textContent = petTypeText;
       }
     }
     if (geschlecht) {
-      const successSummaryPetGender = document.getElementById("successSummaryPetGender");
+      const successSummaryPetGender = document.getElementById(
+        "successSummaryPetGender"
+      );
       if (successSummaryPetGender) {
-        const genderText = geschlecht === "maennlich" ? "♂️ Männlich" : "♀️ Weiblich";
+        const genderText =
+          geschlecht === "maennlich" ? "♂️ Männlich" : "♀️ Weiblich";
         successSummaryPetGender.textContent = genderText;
       }
     }
     if (rasseText) {
-      const successSummaryBreed = document.getElementById("successSummaryBreed");
+      const successSummaryBreed = document.getElementById(
+        "successSummaryBreed"
+      );
       if (successSummaryBreed) successSummaryBreed.textContent = rasseText;
     }
     if (petName) {
-      const successSummaryPetName = document.getElementById("successSummaryPetName");
+      const successSummaryPetName = document.getElementById(
+        "successSummaryPetName"
+      );
       if (successSummaryPetName) successSummaryPetName.textContent = petName;
     }
     if (petBirthDate) {
-      const successSummaryPetBirthDate = document.getElementById("successSummaryPetBirthDate");
-      if (successSummaryPetBirthDate) successSummaryPetBirthDate.textContent = petBirthDate;
+      const successSummaryPetBirthDate = document.getElementById(
+        "successSummaryPetBirthDate"
+      );
+      if (successSummaryPetBirthDate)
+        successSummaryPetBirthDate.textContent = petBirthDate;
     }
 
     // Update Personal Data Summary on Success Page
     if (gender) {
-      const successSummaryGender = document.getElementById("successSummaryGender");
+      const successSummaryGender = document.getElementById(
+        "successSummaryGender"
+      );
       if (successSummaryGender)
-        successSummaryGender.textContent = gender.value === "frau" ? "Frau" : "Herr";
+        successSummaryGender.textContent =
+          gender.value === "frau" ? "Frau" : "Herr";
     }
     if (firstName || lastName) {
       const successSummaryName = document.getElementById("successSummaryName");
       if (successSummaryName)
-        successSummaryName.textContent = `${firstName} ${lastName}`.trim() || "-";
+        successSummaryName.textContent =
+          `${firstName} ${lastName}`.trim() || "-";
     }
     if (birthDate) {
-      const successSummaryBirthDate = document.getElementById("successSummaryBirthDate");
-      if (successSummaryBirthDate) successSummaryBirthDate.textContent = birthDate;
+      const successSummaryBirthDate = document.getElementById(
+        "successSummaryBirthDate"
+      );
+      if (successSummaryBirthDate)
+        successSummaryBirthDate.textContent = birthDate;
     }
     if (email) {
-      const successSummaryEmail = document.getElementById("successSummaryEmail");
+      const successSummaryEmail = document.getElementById(
+        "successSummaryEmail"
+      );
       if (successSummaryEmail) successSummaryEmail.textContent = email;
     }
     if (phone) {
-      const successSummaryPhone = document.getElementById("successSummaryPhone");
+      const successSummaryPhone = document.getElementById(
+        "successSummaryPhone"
+      );
       if (successSummaryPhone) successSummaryPhone.textContent = phone;
     }
     if (street && houseNumber && postalCode && city) {
-      const successSummaryAddress = document.getElementById("successSummaryAddress");
+      const successSummaryAddress = document.getElementById(
+        "successSummaryAddress"
+      );
       if (successSummaryAddress)
         successSummaryAddress.textContent = `${street} ${houseNumber}, ${postalCode} ${city}`;
     }
@@ -6417,7 +6501,9 @@ document.addEventListener("DOMContentLoaded", function () {
         successSummaryInsuranceStart.textContent = insuranceStartDate;
     }
     if (duration) {
-      const successSummaryDuration = document.getElementById("successSummaryDuration");
+      const successSummaryDuration = document.getElementById(
+        "successSummaryDuration"
+      );
       if (successSummaryDuration)
         successSummaryDuration.textContent =
           duration.value === "1" ? "1 Jahr" : "3 Jahre";
@@ -6445,19 +6531,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Update total price on success page
-    const successSummaryTotalPrice = document.getElementById("successSummaryTotalPrice");
+    const successSummaryTotalPrice = document.getElementById(
+      "successSummaryTotalPrice"
+    );
     if (successSummaryTotalPrice && pricingData.totalPrice) {
-      const periodText = pricingData.paymentFrequency ? getBillingPeriodText(pricingData.paymentFrequency) : "Monat";
+      const periodText = pricingData.paymentFrequency
+        ? getBillingPeriodText(pricingData.paymentFrequency)
+        : "Monat";
       successSummaryTotalPrice.textContent = `${pricingData.totalPrice}€ pro ${periodText}`;
     }
   }
 
-
-
   // Function to generate HTML email body
   function generateEmailHTML(applicationData, pricingData) {
     const formData = getFormPayloadFromStorage() || {};
-    
+
     return `
 <!DOCTYPE html>
 <html>
@@ -6478,128 +6566,149 @@ document.addEventListener("DOMContentLoaded", function () {
 <body>
   <div class="header">
     <h1 style="color: white; border: none; margin: 0;">🎉 Neuer Tierkrankenversicherungsantrag</h1>
-    <p style="margin: 10px 0 0 0;">Eingegangen am ${new Date().toLocaleDateString('de-DE', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })}</p>
+    <p style="margin: 10px 0 0 0;">Eingegangen am ${new Date().toLocaleDateString(
+      "de-DE",
+      {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }
+    )}</p>
   </div>
 
   <h2>🎯 Gewählter Tarif</h2>
   <div class="section">
     <div class="item">
       <span class="label">Tarif:</span>
-      <span class="value">${pricingData.planTitle || '-'}</span>
+      <span class="value">${pricingData.planTitle || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Monatlicher Beitrag:</span>
-      <span class="value">${pricingData.planPrice || '-'}</span>
+      <span class="value">${pricingData.planPrice || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Selbstbeteiligung:</span>
-      <span class="value">${pricingData.deductible || '-'}</span>
+      <span class="value">${pricingData.deductible || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Zahlungsweise:</span>
-      <span class="value">${pricingData.paymentFrequency || '-'}</span>
+      <span class="value">${pricingData.paymentFrequency || "-"}</span>
     </div>
-    ${pricingData.addon ? `
+    ${
+      pricingData.addon
+        ? `
     <div class="item">
       <span class="label">Zusatzoption:</span>
       <span class="value">${pricingData.addon}</span>
     </div>
     <div class="item">
       <span class="label">Zusatzpreis:</span>
-      <span class="value">${pricingData.addonPrice || '-'}</span>
+      <span class="value">${pricingData.addonPrice || "-"}</span>
     </div>
-    ` : ''}
+    `
+        : ""
+    }
   </div>
 
   <h2>🐾 Tier-Informationen</h2>
   <div class="section">
     <div class="item">
       <span class="label">Postleitzahl:</span>
-      <span class="value">${formData.plz || '-'}</span>
+      <span class="value">${formData.plz || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Tierart:</span>
-      <span class="value">${formData.tierKategorie || '-'}</span>
+      <span class="value">${formData.tierKategorie || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Geschlecht:</span>
-      <span class="value">${formData.geschlecht || '-'}</span>
+      <span class="value">${formData.geschlecht || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Rasse:</span>
-      <span class="value">${formData.rasseLabel || formData.rasse || '-'}</span>
+      <span class="value">${formData.rasseLabel || formData.rasse || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Name des Tieres:</span>
-      <span class="value">${applicationData.petName || '-'}</span>
+      <span class="value">${applicationData.petName || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Geburtsdatum des Tieres:</span>
-      <span class="value">${formData.geburtsdatum || '-'}</span>
+      <span class="value">${formData.geburtsdatum || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Kastriert/Sterilisiert:</span>
-      <span class="value">${formData.kastriert || '-'}</span>
+      <span class="value">${formData.kastriert || "-"}</span>
     </div>
-    ${formData.haltung ? `
+    ${
+      formData.haltung
+        ? `
     <div class="item">
       <span class="label">Haltung:</span>
       <span class="value">${formData.haltung}</span>
     </div>
-    ` : ''}
+    `
+        : ""
+    }
     <div class="item">
       <span class="label">Kennzeichnung:</span>
-      <span class="value">${applicationData.petIdentification || '-'}</span>
+      <span class="value">${applicationData.petIdentification || "-"}</span>
     </div>
-    ${applicationData.chipNumber ? `
+    ${
+      applicationData.chipNumber
+        ? `
     <div class="item">
       <span class="label">Chipnummer:</span>
       <span class="value">${applicationData.chipNumber}</span>
     </div>
-    ` : ''}
-    ${applicationData.tattooNumber ? `
+    `
+        : ""
+    }
+    ${
+      applicationData.tattooNumber
+        ? `
     <div class="item">
       <span class="label">Tätowierungsnummer:</span>
       <span class="value">${applicationData.tattooNumber}</span>
     </div>
-    ` : ''}
+    `
+        : ""
+    }
   </div>
 
   <h2>👤 Persönliche Daten</h2>
   <div class="section">
     <div class="item">
       <span class="label">Anrede:</span>
-      <span class="value">${applicationData.gender || '-'}</span>
+      <span class="value">${applicationData.gender || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Vorname:</span>
-      <span class="value">${applicationData.firstName || '-'}</span>
+      <span class="value">${applicationData.firstName || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Nachname:</span>
-      <span class="value">${applicationData.lastName || '-'}</span>
+      <span class="value">${applicationData.lastName || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Geburtsdatum:</span>
-      <span class="value">${applicationData.birthDate || '-'}</span>
+      <span class="value">${applicationData.birthDate || "-"}</span>
     </div>
     <div class="item">
       <span class="label">E-Mail:</span>
-      <span class="value">${applicationData.email || '-'}</span>
+      <span class="value">${applicationData.email || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Telefon:</span>
-      <span class="value">${applicationData.phone || '-'}</span>
+      <span class="value">${applicationData.phone || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Adresse:</span>
-      <span class="value">${applicationData.street || ''} ${applicationData.houseNumber || ''}, ${applicationData.postalCode || ''} ${applicationData.city || ''}</span>
+      <span class="value">${
+        applicationData.street || ""
+      } ${applicationData.houseNumber || ""}, ${applicationData.postalCode || ""} ${applicationData.city || ""}</span>
     </div>
   </div>
 
@@ -6607,15 +6716,21 @@ document.addEventListener("DOMContentLoaded", function () {
   <div class="section">
     <div class="item">
       <span class="label">Versicherungsbeginn:</span>
-      <span class="value">${applicationData.insuranceStartDate || '-'}</span>
+      <span class="value">${applicationData.insuranceStartDate || "-"}</span>
     </div>
     <div class="item">
       <span class="label">Laufzeit:</span>
-      <span class="value">${applicationData.duration === '1' ? '1 Jahr' : applicationData.duration === '3' ? '3 Jahre' : '-'}</span>
+      <span class="value">${
+        applicationData.duration === "1"
+          ? "1 Jahr"
+          : applicationData.duration === "3"
+          ? "3 Jahre"
+          : "-"
+      }</span>
     </div>
     <div class="item">
       <span class="label">Vorversicherung:</span>
-      <span class="value">${applicationData.previousInsurance || '-'}</span>
+      <span class="value">${applicationData.previousInsurance || "-"}</span>
     </div>
   </div>
 
@@ -6623,16 +6738,16 @@ document.addEventListener("DOMContentLoaded", function () {
   <div class="section">
     <div class="item">
       <span class="label">Kontoinhaber:</span>
-      <span class="value">${applicationData.accountHolder || '-'}</span>
+      <span class="value">${applicationData.accountHolder || "-"}</span>
     </div>
     <div class="item">
       <span class="label">IBAN:</span>
-      <span class="value">${applicationData.iban || '-'}</span>
+      <span class="value">${applicationData.iban || "-"}</span>
     </div>
   </div>
 
   <div class="total">
-    💰 Gesamtbeitrag: ${pricingData.totalPrice || '-'}€ pro Monat
+    💰 Gesamtbeitrag: ${pricingData.totalPrice || "-"}€ pro Monat
   </div>
 </body>
 </html>
@@ -6642,31 +6757,34 @@ document.addEventListener("DOMContentLoaded", function () {
   // Function to send email
   async function sendEmailNotification(applicationData, pricingData) {
     const htmlBody = generateEmailHTML(applicationData, pricingData);
-    
+
     try {
-      const response = await fetchWithRetry('https://api-vierbeinerabsicherung.moazzammalek.com/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          htmlBody: htmlBody,
-          to: 'kaif@theautomagichub.com',
-          subject: `Neuer Tierkrankenversicherungsantrag - ${applicationData.firstName} ${applicationData.lastName}`,
-          apiKey: 'ScrapingKing',
-          from: 'moazzam@moazzammalek.com'
-        })
-      });
+      const response = await fetchWithRetry(
+        "https://api-vierbeinerabsicherung.moazzammalek.com/api/send-email",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            htmlBody: htmlBody,
+            to: "kaif@theautomagichub.com",
+            subject: `Neuer Tierkrankenversicherungsantrag - ${applicationData.firstName} ${applicationData.lastName}`,
+            apiKey: "ScrapingKing",
+            from: "moazzam@moazzammalek.com",
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Email sending failed');
+        throw new Error("Email sending failed");
       }
 
       const result = await response.json();
-      console.log('Email sent successfully:', result);
+      console.log("Email sent successfully:", result);
       return true;
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error("Error sending email:", error);
       // Don't block the user flow if email fails
       return false;
     }
@@ -6748,27 +6866,29 @@ document.addEventListener("DOMContentLoaded", function () {
         submitButton.disabled = true;
 
         // Send email and then show success screen
-        sendEmailNotification(applicationData, pricingData).then(() => {
-          console.log("Application Data:", applicationData);
+        sendEmailNotification(applicationData, pricingData)
+          .then(() => {
+            console.log("Application Data:", applicationData);
 
-          // Reset button
-          submitButton.innerHTML = originalText;
-          submitButton.disabled = false;
+            // Reset button
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
 
-          // Redirect to thank you page
-          showScreen("successScreen");
-          updateSuccessPageSummary();
-        }).catch((error) => {
-          console.error("Error in submission process:", error);
-          
-          // Reset button
-          submitButton.innerHTML = originalText;
-          submitButton.disabled = false;
+            // Redirect to thank you page
+            showScreen("successScreen");
+            updateSuccessPageSummary();
+          })
+          .catch((error) => {
+            console.error("Error in submission process:", error);
 
-          // Still show success screen even if email fails
-          showScreen("successScreen");
-          updateSuccessPageSummary();
-        });
+            // Reset button
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+
+            // Still show success screen even if email fails
+            showScreen("successScreen");
+            updateSuccessPageSummary();
+          });
       } else {
         // Fallback if no submit button found
         console.log("Application Data:", applicationData);
@@ -6815,16 +6935,16 @@ document.addEventListener("DOMContentLoaded", function () {
     appInsuranceStartDate.addEventListener("input", function () {
       let value = this.value;
       let cursorPosition = this.selectionStart;
-      
+
       // If backspace was used (value is shorter), don't auto-format
       if (value.length < lastValue.length) {
         lastValue = value;
         return;
       }
-      
+
       // Only keep digits
       value = value.replace(/\D/g, "");
-      
+
       // Add dots for formatting
       if (value.length >= 2) {
         value = value.substring(0, 2) + "." + value.substring(2);
@@ -6832,7 +6952,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (value.length >= 5) {
         value = value.substring(0, 5) + "." + value.substring(5, 9);
       }
-      
+
       this.value = value;
       lastValue = value;
     });
@@ -6909,46 +7029,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Helper function to update required status of insurance fields
   function updateInsuranceFieldsRequired(isRequired) {
-    const allInsuranceEntries = document.querySelectorAll('.insurance-entry');
-    
-    allInsuranceEntries.forEach(entry => {
+    const allInsuranceEntries = document.querySelectorAll(".insurance-entry");
+
+    allInsuranceEntries.forEach((entry) => {
       // Update company field
-      const companyInput = entry.querySelector('input[name="insuranceCompany[]"]');
-      const companyLabel = entry.querySelector('label[for^="insurance-company-"]');
-      
+      const companyInput = entry.querySelector(
+        'input[name="insuranceCompany[]"]'
+      );
+      const companyLabel = entry.querySelector(
+        'label[for^="insurance-company-"]'
+      );
+
       if (companyInput) {
         if (isRequired) {
-          companyInput.setAttribute('required', '');
+          companyInput.setAttribute("required", "");
         } else {
-          companyInput.removeAttribute('required');
+          companyInput.removeAttribute("required");
         }
       }
-      
+
       if (companyLabel) {
-        const existingAsterisk = companyLabel.querySelector('.required');
+        const existingAsterisk = companyLabel.querySelector(".required");
         if (isRequired && !existingAsterisk) {
-          companyLabel.innerHTML = companyLabel.innerHTML + ' <span class="required">*</span>';
+          companyLabel.innerHTML =
+            companyLabel.innerHTML + ' <span class="required">*</span>';
         } else if (!isRequired && existingAsterisk) {
           existingAsterisk.remove();
         }
       }
-      
+
       // Update number field
-      const numberInput = entry.querySelector('input[name="insuranceNumber[]"]');
-      const numberLabel = entry.querySelector('label[for^="insurance-number-"]');
-      
+      const numberInput = entry.querySelector(
+        'input[name="insuranceNumber[]"]'
+      );
+      const numberLabel = entry.querySelector(
+        'label[for^="insurance-number-"]'
+      );
+
       if (numberInput) {
         if (isRequired) {
-          numberInput.setAttribute('required', '');
+          numberInput.setAttribute("required", "");
         } else {
-          numberInput.removeAttribute('required');
+          numberInput.removeAttribute("required");
         }
       }
-      
+
       if (numberLabel) {
-        const existingAsterisk = numberLabel.querySelector('.required');
+        const existingAsterisk = numberLabel.querySelector(".required");
         if (isRequired && !existingAsterisk) {
-          numberLabel.innerHTML = numberLabel.innerHTML + ' <span class="required">*</span>';
+          numberLabel.innerHTML =
+            numberLabel.innerHTML + ' <span class="required">*</span>';
         } else if (!isRequired && existingAsterisk) {
           existingAsterisk.remove();
         }
@@ -7247,7 +7377,9 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="form-row">
         <div class="form-group full-width">
           <label for="insurance-company-${insuranceCounter}">
-            Versicherungsgesellschaft${prevInsYes?.checked ? ' <span class="required">*</span>' : ''}
+            Versicherungsgesellschaft${
+              prevInsYes?.checked ? ' <span class="required">*</span>' : ""
+            }
           </label>
           <input 
             type="text" 
@@ -7255,14 +7387,16 @@ document.addEventListener("DOMContentLoaded", function () {
             name="insuranceCompany[]" 
             class="form-input" 
             placeholder="z.B. Dresdner Pensionskasse VVaG, 95326 Kulmbach"
-            ${prevInsYes?.checked ? 'required' : ''}
+            ${prevInsYes?.checked ? "required" : ""}
           />
         </div>
       </div>
       <div class="form-row">
         <div class="form-group full-width">
           <label for="insurance-number-${insuranceCounter}">
-            Ihre Versicherungsnummer${prevInsYes?.checked ? ' <span class="required">*</span>' : ''}
+            Ihre Versicherungsnummer${
+              prevInsYes?.checked ? ' <span class="required">*</span>' : ""
+            }
           </label>
           <input 
             type="text" 
@@ -7270,7 +7404,7 @@ document.addEventListener("DOMContentLoaded", function () {
             name="insuranceNumber[]" 
             class="form-input" 
             placeholder="sad"
-            ${prevInsYes?.checked ? 'required' : ''}
+            ${prevInsYes?.checked ? "required" : ""}
           />
         </div>
       </div>
