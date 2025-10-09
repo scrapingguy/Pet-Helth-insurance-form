@@ -2381,7 +2381,7 @@ body {
 }
 
 .pricing-section-toggle[aria-expanded="true"] .pricing-section-icon {
-    transform: rotate(45deg);
+    transform: rotate(45deg) !important;
 }
 
 .pricing-section-toggle.is-static .pricing-section-icon {
@@ -2492,6 +2492,14 @@ body {
     cursor: default;
     pointer-events: none;
     opacity: 1;
+}
+
+.mobile-section-toggle.is-static .pricing-section-icon {
+    display: none;
+}
+
+.mobile-section-toggle[aria-expanded="true"] .pricing-section-icon {
+    transform: rotate(45deg) !important;
 }
 
 .mobile-section-content {
