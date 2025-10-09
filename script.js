@@ -29,8 +29,7 @@ async function fetchWithRetry(url, options, maxRetries = 3) {
       // Wait before retrying
       const delay = delays[attempt] || 5000;
       console.log(
-        `API call failed (attempt ${
-          attempt + 1
+        `API call failed (attempt ${attempt + 1
         }/${maxRetries}), retrying in ${delay}ms...`
       );
       await new Promise((resolve) => setTimeout(resolve, delay));
@@ -662,11 +661,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // Check for tierKategorie query parameter and set the animal selection
   const urlParams = new URLSearchParams(window.location.search);
   const tierKategorieParam = urlParams.get('tierKategorie');
-  
+
   if (tierKategorieParam && tierKategorieSelect) {
     const validOptions = ['katze', 'hund', 'pferd'];
     const normalizedParam = tierKategorieParam.toLowerCase();
-    
+
     if (validOptions.includes(normalizedParam)) {
       tierKategorieSelect.value = normalizedParam;
     } else {
@@ -701,15 +700,15 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="disease-column">
         <ul>
           ${firstColumnDiseases
-            .map((disease) => `<li>${disease}</li>`)
-            .join("")}
+        .map((disease) => `<li>${disease}</li>`)
+        .join("")}
         </ul>
       </div>
       <div class="disease-column">
         <ul>
           ${secondColumnDiseases
-            .map((disease) => `<li>${disease}</li>`)
-            .join("")}
+        .map((disease) => `<li>${disease}</li>`)
+        .join("")}
         </ul>
       </div>
     `;
@@ -736,7 +735,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const initialAnimal = tierKategorieSelect?.value || "katze";
   updateDiseaseList(initialAnimal);
   updateHousingVisibility(initialAnimal);
-  
+
   // Note: updateBreedOptions and updateHousingText will be called later in the initialization sequence
 
   if (tierKategorieSelect) {
@@ -3623,10 +3622,10 @@ document.addEventListener("DOMContentLoaded", function () {
         //calulate age from birthday
         age: birthDate
           ? Math.floor(
-              (new Date().getTime() -
-                new Date(birthDate.split(".").reverse().join("-")).getTime()) /
-                (1000 * 60 * 60 * 24 * 365.25)
-            )
+            (new Date().getTime() -
+              new Date(birthDate.split(".").reverse().join("-")).getTime()) /
+            (1000 * 60 * 60 * 24 * 365.25)
+          )
           : null,
         sterilized: sterilized,
         // Only include catHousingType for cats
@@ -6096,9 +6095,18 @@ function populateApplicationForm(selectedData) {
     today.getMonth() + 1
   ).padStart(2, "0")}.${today.getFullYear()}`;
 
+  const after1year = new Date();
+  after1year.setFullYear(after1year.getFullYear() + 1);
+  const formattedDateAfter1Year = `${String(after1year.getDate()).padStart(2, "0")}.${String(
+    after1year.getMonth() + 1
+  ).padStart(2, "0")}.${after1year.getFullYear()}`;
   const insuranceStartInput = document.getElementById("appInsuranceStartDate");
   if (insuranceStartInput) {
     insuranceStartInput.value = formattedDate;
+    document.getElementById(
+      "insuranceExpirationDisplay .expiration-date"
+    ).textContent = formattedDateAfter1Year;
+
   }
 }
 
@@ -6268,7 +6276,7 @@ document.addEventListener("DOMContentLoaded", function () {
         tattooNumberContainer.style.display = "block";
         // Do not set as required - these fields are optional
       }
-      
+
       // Always ensure these fields are not required
       if (chipNumberInput) chipNumberInput.removeAttribute("required");
       if (tattooNumberInput) tattooNumberInput.removeAttribute("required");
@@ -6397,10 +6405,10 @@ document.addEventListener("DOMContentLoaded", function () {
           pricingData.paymentFrequency === "monthly"
             ? "Monatlich"
             : pricingData.paymentFrequency === "quarterly"
-            ? "Vierteljährlich"
-            : pricingData.paymentFrequency === "annually"
-            ? "Jährlich"
-            : pricingData.paymentFrequency;
+              ? "Vierteljährlich"
+              : pricingData.paymentFrequency === "annually"
+                ? "Jährlich"
+                : pricingData.paymentFrequency;
         successSummaryPaymentFrequency.textContent = frequencyText;
       }
     }
@@ -6436,10 +6444,10 @@ document.addEventListener("DOMContentLoaded", function () {
           tierKategorie === "katze"
             ? "🐱 Katze"
             : tierKategorie === "hund"
-            ? "🐶 Hund"
-            : tierKategorie === "pferd"
-            ? "🐴 Pferd"
-            : tierKategorie;
+              ? "🐶 Hund"
+              : tierKategorie === "pferd"
+                ? "🐴 Pferd"
+                : tierKategorie;
         successSummaryPetType.textContent = petTypeText;
       }
     }
@@ -6538,7 +6546,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (successSummaryPreviousInsurance)
         successSummaryPreviousInsurance.textContent =
           previousInsurance.value === "ja" ? "Ja" : "Nein";
-      
+
       // Show previous insurance details if "Ja" was selected
       if (previousInsurance.value === "ja") {
         const detailsContainer = document.getElementById(
@@ -6548,15 +6556,15 @@ document.addEventListener("DOMContentLoaded", function () {
           // Collect all insurance company and number fields
           const companyFields = document.querySelectorAll('input[name="insuranceCompany[]"]');
           const numberFields = document.querySelectorAll('input[name="insuranceNumber[]"]');
-          
+
           if (companyFields.length > 0) {
             let detailsHTML = '<div style="padding: 10px; background: #f5f5f5; border-radius: 5px; margin-top: 10px;">';
             detailsHTML += '<strong style="display: block; margin-bottom: 8px;">Details zur Vorversicherung:</strong>';
-            
+
             companyFields.forEach((field, index) => {
               const company = field.value || "-";
               const number = numberFields[index]?.value || "-";
-              
+
               if (company !== "-" || number !== "-") {
                 detailsHTML += `
                   <div style="padding: 8px; background: white; margin: 5px 0; border-radius: 3px;">
@@ -6567,7 +6575,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
               }
             });
-            
+
             detailsHTML += '</div>';
             detailsContainer.innerHTML = detailsHTML;
             detailsContainer.style.display = 'block';
@@ -6605,7 +6613,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function generateEmailHTML(applicationData, pricingData) {
     // Try multiple sources for pet form data
     let formData = applicationData.petFormData || getFormPayloadFromStorage() || {};
-    
+
     // If formData is empty, try to read directly from DOM as a fallback
     if (!formData.plz || !formData.tierKategorie) {
       console.warn("Pet form data not found in storage, reading from DOM");
@@ -6613,7 +6621,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const geschlechtSelect = document.getElementById("geschlecht");
       const rasseSelect = document.getElementById("rasse");
       const selectedBreedOption = rasseSelect?.selectedOptions?.[0];
-      
+
       formData = {
         plz: document.getElementById("plz")?.value || "",
         tierKategorie: tierKategorieSelect?.value || "",
@@ -6626,7 +6634,7 @@ document.addEventListener("DOMContentLoaded", function () {
         gesundheitsprobleme: document.querySelector('input[name="gesundheitsprobleme"]:checked')?.value || "",
       };
     }
-    
+
     console.log("Generating email with form data:", formData);
     console.log("Application data:", applicationData);
     console.log("Pricing data:", pricingData);
@@ -6671,10 +6679,9 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
     <div class="item">
       <span class="label">Monatlicher Beitrag:</span>
-      <span class="value">${
-        pricingData.planPrice
-          ? (Math.round(pricingData.planPrice * 100) / 100).toFixed(2) + " €"
-          : "-"
+      <span class="value">${pricingData.planPrice
+        ? (Math.round(pricingData.planPrice * 100) / 100).toFixed(2) + " €"
+        : "-"
       }</span>
     </div>
     <div class="item">
@@ -6683,38 +6690,34 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
     <div class="item">
       <span class="label">Zahlungsweise:</span>
-      <span class="value">${
-        pricingData.paymentFrequency === "monthly"
-          ? "Monatlich"
-          : pricingData.paymentFrequency === "quarterly"
+      <span class="value">${pricingData.paymentFrequency === "monthly"
+        ? "Monatlich"
+        : pricingData.paymentFrequency === "quarterly"
           ? "Vierteljährlich"
           : pricingData.paymentFrequency === "semi-annually"
-          ? "Halbjährlich"
-          : pricingData.paymentFrequency === "yearly"
-          ? "Jährlich"
-          : pricingData.paymentFrequency || "-"
+            ? "Halbjährlich"
+            : pricingData.paymentFrequency === "yearly"
+              ? "Jährlich"
+              : pricingData.paymentFrequency || "-"
       }</span>
     </div>
-    ${
-      pricingData.addonSelected && pricingData.addonPrice > 0
+    ${pricingData.addonSelected && pricingData.addonPrice > 0
         ? `
     <div class="item">
       <span class="label">Zusatzoption:</span>
-      <span class="value">Heilbehandlungs- und Vorsorgeschutz (${
-        pricingData.addonOption || "2000"
-      } € Versicherungssumme)</span>
+      <span class="value">Heilbehandlungs- und Vorsorgeschutz (${pricingData.addonOption || "2000"
+        } € Versicherungssumme)</span>
     </div>
     <div class="item">
       <span class="label">Zusatzpreis:</span>
-      <span class="value">${
-        pricingData.addonPrice
+      <span class="value">${pricingData.addonPrice
           ? (Math.round(pricingData.addonPrice * 100) / 100).toFixed(2) + " €"
           : "-"
-      }</span>
+        }</span>
     </div>
     `
         : ""
-    }
+      }
   </div>
 
   <h2>🐾 Tier-Informationen</h2>
@@ -6725,22 +6728,20 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
     <div class="item">
       <span class="label">Tierart:</span>
-      <span class="value">${
-        formData.tierKategorie === "katze"
-          ? "🐱 Katze"
-          : formData.tierKategorie === "hund"
+      <span class="value">${formData.tierKategorie === "katze"
+        ? "🐱 Katze"
+        : formData.tierKategorie === "hund"
           ? "🐶 Hund"
           : formData.tierKategorie === "pferd"
-          ? "🐴 Pferd"
-          : formData.tierKategorie || "-"
+            ? "🐴 Pferd"
+            : formData.tierKategorie || "-"
       }</span>
     </div>
     <div class="item">
       <span class="label">Geschlecht:</span>
-      <span class="value">${
-        formData.geschlecht === "maennlich"
-          ? "♂️ Männlich"
-          : formData.geschlecht === "weiblich"
+      <span class="value">${formData.geschlecht === "maennlich"
+        ? "♂️ Männlich"
+        : formData.geschlecht === "weiblich"
           ? "♀️ Weiblich"
           : formData.geschlecht || "-"
       }</span>
@@ -6759,52 +6760,46 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
     <div class="item">
       <span class="label">Kastriert/Sterilisiert:</span>
-      <span class="value">${
-        formData.kastriert === "ja"
-          ? "✅ Ja"
-          : formData.kastriert === "nein"
+      <span class="value">${formData.kastriert === "ja"
+        ? "✅ Ja"
+        : formData.kastriert === "nein"
           ? "❌ Nein"
           : formData.kastriert || "-"
       }</span>
     </div>
-    ${
-      formData.haltung
+    ${formData.haltung
         ? `
     <div class="item">
       <span class="label">Haltung:</span>
-      <span class="value">${
-        formData.haltung === "wohnung"
+      <span class="value">${formData.haltung === "wohnung"
           ? "🏢 Wohnungshaltung"
           : formData.haltung === "freigang"
-          ? "🌳 Freigang"
-          : formData.haltung
-      }</span>
+            ? "🌳 Freigang"
+            : formData.haltung
+        }</span>
     </div>
     `
         : ""
-    }
-    ${
-      formData.gesundheitsprobleme
+      }
+    ${formData.gesundheitsprobleme
         ? `
     <div class="item">
       <span class="label">Gesundheitsprobleme:</span>
-      <span class="value">${
-        formData.gesundheitsprobleme === "ja"
+      <span class="value">${formData.gesundheitsprobleme === "ja"
           ? "⚠️ Ja"
           : formData.gesundheitsprobleme === "nein"
-          ? "✅ Nein"
-          : formData.gesundheitsprobleme
-      }</span>
+            ? "✅ Nein"
+            : formData.gesundheitsprobleme
+        }</span>
     </div>
     `
         : ""
-    }
+      }
     <div class="item">
       <span class="label">Kennzeichnung:</span>
       <span class="value">${applicationData.petIdentification || "-"}</span>
     </div>
-    ${
-      applicationData.chipNumber
+    ${applicationData.chipNumber
         ? `
     <div class="item">
       <span class="label">Chipnummer:</span>
@@ -6812,9 +6807,8 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
     `
         : ""
-    }
-    ${
-      applicationData.tattooNumber
+      }
+    ${applicationData.tattooNumber
         ? `
     <div class="item">
       <span class="label">Tätowierungsnummer:</span>
@@ -6822,7 +6816,7 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
     `
         : ""
-    }
+      }
   </div>
 
   <h2>👤 Persönliche Daten</h2>
@@ -6853,8 +6847,7 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
     <div class="item">
       <span class="label">Adresse:</span>
-      <span class="value">${
-        applicationData.street || ""
+      <span class="value">${applicationData.street || ""
       } ${applicationData.houseNumber || ""}, ${applicationData.postalCode || ""} ${applicationData.city || ""}</span>
     </div>
   </div>
@@ -6867,49 +6860,45 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
     <div class="item">
       <span class="label">Laufzeit:</span>
-      <span class="value">${
-        applicationData.duration === "1"
-          ? "1 Jahr"
-          : applicationData.duration === "3"
+      <span class="value">${applicationData.duration === "1"
+        ? "1 Jahr"
+        : applicationData.duration === "3"
           ? "3 Jahre"
           : "-"
       }</span>
     </div>
     <div class="item">
       <span class="label">Vorversicherung:</span>
-      <span class="value">${
-        applicationData.previousInsurance === "ja"
-          ? "✅ Ja"
-          : applicationData.previousInsurance === "nein"
+      <span class="value">${applicationData.previousInsurance === "ja"
+        ? "✅ Ja"
+        : applicationData.previousInsurance === "nein"
           ? "❌ Nein"
           : applicationData.previousInsurance || "-"
       }</span>
     </div>
-    ${
-      applicationData.previousInsurance === "ja" &&
-      applicationData.insuranceCompany &&
-      Array.isArray(applicationData.insuranceCompany) &&
-      applicationData.insuranceCompany.length > 0
+    ${applicationData.previousInsurance === "ja" &&
+        applicationData.insuranceCompany &&
+        Array.isArray(applicationData.insuranceCompany) &&
+        applicationData.insuranceCompany.length > 0
         ? `
     <div class="item" style="flex-direction: column; align-items: flex-start;">
       <span class="label" style="margin-bottom: 10px;">Details zur Vorversicherung:</span>
       ${applicationData.insuranceCompany
-        .map(
-          (company, index) => `
+          .map(
+            (company, index) => `
         <div style="background: white; padding: 10px; margin: 5px 0; border-radius: 3px; width: 100%;">
           <strong>${index + 1}. Versicherung:</strong><br>
           <span style="color: #666;">Gesellschaft:</span> ${company || "-"}<br>
-          <span style="color: #666;">Versicherungsnummer:</span> ${
-            applicationData.insuranceNumber?.[index] || "-"
-          }
+          <span style="color: #666;">Versicherungsnummer:</span> ${applicationData.insuranceNumber?.[index] || "-"
+              }
         </div>
       `
-        )
-        .join("")}
+          )
+          .join("")}
     </div>
     `
         : ""
-    }
+      }
   </div>
 
   <h2>💳 Kontodaten</h2>
@@ -6925,11 +6914,10 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 
   <div class="total">
-    💰 Gesamtbeitrag: ${
-      pricingData.totalPrice
+    💰 Gesamtbeitrag: ${pricingData.totalPrice
         ? (Math.round(pricingData.totalPrice * 100) / 100).toFixed(2)
         : "-"
-    }€ pro Monat
+      }€ pro Monat
   </div>
 </body>
 </html>
@@ -7024,7 +7012,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isValid) {
       // Collect form data
       const formData = new FormData(applicationForm);
-      
+
       // Handle array fields properly (like insuranceCompany[] and insuranceNumber[])
       const data = {};
       for (let [key, value] of formData.entries()) {
@@ -7039,7 +7027,7 @@ document.addEventListener("DOMContentLoaded", function () {
           data[key] = value;
         }
       }
-      
+
       console.log("Application form data collected:", data);
       console.log("Previous Insurance value:", data.previousInsurance);
       console.log("Insurance Companies:", data.insuranceCompany);
@@ -7053,10 +7041,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const pricingData = JSON.parse(
         sessionStorage.getItem("selectedInsurancePlan") || "{}"
       );
-      
+
       // Merge all data together
-      const applicationData = { 
-        ...data, 
+      const applicationData = {
+        ...data,
         pricing: pricingData,
         petFormData: petFormData // Add pet form data explicitly
       };
@@ -7215,9 +7203,8 @@ document.addEventListener("DOMContentLoaded", function () {
       "November",
       "Dezember",
     ];
-    const formattedEndDate = `${endDate.getDate()}. ${
-      months[endDate.getMonth()]
-    } ${endDate.getFullYear()}`;
+    const formattedEndDate = `${endDate.getDate()}. ${months[endDate.getMonth()]
+      } ${endDate.getFullYear()}`;
 
     insuranceExpirationDisplay.querySelector(".expiration-date").textContent =
       formattedEndDate;
@@ -7588,9 +7575,8 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="form-row">
         <div class="form-group full-width">
           <label for="insurance-company-${insuranceCounter}">
-            Versicherungsgesellschaft${
-              prevInsYes?.checked ? ' <span class="required">*</span>' : ""
-            }
+            Versicherungsgesellschaft${prevInsYes?.checked ? ' <span class="required">*</span>' : ""
+      }
           </label>
           <input 
             type="text" 
@@ -7605,9 +7591,8 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="form-row">
         <div class="form-group full-width">
           <label for="insurance-number-${insuranceCounter}">
-            Ihre Versicherungsnummer${
-              prevInsYes?.checked ? ' <span class="required">*</span>' : ""
-            }
+            Ihre Versicherungsnummer${prevInsYes?.checked ? ' <span class="required">*</span>' : ""
+      }
           </label>
           <input 
             type="text" 
