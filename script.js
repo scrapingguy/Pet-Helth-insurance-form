@@ -659,6 +659,25 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentStepIndex = 0;
   let stepThreeEnabled = false;
 
+  // Check for tierKategorie query parameter and set the animal selection
+  const urlParams = new URLSearchParams(window.location.search);
+  const tierKategorieParam = urlParams.get('tierKategorie');
+  
+  if (tierKategorieParam && tierKategorieSelect) {
+    const validOptions = ['katze', 'hund', 'pferd'];
+    const normalizedParam = tierKategorieParam.toLowerCase();
+    
+    if (validOptions.includes(normalizedParam)) {
+      tierKategorieSelect.value = normalizedParam;
+    } else {
+      // Default to 'katze' if invalid parameter
+      tierKategorieSelect.value = 'katze';
+    }
+  } else if (tierKategorieSelect) {
+    // Default to 'katze' if no parameter
+    tierKategorieSelect.value = 'katze';
+  }
+
   // Disease data mapping using imported variables
   const diseaseData = {
     katze: catDisease,
@@ -696,9 +715,6 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
   }
 
-  // Initialize disease list for default animal (cat)
-  updateDiseaseList(tierKategorieSelect?.value || "katze");
-
   // Function to update housing question visibility based on animal type
   function updateHousingVisibility(animalType) {
     const housingQuestion = document.getElementById("housingQuestion");
@@ -715,6 +731,13 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   }
+
+  // Initialize disease list and housing visibility for the selected animal (from query param or default)
+  const initialAnimal = tierKategorieSelect?.value || "katze";
+  updateDiseaseList(initialAnimal);
+  updateHousingVisibility(initialAnimal);
+  
+  // Note: updateBreedOptions and updateHousingText will be called later in the initialization sequence
 
   if (tierKategorieSelect) {
     tierKategorieSelect.addEventListener("change", () => {
@@ -3129,8 +3152,9 @@ document.addEventListener("DOMContentLoaded", function () {
       updateHousingText(selectedAnimal);
     });
 
-    // Initialize breed options on page load
+    // Initialize breed options and housing text on page load
     updateBreedOptions(tierKategorieSelect.value);
+    updateHousingText(tierKategorieSelect.value);
   }
 
   // Function to update housing question text based on animal type
