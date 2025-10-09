@@ -265,7 +265,7 @@ body.embedded-full {
 }
 
 .embedded-full .full-screen-card {
-    max-height: calc(var(--embed-max-height, 100vh) - 2 * var(--spacing-lg));
+    /* max-height: calc(var(--embed-max-height, 100vh) - 2 * var(--spacing-lg)); */
     overflow-y: auto;
 }
 
@@ -303,7 +303,7 @@ body.embedded-full {
 }
 
 .embedded-full .form-card {
-    max-height: calc(var(--embed-max-height, 100vh) - 2 * var(--spacing-lg));
+    /* max-height: calc(var(--embed-max-height, 100vh) - 2 * var(--spacing-lg)); */
     overflow-y: auto;
 }
 
@@ -1347,7 +1347,7 @@ body.embedded-full {
     border-radius: 8px;
     max-width: 900px;
     width: 90%;
-    max-height: calc(var(--embed-max-height, 100vh) - (2 * var(--spacing-lg)));
+    /* max-height: calc(var(--embed-max-height, 100vh) - (2 * var(--spacing-lg))); */
     overflow-y: auto;
 }
 
@@ -1364,7 +1364,7 @@ body.embedded-full {
 }
 
 .embedded-full .calendly-container {
-    max-height: calc(var(--embed-max-height, 100vh) - 4 * var(--spacing-lg));
+    /* max-height: calc(var(--embed-max-height, 100vh) - 4 * var(--spacing-lg)); */
     overflow-y: auto;
 }
 

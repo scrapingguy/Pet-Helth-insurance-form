@@ -6263,15 +6263,15 @@ document.addEventListener("DOMContentLoaded", function () {
       // Show relevant container based on selection
       if (this.value === "chip" && chipNumberContainer) {
         chipNumberContainer.style.display = "block";
-        if (chipNumberInput) chipNumberInput.setAttribute("required", "");
+        // Do not set as required - these fields are optional
       } else if (this.value === "tattoo" && tattooNumberContainer) {
         tattooNumberContainer.style.display = "block";
-        if (tattooNumberInput) tattooNumberInput.setAttribute("required", "");
-      } else {
-        // Remove required attribute when "none" is selected
-        if (chipNumberInput) chipNumberInput.removeAttribute("required");
-        if (tattooNumberInput) tattooNumberInput.removeAttribute("required");
+        // Do not set as required - these fields are optional
       }
+      
+      // Always ensure these fields are not required
+      if (chipNumberInput) chipNumberInput.removeAttribute("required");
+      if (tattooNumberInput) tattooNumberInput.removeAttribute("required");
     });
   });
 
@@ -6299,11 +6299,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     chipNumberInput.addEventListener("blur", function () {
       const chipError = document.getElementById("chipNumberError");
-      if (
-        this.hasAttribute("required") &&
-        this.value.length > 0 &&
-        this.value.length !== 15
-      ) {
+      // Only validate format if user has entered something (field is optional)
+      if (this.value.length > 0 && this.value.length !== 15) {
         this.style.borderColor = "#d32f2f";
         if (chipError) {
           chipError.style.display = "block";
@@ -6314,10 +6311,9 @@ document.addEventListener("DOMContentLoaded", function () {
             Chipnummer muss genau 15 Ziffern haben.
           `;
         }
-      } else if (this.hasAttribute("required") && this.value.length === 0) {
-        this.style.borderColor = "#d32f2f";
-        if (chipError) chipError.style.display = "block";
       } else {
+        // Clear error if empty or valid (field is optional)
+        this.style.borderColor = "";
         if (chipError) chipError.style.display = "none";
       }
     });
