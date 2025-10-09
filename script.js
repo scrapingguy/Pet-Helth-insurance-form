@@ -6078,9 +6078,9 @@ function proceedToApplication() {
     populateApplicationForm(selectedData);
   } catch (error) {
     console.error("Fehler beim Weiterleiten zur Antragstellung:", error);
-    alert(
-      "Es gab einen Fehler beim Weiterleiten. Bitte versuchen Sie es erneut."
-    );
+    // alert(
+    //   "Es gab einen Fehler beim Weiterleiten. Bitte versuchen Sie es erneut."
+    // );
   }
 }
 
