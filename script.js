@@ -5133,7 +5133,10 @@ function formatCurrency(value) {
     return "--";
   }
 
-  return value.toLocaleString("de-DE", {
+  // Round to 2 decimal places first to ensure proper rounding
+  const rounded = Math.round(value * 100) / 100;
+
+  return rounded.toLocaleString("de-DE", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
@@ -6015,8 +6018,8 @@ function proceedToApplication() {
     // Get addon price if selected
     const addonPrice = addonSelected ? getSelectedAddonPrice() : 0;
 
-    // Calculate total price (plan + addon if selected)
-    const totalPrice = planPriceValue + addonPrice;
+    // Calculate total price (plan + addon if selected) and round to 2 decimal places
+    const totalPrice = Math.round((planPriceValue + addonPrice) * 100) / 100;
 
     // Store current selection data for the application form
     const selectedData = {
@@ -6024,14 +6027,14 @@ function proceedToApplication() {
       planIdent: planDetails?.ident || null,
       planTitle:
         planDetails?.description || getPlanName(selectedPlan) || selectedPlan,
-      planPrice: planPriceValue,
-      monthlyPrice: planPriceValue,
+      planPrice: Math.round(planPriceValue * 100) / 100,
+      monthlyPrice: Math.round(planPriceValue * 100) / 100,
       deductible: document.getElementById("deductible")?.value || "20",
       paymentFrequency:
         document.getElementById("paymentFrequency")?.value || "monthly",
       addonSelected: addonSelected,
       addonOption: addonSelected ? addonOptionValue || "2000" : null,
-      addonPrice: addonPrice,
+      addonPrice: Math.round(addonPrice * 100) / 100,
       totalPrice: totalPrice,
       timestamp: new Date().toISOString(),
     };
@@ -6515,6 +6518,42 @@ document.addEventListener("DOMContentLoaded", function () {
       if (successSummaryPreviousInsurance)
         successSummaryPreviousInsurance.textContent =
           previousInsurance.value === "ja" ? "Ja" : "Nein";
+      
+      // Show previous insurance details if "Ja" was selected
+      if (previousInsurance.value === "ja") {
+        const detailsContainer = document.getElementById(
+          "successSummaryPreviousInsuranceDetails"
+        );
+        if (detailsContainer) {
+          // Collect all insurance company and number fields
+          const companyFields = document.querySelectorAll('input[name="insuranceCompany[]"]');
+          const numberFields = document.querySelectorAll('input[name="insuranceNumber[]"]');
+          
+          if (companyFields.length > 0) {
+            let detailsHTML = '<div style="padding: 10px; background: #f5f5f5; border-radius: 5px; margin-top: 10px;">';
+            detailsHTML += '<strong style="display: block; margin-bottom: 8px;">Details zur Vorversicherung:</strong>';
+            
+            companyFields.forEach((field, index) => {
+              const company = field.value || "-";
+              const number = numberFields[index]?.value || "-";
+              
+              if (company !== "-" || number !== "-") {
+                detailsHTML += `
+                  <div style="padding: 8px; background: white; margin: 5px 0; border-radius: 3px;">
+                    <strong>${index + 1}. Versicherung:</strong><br>
+                    <span style="font-size: 14px; color: #666;">Gesellschaft:</span> ${company}<br>
+                    <span style="font-size: 14px; color: #666;">Versicherungsnummer:</span> ${number}
+                  </div>
+                `;
+              }
+            });
+            
+            detailsHTML += '</div>';
+            detailsContainer.innerHTML = detailsHTML;
+            detailsContainer.style.display = 'block';
+          }
+        }
+      }
     }
 
     // Update Account Data Summary on Success Page
@@ -6544,7 +6583,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Function to generate HTML email body
   function generateEmailHTML(applicationData, pricingData) {
-    const formData = getFormPayloadFromStorage() || {};
+    // Try multiple sources for pet form data
+    let formData = applicationData.petFormData || getFormPayloadFromStorage() || {};
+    
+    // If formData is empty, try to read directly from DOM as a fallback
+    if (!formData.plz || !formData.tierKategorie) {
+      console.warn("Pet form data not found in storage, reading from DOM");
+      const tierKategorieSelect = document.getElementById("tierKategorie");
+      const geschlechtSelect = document.getElementById("geschlecht");
+      const rasseSelect = document.getElementById("rasse");
+      const selectedBreedOption = rasseSelect?.selectedOptions?.[0];
+      
+      formData = {
+        plz: document.getElementById("plz")?.value || "",
+        tierKategorie: tierKategorieSelect?.value || "",
+        geschlecht: geschlechtSelect?.value || "",
+        rasse: rasseSelect?.value || "",
+        rasseLabel: selectedBreedOption?.textContent?.trim() || "",
+        geburtsdatum: document.getElementById("geburtsdatum")?.value || "",
+        kastriert: document.querySelector('input[name="kastriert"]:checked')?.value || "",
+        haltung: document.querySelector('input[name="haltung"]:checked')?.value || "",
+        gesundheitsprobleme: document.querySelector('input[name="gesundheitsprobleme"]:checked')?.value || "",
+      };
+    }
+    
+    console.log("Generating email with form data:", formData);
+    console.log("Application data:", applicationData);
+    console.log("Pricing data:", pricingData);
 
     return `
 <!DOCTYPE html>
@@ -6586,26 +6651,46 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
     <div class="item">
       <span class="label">Monatlicher Beitrag:</span>
-      <span class="value">${pricingData.planPrice || "-"}</span>
+      <span class="value">${
+        pricingData.planPrice
+          ? (Math.round(pricingData.planPrice * 100) / 100).toFixed(2) + " €"
+          : "-"
+      }</span>
     </div>
     <div class="item">
       <span class="label">Selbstbeteiligung:</span>
-      <span class="value">${pricingData.deductible || "-"}</span>
+      <span class="value">${pricingData.deductible || "-"}%</span>
     </div>
     <div class="item">
       <span class="label">Zahlungsweise:</span>
-      <span class="value">${pricingData.paymentFrequency || "-"}</span>
+      <span class="value">${
+        pricingData.paymentFrequency === "monthly"
+          ? "Monatlich"
+          : pricingData.paymentFrequency === "quarterly"
+          ? "Vierteljährlich"
+          : pricingData.paymentFrequency === "semi-annually"
+          ? "Halbjährlich"
+          : pricingData.paymentFrequency === "yearly"
+          ? "Jährlich"
+          : pricingData.paymentFrequency || "-"
+      }</span>
     </div>
     ${
-      pricingData.addon
+      pricingData.addonSelected && pricingData.addonPrice > 0
         ? `
     <div class="item">
       <span class="label">Zusatzoption:</span>
-      <span class="value">${pricingData.addon}</span>
+      <span class="value">Heilbehandlungs- und Vorsorgeschutz (${
+        pricingData.addonOption || "2000"
+      } € Versicherungssumme)</span>
     </div>
     <div class="item">
       <span class="label">Zusatzpreis:</span>
-      <span class="value">${pricingData.addonPrice || "-"}</span>
+      <span class="value">${
+        pricingData.addonPrice
+          ? (Math.round(pricingData.addonPrice * 100) / 100).toFixed(2) + " €"
+          : "-"
+      }</span>
     </div>
     `
         : ""
@@ -6620,11 +6705,25 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
     <div class="item">
       <span class="label">Tierart:</span>
-      <span class="value">${formData.tierKategorie || "-"}</span>
+      <span class="value">${
+        formData.tierKategorie === "katze"
+          ? "🐱 Katze"
+          : formData.tierKategorie === "hund"
+          ? "🐶 Hund"
+          : formData.tierKategorie === "pferd"
+          ? "🐴 Pferd"
+          : formData.tierKategorie || "-"
+      }</span>
     </div>
     <div class="item">
       <span class="label">Geschlecht:</span>
-      <span class="value">${formData.geschlecht || "-"}</span>
+      <span class="value">${
+        formData.geschlecht === "maennlich"
+          ? "♂️ Männlich"
+          : formData.geschlecht === "weiblich"
+          ? "♀️ Weiblich"
+          : formData.geschlecht || "-"
+      }</span>
     </div>
     <div class="item">
       <span class="label">Rasse:</span>
@@ -6640,14 +6739,42 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
     <div class="item">
       <span class="label">Kastriert/Sterilisiert:</span>
-      <span class="value">${formData.kastriert || "-"}</span>
+      <span class="value">${
+        formData.kastriert === "ja"
+          ? "✅ Ja"
+          : formData.kastriert === "nein"
+          ? "❌ Nein"
+          : formData.kastriert || "-"
+      }</span>
     </div>
     ${
       formData.haltung
         ? `
     <div class="item">
       <span class="label">Haltung:</span>
-      <span class="value">${formData.haltung}</span>
+      <span class="value">${
+        formData.haltung === "wohnung"
+          ? "🏢 Wohnungshaltung"
+          : formData.haltung === "freigang"
+          ? "🌳 Freigang"
+          : formData.haltung
+      }</span>
+    </div>
+    `
+        : ""
+    }
+    ${
+      formData.gesundheitsprobleme
+        ? `
+    <div class="item">
+      <span class="label">Gesundheitsprobleme:</span>
+      <span class="value">${
+        formData.gesundheitsprobleme === "ja"
+          ? "⚠️ Ja"
+          : formData.gesundheitsprobleme === "nein"
+          ? "✅ Nein"
+          : formData.gesundheitsprobleme
+      }</span>
     </div>
     `
         : ""
@@ -6730,8 +6857,39 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
     <div class="item">
       <span class="label">Vorversicherung:</span>
-      <span class="value">${applicationData.previousInsurance || "-"}</span>
+      <span class="value">${
+        applicationData.previousInsurance === "ja"
+          ? "✅ Ja"
+          : applicationData.previousInsurance === "nein"
+          ? "❌ Nein"
+          : applicationData.previousInsurance || "-"
+      }</span>
     </div>
+    ${
+      applicationData.previousInsurance === "ja" &&
+      applicationData.insuranceCompany &&
+      Array.isArray(applicationData.insuranceCompany) &&
+      applicationData.insuranceCompany.length > 0
+        ? `
+    <div class="item" style="flex-direction: column; align-items: flex-start;">
+      <span class="label" style="margin-bottom: 10px;">Details zur Vorversicherung:</span>
+      ${applicationData.insuranceCompany
+        .map(
+          (company, index) => `
+        <div style="background: white; padding: 10px; margin: 5px 0; border-radius: 3px; width: 100%;">
+          <strong>${index + 1}. Versicherung:</strong><br>
+          <span style="color: #666;">Gesellschaft:</span> ${company || "-"}<br>
+          <span style="color: #666;">Versicherungsnummer:</span> ${
+            applicationData.insuranceNumber?.[index] || "-"
+          }
+        </div>
+      `
+        )
+        .join("")}
+    </div>
+    `
+        : ""
+    }
   </div>
 
   <h2>💳 Kontodaten</h2>
@@ -6747,7 +6905,11 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 
   <div class="total">
-    💰 Gesamtbeitrag: ${pricingData.totalPrice || "-"}€ pro Monat
+    💰 Gesamtbeitrag: ${
+      pricingData.totalPrice
+        ? (Math.round(pricingData.totalPrice * 100) / 100).toFixed(2)
+        : "-"
+    }€ pro Monat
   </div>
 </body>
 </html>
@@ -6768,7 +6930,7 @@ document.addEventListener("DOMContentLoaded", function () {
           },
           body: JSON.stringify({
             htmlBody: htmlBody,
-            to: "kaif@theautomagichub.com",
+            to: "moazzamalek@gmail.com",
             subject: `Neuer Tierkrankenversicherungsantrag - ${applicationData.firstName} ${applicationData.lastName}`,
             apiKey: "ScrapingKing",
             from: "moazzam@moazzammalek.com",
@@ -6842,13 +7004,42 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isValid) {
       // Collect form data
       const formData = new FormData(applicationForm);
-      const data = Object.fromEntries(formData.entries());
+      
+      // Handle array fields properly (like insuranceCompany[] and insuranceNumber[])
+      const data = {};
+      for (let [key, value] of formData.entries()) {
+        if (key.endsWith('[]')) {
+          // Handle array fields
+          const arrayKey = key.slice(0, -2); // Remove '[]' suffix
+          if (!data[arrayKey]) {
+            data[arrayKey] = [];
+          }
+          data[arrayKey].push(value);
+        } else {
+          data[key] = value;
+        }
+      }
+      
+      console.log("Application form data collected:", data);
+      console.log("Previous Insurance value:", data.previousInsurance);
+      console.log("Insurance Companies:", data.insuranceCompany);
+      console.log("Insurance Numbers:", data.insuranceNumber);
+
+      // Get pet form data from localStorage
+      const petFormData = getFormPayloadFromStorage() || {};
+      console.log("Pet form data from storage:", petFormData);
 
       // Add pricing data from session storage
       const pricingData = JSON.parse(
         sessionStorage.getItem("selectedInsurancePlan") || "{}"
       );
-      const applicationData = { ...data, pricing: pricingData };
+      
+      // Merge all data together
+      const applicationData = { 
+        ...data, 
+        pricing: pricingData,
+        petFormData: petFormData // Add pet form data explicitly
+      };
 
       // Store application data
       sessionStorage.setItem(
