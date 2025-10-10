@@ -1108,6 +1108,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     saveFormState();
 
+    // Meta Pixel: Track Lead Event (Calculator Start)
+    if (typeof fbq !== 'undefined') {
+      fbq('track', 'Lead');
+    }
+
     const jsonData = generateFormJSON();
 
     try {
@@ -7073,6 +7078,11 @@ document.addEventListener("DOMContentLoaded", function () {
             submitButton.innerHTML = originalText;
             submitButton.disabled = false;
 
+            // Meta Pixel: Track Complete Registration Event (Thank You Page)
+            if (typeof fbq !== 'undefined') {
+              fbq('track', 'CompleteRegistration');
+            }
+
             // Redirect to thank you page
             showScreen("successScreen");
             updateSuccessPageSummary();
@@ -7084,6 +7094,11 @@ document.addEventListener("DOMContentLoaded", function () {
             submitButton.innerHTML = originalText;
             submitButton.disabled = false;
 
+            // Meta Pixel: Track Complete Registration Event (Thank You Page)
+            if (typeof fbq !== 'undefined') {
+              fbq('track', 'CompleteRegistration');
+            }
+
             // Still show success screen even if email fails
             showScreen("successScreen");
             updateSuccessPageSummary();
@@ -7092,6 +7107,12 @@ document.addEventListener("DOMContentLoaded", function () {
         // Fallback if no submit button found
         console.log("Application Data:", applicationData);
         sendEmailNotification(applicationData, pricingData);
+        
+        // Meta Pixel: Track Complete Registration Event (Thank You Page)
+        if (typeof fbq !== 'undefined') {
+          fbq('track', 'CompleteRegistration');
+        }
+
         showScreen("successScreen");
         updateSuccessPageSummary();
       }
