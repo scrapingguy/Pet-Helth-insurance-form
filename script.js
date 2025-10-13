@@ -431,6 +431,13 @@ function renderMobilePricingCards(container, sections, headers) {
     const titleDiv = document.createElement("div");
     titleDiv.className = "mobile-plan-card-title";
     titleDiv.textContent = PLAN_LABELS[planKey] || planKey;
+    
+    // Add discount badge to all plans
+    const discountBadge = document.createElement("span");
+    discountBadge.className = "discount-badge";
+    discountBadge.textContent = "10% Rabatt";
+    titleDiv.appendChild(discountBadge);
+    
     if (planKey === "komfort") {
       const badge = document.createElement("span");
       badge.className = "plan-col-badge";

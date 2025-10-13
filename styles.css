@@ -2278,6 +2278,46 @@ body {
     letter-spacing: 0.4px;
 }
 
+/* Discount Badge Styles */
+.discount-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    margin-top: 6px;
+    animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.5);
+    }
+}
+
+.plan-col-header .discount-badge {
+    margin-bottom: 4px;
+}
+
+/* Mobile discount badge */
+.mobile-plan-card-title .discount-badge {
+    align-self: flex-start;
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
 .plan-col-price {
     display: flex;
     align-items: baseline;
@@ -2590,7 +2630,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     padding: 12px 8px;
 }
 
@@ -2604,6 +2644,7 @@ body {
     font-weight: 600;
     color: var(--text-primary);
     text-align: center;
+    margin-bottom: 0;
 }
 
 .plan-col.featured {
@@ -4167,6 +4208,12 @@ select:focus {
 
     .radio-group {
         flex-direction: column;
+    }
+
+    /* Discount badge mobile adjustments */
+    .discount-badge {
+        font-size: 0.65rem;
+        padding: 3px 10px;
     }
 
     /* Mobile styles for summary toggle */
