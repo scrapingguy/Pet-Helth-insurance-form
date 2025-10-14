@@ -2894,6 +2894,15 @@ body {
     margin-left: auto;
     text-align: right;
     min-width: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.addon-price .discount-badge {
+    margin-top: 0;
+    margin-bottom: 4px;
 }
 
 .addon-price-amount {
@@ -3160,6 +3169,7 @@ body {
     .addon-price {
         width: 100%;
         text-align: left;
+        align-items: flex-start;
     }
 
     .addon-select-btn {
