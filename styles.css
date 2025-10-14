@@ -2905,6 +2905,18 @@ body {
     margin-bottom: 4px;
 }
 
+.addon-original-price {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    text-decoration: line-through;
+    opacity: 0.7;
+    margin-bottom: 4px;
+}
+
+.addon-original-price .addon-amount-original {
+    font-weight: 600;
+}
+
 .addon-price-amount {
     font-size: 1.75rem;
     font-weight: 700;

@@ -5648,6 +5648,14 @@ function updateAddonPricing() {
       ? activeAddon.price
       : 0;
 
+  // Update original addon price (strikethrough)
+  const addonOriginalPriceElement = document.querySelector("[data-addon-amount-original]");
+  if (addonOriginalPriceElement) {
+    addonOriginalPriceElement.textContent = Number.isFinite(addonPrice)
+      ? `${formatCurrency(addonPrice)} €`
+      : "--";
+  }
+
   // Apply 10% discount to addon price
   const discountedAddonPrice = addonPrice * 0.9;
 
