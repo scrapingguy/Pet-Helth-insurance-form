@@ -83,10 +83,27 @@
     align-items: center;
 }
 
+.logo {
+    display: flex;
+    align-items: center;
+}
+
 .logo img {
     padding-left: 35px;
-    height: 39px;
+    height: 45px; /* Increased from 39px for better visibility */
     width: auto;
+    transition: transform 0.2s ease;
+}
+
+.logo img:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .logo img {
+        height: 36px;
+        padding-left: 16px;
+    }
 }
 
 /* Footer Styles */
@@ -305,6 +322,37 @@ body.embedded-full {
 .embedded-full .form-card {
     /* max-height: calc(var(--embed-max-height, 100vh) - 2 * var(--spacing-lg)); */
     overflow-y: auto;
+}
+
+/* Social Proof Section */
+.social-proof-section {
+    background: linear-gradient(135deg, #fff8f3 0%, #ffffff 100%);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    margin: var(--spacing-xl) auto 0;
+    width: min(100%, var(--layout-max-width));
+    text-align: center;
+    border: 1px solid rgba(255, 140, 66, 0.2);
+    box-shadow: 0 4px 16px rgba(255, 140, 66, 0.1);
+}
+
+.social-proof-section p {
+    margin: 0;
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .social-proof-section {
+        padding: var(--spacing-md) var(--spacing-lg);
+        margin-top: var(--spacing-lg);
+    }
+    
+    .social-proof-section p {
+        font-size: var(--font-size-sm);
+    }
 }
 
 /* Progress Bar Styles */
