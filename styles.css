@@ -178,10 +178,15 @@
     position: relative;
     overflow: hidden;
     z-index: 1;
+     display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+
 }
 
 .section-banner h1 {
-    margin-top: 125px;  /* remove after chrishmatsh */
     font-size: clamp(1.8rem, 2.8vw, 2.6rem);
     font-weight: 700;
     letter-spacing: -0.3px;
