@@ -164,8 +164,9 @@
     margin-top: 20px;
     width: min(100%, var(--layout-max-width));
     margin: 0 auto var(--spacing-xl);
-    padding: clamp(28px, 6vw, 56px) clamp(24px, 5vw, 48px);
-    background: linear-gradient(135deg, #ff8c42 0%, #ff7a28 60%, #ffb347 100%);
+    padding: clamp(28px, 6vw, 56px) clamp(24px, 5vw, 48px);|
+    background-image:;
+    /* background: linear-gradient(135deg, #ff8c42 0%, #ff7a28 60%, #ffb347 100%); */
     color: var(--background-primary);
     border-radius: var(--radius-lg);
     box-shadow: 0 12px 32px rgba(255, 140, 66, 0.25);
