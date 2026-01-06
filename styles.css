@@ -2348,46 +2348,6 @@ body {
     letter-spacing: 0.4px;
 }
 
-/* Discount Badge Styles */
-.discount-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 12px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-    margin-top: 6px;
-    animation: badgePulse 2s ease-in-out infinite;
-}
-
-@keyframes badgePulse {
-    0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-    }
-    50% {
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.5);
-    }
-}
-
-.plan-col-header .discount-badge {
-    margin-bottom: 4px;
-}
-
-/* Mobile discount badge */
-.mobile-plan-card-title .discount-badge {
-    align-self: flex-start;
-    margin-top: 0;
-    margin-bottom: 4px;
-}
-
 .plan-col-price {
     display: flex;
     flex-direction: column;
@@ -2398,28 +2358,7 @@ body {
     color: var(--primary-color);
 }
 
-/* Original price (strikethrough) */
-.plan-col-price .original-price {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    text-decoration: line-through;
-    opacity: 0.7;
-}
-
-.plan-col-price .original-price .currency {
-    font-size: 0.8rem;
-}
-
-.plan-col-price .original-price .plan-amount-original {
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-
-/* Discounted price row */
-.plan-col-price .discounted-price {
+.plan-col-price .current-price {
     display: flex;
     align-items: baseline;
     gap: 6px;
@@ -2587,28 +2526,7 @@ body {
     font-weight: 700;
 }
 
-/* Original price for mobile */
-.mobile-plan-card-price .original-price {
-    display: flex;
-    align-items: baseline;
-    gap: 3px;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    text-decoration: line-through;
-    opacity: 0.7;
-}
-
-.mobile-plan-card-price .original-price .currency {
-    font-size: 0.75rem;
-}
-
-.mobile-plan-card-price .original-price .plan-amount-original {
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-/* Discounted price for mobile */
-.mobile-plan-card-price .discounted-price {
+.mobile-plan-card-price .current-price {
     display: flex;
     align-items: baseline;
     gap: 6px;
@@ -2968,23 +2886,6 @@ body {
     flex-direction: column;
     align-items: flex-end;
     gap: 8px;
-}
-
-.addon-price .discount-badge {
-    margin-top: 0;
-    margin-bottom: 4px;
-}
-
-.addon-original-price {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    text-decoration: line-through;
-    opacity: 0.7;
-    margin-bottom: 4px;
-}
-
-.addon-original-price .addon-amount-original {
-    font-weight: 600;
 }
 
 .addon-price-amount {
@@ -4359,12 +4260,6 @@ select:focus {
 
     .radio-group {
         flex-direction: column;
-    }
-
-    /* Discount badge mobile adjustments */
-    .discount-badge {
-        font-size: 0.65rem;
-        padding: 3px 10px;
     }
 
     /* Mobile styles for summary toggle */

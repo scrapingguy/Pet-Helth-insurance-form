@@ -432,12 +432,6 @@ function renderMobilePricingCards(container, sections, headers) {
     titleDiv.className = "mobile-plan-card-title";
     titleDiv.textContent = PLAN_LABELS[planKey] || planKey;
     
-    // Add discount badge to all plans
-    const discountBadge = document.createElement("span");
-    discountBadge.className = "discount-badge";
-    discountBadge.textContent = "10% Rabatt";
-    titleDiv.appendChild(discountBadge);
-    
     if (planKey === "komfort") {
       const badge = document.createElement("span");
       badge.className = "plan-col-badge";
@@ -448,11 +442,7 @@ function renderMobilePricingCards(container, sections, headers) {
     const priceDiv = document.createElement("div");
     priceDiv.className = "mobile-plan-card-price";
     priceDiv.innerHTML = `
-      <div class="original-price">
-        <span class="currency">€</span>
-        <span class="plan-amount-original" data-plan-amount-original="${planKey}">--</span>
-      </div>
-      <div class="discounted-price">
+      <div class="current-price">
         <span class="currency">€</span>
         <span class="plan-amount" data-plan-amount="${planKey}">--</span>
       </div>
@@ -5059,21 +5049,9 @@ function applyPricingData(pricingData, billingValue, retention, scheduleCode) {
 
   updateSelectedPlanPricingSnapshot(scheduleCode);
 
-  // Update discounted prices (10% off)
+  // Update plan prices
   document.querySelectorAll("[data-plan-amount]").forEach((element) => {
     const planKey = element.getAttribute("data-plan-amount");
-    const product = normalizedProducts[planKey];
-    if (product && Number.isFinite(product.basePrice)) {
-      const discountedPrice = product.basePrice * 0.9; // 10% discount
-      element.textContent = formatCurrency(discountedPrice);
-    } else {
-      element.textContent = "--";
-    }
-  });
-
-  // Update original prices (strikethrough)
-  document.querySelectorAll("[data-plan-amount-original]").forEach((element) => {
-    const planKey = element.getAttribute("data-plan-amount-original");
     const product = normalizedProducts[planKey];
     if (product && Number.isFinite(product.basePrice)) {
       element.textContent = formatCurrency(product.basePrice);
@@ -5648,20 +5626,9 @@ function updateAddonPricing() {
       ? activeAddon.price
       : 0;
 
-  // Update original addon price (strikethrough)
-  const addonOriginalPriceElement = document.querySelector("[data-addon-amount-original]");
-  if (addonOriginalPriceElement) {
-    addonOriginalPriceElement.textContent = Number.isFinite(addonPrice)
-      ? `${formatCurrency(addonPrice)} €`
-      : "--";
-  }
-
-  // Apply 10% discount to addon price
-  const discountedAddonPrice = addonPrice * 0.9;
-
   if (addonPriceElement) {
-    addonPriceElement.textContent = Number.isFinite(discountedAddonPrice)
-      ? `${formatCurrency(discountedAddonPrice)} €`
+    addonPriceElement.textContent = Number.isFinite(addonPrice)
+      ? `${formatCurrency(addonPrice)} €`
       : "--";
   }
 
@@ -5772,14 +5739,9 @@ function updateConfirmationSection() {
     )} · ${getPaymentFrequencyDescription(paymentValue)}`;
   }
 
-  // Apply 10% discount to plan price
-  const discountedPlanPrice = Number.isFinite(planPriceValue) 
-    ? planPriceValue * 0.9 
-    : planPriceValue;
-
   if (tariffPrice) {
-    tariffPrice.textContent = Number.isFinite(discountedPlanPrice)
-      ? `${formatCurrency(discountedPlanPrice)} €`
+    tariffPrice.textContent = Number.isFinite(planPriceValue)
+      ? `${formatCurrency(planPriceValue)} €`
       : "--";
   }
 
@@ -5792,11 +5754,10 @@ function updateConfirmationSection() {
     addonOption.textContent = addonText;
   }
 
-  // Apply 10% discount to addon price
-  const discountedAddonPrice = addonPriceValue * 0.9;
-
   if (addonSelectedPrice) {
-    addonSelectedPrice.textContent = `${formatCurrency(discountedAddonPrice)} €`;
+    addonSelectedPrice.textContent = Number.isFinite(addonPriceValue)
+      ? `${formatCurrency(addonPriceValue)} €`
+      : "--";
   }
 
   // Update period text for addon price
@@ -5805,8 +5766,9 @@ function updateConfirmationSection() {
   }
 
   if (totalPriceElement) {
-    totalPriceElement.textContent = Number.isFinite(discountedPlanPrice)
-      ? `${formatCurrency(discountedPlanPrice + discountedAddonPrice)} €`
+    const addonComponent = Number.isFinite(addonPriceValue) ? addonPriceValue : 0;
+    totalPriceElement.textContent = Number.isFinite(planPriceValue)
+      ? `${formatCurrency(planPriceValue + addonComponent)} €`
       : "--";
   }
 
